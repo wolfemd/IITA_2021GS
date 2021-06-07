@@ -6,7 +6,7 @@ predCrossVars<-function(CrossesToPredict,modelType,
                        AddEffectList,DomEffectList=NULL,
                        predType="VPM",
                        haploMat,recombFreqMat,
-                       ncores=1){
+                       ncores=1,...){
   starttime<-proc.time()[3]
   # Center posterior distribution of effects
   ## on posterior mean across MCMC samples
@@ -199,34 +199,26 @@ quadform<-function(D,x,y){ return(as.numeric(colSums(x*(D%*%y)))) }
 predCrossMeans<-function(CrossesToPredict,modelType,
                          AddEffectList,DomEffectList=NULL,
                          doseMat,
-                         ncores=1){
+                         ncores=1,...){
 
   means<-tibble(Trait=names(AddEffectList))
   parents<-CrossesToPredict %$% union(sireID,damID)
-  doseMat<-doseMat[parents,names(AddEffectList[[1]])]
+  doseMat<-doseMat[parents,colnames(AddEffectList[[1]])]
 
   require(furrr); options(mc.cores=ncores); plan(multicore)
   means<-means %>%
-    mutate(predictedMeanBVs=future_map(Trait,function(Trait,...){
-      parentGEBVs<-doseMat%*%AddEffectList[[Trait]]
-      predmeangebvs<-CrossesToPredict %>%
+    mutate(predictedMeans=future_map(Trait,function(Trait,...){
+      parentGEBVs<-tcrossprod(doseMat,AddEffectList[[Trait]])
+
+      predmeans<-CrossesToPredict %>%
         left_join(tibble(sireID=rownames(parentGEBVs),
                          sireGEBV=as.numeric(parentGEBVs))) %>%
         left_join(tibble(damID=rownames(parentGEBVs),
                          damGEBV=as.numeric(parentGEBVs))) %>%
         mutate(predOf="MeanBV",predMean=(sireGEBV+damGEBV)/2)
-      return(predmeangebvs)})) %>%
-    unnest(predictedMeanBVs)
-
-  if(modelType=="AD"){
-    means<-means %>%
-      bind_rows(tibble(Trait=names(AddEffectList)) %>%
-                  mutate(predictedMeanTGVs=future_map(Trait,function(Trait,...){
-                    predmeangetgvs<-CrossesToPredict %>%
-                      left_join(tibble(sireID=rownames(parentGEBVs),
-                                       sireGEBV=as.numeric(parentGEBVs))) %>%
-                      left_join(tibble(damID=rownames(parentGEBVs),
-                                       damGEBV=as.numeric(parentGEBVs))) %>%
+      if(modelType=="AD"){
+        predmeans %<>%
+          bind_rows(predmeans %>%
                       mutate(predOf="MeanTGV",
                              predMean=map2_dbl(sireID,damID,function(sireID,damID,...){
                                # Eqn 14.6 from Falconer+MacKay
@@ -236,9 +228,9 @@ predCrossMeans<-function(CrossesToPredict,modelType,
                                y<-p1-p2
                                g<-AddEffectList[[Trait]]*(p1-q-y) + DomEffectList[[Trait]]*((2*p1*q)+y*(p1-q))
                                meanG<-sum(g)
-                               return(meanG)}))
-                    return(predmeangetgvs)})) %>%
-                  unnest(predictedMeanTGVs))
-  }
-  return(means)
-}
+                               return(meanG)})))
+      }
+      return(predmeans)})) %>%
+    unnest(predictedMeans)
+  return(means) }
+
