@@ -1,0 +1,960 @@
+---
+title: "Parent-wise cross-validation to check the accuracy of predicting cross (co)-variances"
+author: "Marnin Wolfe"
+date: "2021-May-14"
+output: 
+  workflowr::wflow_html:
+    toc: true
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F, 
+                      tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
+```
+
+# Previous step
+
+4.  [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map *and* recombination frequency matrix, for use in predictions.
+
+# Automating cross-validation
+
+In the manuscript, the cross-validation is documented many pages and scripts, [documented here](https://wolfemd.github.io/PredictOutbredCrossVar/).
+
+For ongoing GS, I have a function `runCrossVal()` that manages all inputs and outputs easy to work with pre-computed accuracies.
+
+Goal here is to make a function: `runParentWiseCrossVal()`, or at least make progress towards developing one.
+
+*However*, for computational reasons, I imagine it might still be best to separate the task into a few functions.
+
+# `runParentWiseCrossVal()`
+
+```{bash, eval=F}
+cd /home/jj332_cas/marnin/implementGMSinCassava/; 
+export OMP_NUM_THREADS=56 # activate multithread OpenBLAS 
+##### [considered] 
+######/programs/R-4.0.0/bin/R # switched to R V4, having trouble with sommer/Matrix in v3.5
+## may have to reinstall packages
+```
+
+```{r, eval=F}
+# runCrossVal<-function(TrainTestData,modelType,grms,nrepeats,nfolds,ncores=1,
+#                           byGroup=FALSE,augmentTP=NULL,gid="GID",...)
+```
+
+## Make parent-wise folds
+
+```{r inputs}
+require(tidyverse); require(magrittr); require(rsample)
+ped<-read.table(here::here("output","verified_ped.txt"),
+                header = T, stringsAsFactors = F) %>% 
+  rename(GID=FullSampleName,
+         damID=DamID,
+         sireID=SireID) %>% 
+  dplyr::select(GID,sireID,damID)
+# only families with _at least_ 2 offspring
+ped %<>%
+  semi_join(ped %>% count(sireID,damID) %>% filter(n>1) %>% ungroup())
+gid<-"GID"
+seed<-42
+nrepeats<-5
+nfolds<-5
+```
+
+```{r makeParentFolds}
+# Prunes out offspring, grandkids, greatgrandkids (up to X4) steps of 
+# great ancestors.  It is not automatically recursive across any depth of 
+# pedigree. That depth works for current test pedigree (IITA 2021). 
+# Must name parent columns in ped "sireID" and "damID".
+makeParentFolds<-function(ped,gid,nrepeats=5,nfolds=5,seed=NULL){
+  set.seed(seed)
+  parentfolds<-rsample::vfold_cv(tibble(Parents=union(ped$sireID,
+                                                      ped$damID)),
+                                 v = nfolds,repeats = nrepeats) %>% 
+    mutate(folds=map(splits,function(splits){
+      #splits<-parentfolds$splits[[1]]
+      testparents<-testing(splits)$Parents
+      trainparents<-training(splits)$Parents
+      ped<-ped %>% 
+        rename(gid=!!sym(gid))
+      offspring<-ped %>% 
+        filter(sireID %in% testparents | damID %in% testparents) %$% 
+        unique(gid)
+      grandkids<-ped %>% 
+        filter(sireID %in% offspring | damID %in% offspring) %$% 
+        unique(gid)
+      greatX1grandkids<-ped %>% 
+        filter(sireID %in% grandkids | damID %in% grandkids) %$% 
+        unique(gid)
+      greatX2grandkids<-ped %>% 
+        filter(sireID %in% greatX1grandkids | 
+                 damID %in% greatX1grandkids) %$% 
+        unique(gid)
+      greatX3grandkids<-ped %>% 
+        filter(sireID %in% greatX2grandkids | 
+                 damID %in% greatX2grandkids) %$% 
+        unique(gid)
+      greatX4grandkids<-ped %>% 
+        filter(sireID %in% greatX3grandkids | 
+                 damID %in% greatX3grandkids) %$% 
+        unique(gid)
+      
+      testset<-unique(c(offspring,
+                        grandkids,
+                        greatX1grandkids,
+                        greatX2grandkids,
+                        greatX3grandkids,
+                        greatX4grandkids)) %>% 
+        .[!. %in% c(testparents,trainparents)]
+      
+      nontestdescendents<-ped %>% 
+        filter(!gid %in% testset) %$% 
+        unique(gid)
+      trainset<-union(testparents,trainparents) %>% 
+        union(.,nontestdescendents)
+      
+      out<-tibble(testparents=list(testparents),
+                  trainset=list(trainset),
+                  testset=list(testset))
+      return(out) })) %>% 
+    unnest(folds) %>% 
+    rename(Repeat=id,Fold=id2) %>% 
+    select(-splits)
+  
+  # Crosses To Predict
+  parentfolds %<>%
+    mutate(CrossesToPredict=map(testparents,
+                                ~filter(ped %>%
+                                          # only need a list of fams-to-predict
+                                          # not the progeny info
+                                          distinct(damID,sireID),
+                                        sireID %in% . | damID %in% .)))
+  return(parentfolds) 
+}
+```
+
+```{r run func and save}
+parentfolds<-makeParentFolds(ped=ped,gid="GID",nrepeats=5,nfolds=5,seed=42)
+saveRDS(parentfolds,file=here::here("output","parentfolds.rds"))
+#parentfolds$CrossesToPredict[[1]]
+
+parentfolds<-makeParentFolds(ped=ped,gid="GID",nrepeats=5,nfolds=5,seed=42)
+parentfolds %>% head
+```
+
+## Get univariate REML marker effects
+
+My goal is to simplify and integrate into the pipeline used for NextGen Cassava. In the paper, used multi-trait Bayesian ridge-regression (MtBRR) to obtain marker effects, and also stored posterior matrices on disk to later compute posterior mean variances. This was computationally expensive and different from my standard univariate REML approach. I think MtBRR and PMV are probably the least biased way to go... but...
+
+For the sake of testing a simple integration into the in-use pipeline, I want to try univariate REML to get the marker effects, which I'll subsequently use for the cross-validation.
+
+```{r getMarkEffs}
+getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
+  traintestdata<-parentfolds %>% 
+    dplyr::select(Repeat,Fold,trainset,testset) %>% 
+    pivot_longer(c(trainset,testset),
+                 names_to = "Dataset",
+                 values_to = "sampleIDs")
+  
+  # Internal function
+  ## For each training or testing chunk of sampleIDs
+  ## fit GBLUP model for each trait
+  ## Backsolve SNP-effects from GBLUP
+  
+  fitModel<-function(blups,sampleIDs,modelType,grms){
+    require(predCrossVar)
+    A<-grms[["A"]]
+    if(modelType %in% c("AD")){ D<-grms[["D"]] }
+    # debug fitModel()
+    # sampleIDs<-traintestdata$sampleIDs[[1]]
+    out<-blups %>% 
+      #slice(1:2) %>% # debug (just 2 traits)
+      dplyr::mutate(trainingdata=map(blups,function(blups){
+        trainingdata<-blups %>% 
+          rename(gid=!!sym(gid)) %>% 
+          filter(gid %in% sampleIDs)
+        trainingdata[[paste0(gid,"a")]]<-factor(trainingdata[["gid"]],
+                                                levels=rownames(A))
+        if(modelType %in% c("AD")){
+          trainingdata[[paste0(gid,"d")]]<-trainingdata[[paste0(gid,"a")]]
+          # factor(trainingdata[["gid"]],
+          #                                         levels=rownames(D))
+        }
+        return(trainingdata) })) %>% 
+      dplyr::select(-blups)
+    
+    # Set-up random model statements
+    randFormula<-paste0("~vs(",gid,"a,Gu=A)")
+    if(modelType %in% c("AD")){
+      randFormula<-paste0(randFormula,"+vs(",gid,"d,Gu=D)")
+    }
+
+    # Fit model across each trait
+    out<-out %>% 
+      mutate(modelOut=map(trainingdata,function(trainingdata){
+        # Fit genomic prediction model
+        require(sommer)
+        fit <- mmer(fixed = drgBLUP ~1,
+                    random = as.formula(randFormula),
+                    weights = WT,
+                    data=trainingdata)
+        
+        # Gather the GBLUPs
+        gblups<-tibble(GID=as.character(names(fit$U[[paste0("u:",gid,"a")]]$drgBLUP)),
+                       GEBV=as.numeric(fit$U[[paste0("u:",gid,"a")]]$drgBLUP))
+        if(modelType %in% c("AD")){
+          gblups %<>% 
+            mutate(GEDD=as.numeric(fit$U[[paste0("u:",gid,"d")]]$drgBLUP))
+        }
+        # Calc GETGVs
+        ## Note that for modelType=="A", GEBV==GETGV
+         gblups %<>%
+          mutate(GETGV=rowSums(.[,grepl("GE",colnames(.))]))
+        
+        # Backsolve SNP effects
+        ga<-as.matrix(fit$U[[paste0("u:",gid,"a")]]$drgBLUP,ncol=1)
+        addsnpeff<-backsolveSNPeff(Z=centerDosage(dosages),g=ga)
+        if(modelType %in% c("AD")){ 
+          gd<-as.matrix(fit$U[[paste0("u:",gid,"d")]]$drgBLUP,ncol=1)
+          domsnpeff<-backsolveSNPeff(Z=dose2domDev(dosages),g=gd)
+        }
+     
+        # Extract variance components
+        varcomps<-summary(fit)$varcomp
+        
+        results<-tibble(gblups=list(gblups),
+                        varcomps=list(varcomps),
+                        addsnpeff=list(addsnpeff))
+        if(modelType %in% c("AD")){ 
+          results %<>% 
+            mutate(domsnpeff=list(domsnpeff)) }
+        # return results
+        return(results)
+      }))
+    return(out)
+  }
+  
+  require(furrr); options(mc.cores=ncores); plan(multicore)
+  options(future.globals.maxSize=10000*1024^2)
+  
+  traintestdata<-traintestdata %>% 
+    #slice(1:2) %>% # debug just 2 chunks
+    mutate(effects=future_map(sampleIDs,~fitModel(sampleIDs=.,
+                                                  blups=blups,grms=grms,
+                                                  modelType=modelType)),
+           modelType=modelType)
+  return(traintestdata) 
+}
+```
+
+```{r inputs for getMarkEffs}
+require(tidyverse); require(magrittr); require(rsample); library(sommer)
+parentfolds<-readRDS(file=here::here("output","parentfolds.rds"))
+
+blups<-readRDS(file=here::here("data","blups_forCrossVal.rds")) %>% 
+  dplyr::select(-varcomp)
+
+A<-readRDS(file=here::here("output","kinship_A_IITA_2021May13.rds"))
+dosages<-readRDS(file=here::here("data",
+                                 "dosages_IITA_filtered_2021May13.rds"))
+```
+
+```{r test run}
+# D<-readRDS(file=here::here("output","kinship_D_IITA_2021May13.rds"))
+# gid="GID"
+# grms<-list(A=A,D=D)
+# modelType<-"AD"
+# # debug fitModel()
+# sampleIDs<-traintestdata$sampleIDs[[1]]
+# # Fit model across each trait
+# trainingdata<-out$trainingdata[[1]]
+# # markEffsTest<-getMarkEffs(parentfolds,blups,gid,A,dosages,ncores=2)
+# # saveRDS(markEffsTest,here::here("output","markEffsTest.rds"))
+```
+
+```{r run models A and AD}
+# cbsulm15
+markEffsA<-getMarkEffs(parentfolds,blups,gid="GID",
+                       modelType="A",grms=list(A=A),dosages,ncores=2)
+saveRDS(markEffsA,here::here("output","markerEffectsA.rds"))
+
+# cbsulm31
+D<-readRDS(file=here::here("output","kinship_D_IITA_2021May13.rds"))
+markEffsAD<-getMarkEffs(parentfolds,blups,gid="GID",
+                        modelType="AD",grms=list(A=A,D=D),dosages,ncores=2)
+saveRDS(markEffsAD,here::here("output","markerEffectsAD.rds"))
+
+```
+
+## Predict cross variances and covariances
+
+### [TO DELETE] Version 1 of functions
+
+This original version runs the GitHub / manuscript version of the **predCrossVar** package / functions.
+
+In Version 2 in a subsequent section, I revised the functions (not yet included into the actual R package), to increase their computational efficiency.
+
+```{r}
+# inputs for predictCrosses
+require(predCrossVar); require(tidyverse); require(magrittr); 
+parentfolds<-readRDS(file=here::here("output","parentfolds.rds"))
+parents<-parentfolds %>% 
+  select(Repeat,Fold,CrossesToPredict) %>% 
+  unnest(CrossesToPredict) %>% 
+  distinct(sireID,damID) %$%
+  union(sireID,damID)
+
+# Recomb frequency matrix
+recombFreqMat<-readRDS(file=here::here("data",
+                                       "recombFreqMat_1minus2c_2021May13.rds"))
+# Haplotype Matrix
+haploMat<-readRDS(file=here::here("data","haps_IITA_filtered_2021May13.rds"))
+## keep only haplos for parents-to-be-predicted, saves memory
+parenthaps<-sort(c(paste0(parents,"_HapA"),
+                   paste0(parents,"_HapB")))
+haploMat<-haploMat[parenthaps,colnames(recombFreqMat)]; 
+dim(haploMat) # [1]   552 34981
+
+# Parallelization specs
+require(furrr); options(future.globals.maxSize=30000*1024^2)
+```
+
+```{r}
+# predictCrossVars - v1
+predictCrossVars<-function(modelType,snpeffs,parentfolds,haploMat,recombFreqMat,ncores){
+  predvars<-snpeffs %>%
+    unnest(effects) %>% 
+    unnest(modelOut) %>% 
+    filter(Dataset=="trainset") %>% 
+    dplyr::select(Repeat,Fold,Trait,modelType,
+                  any_of(c("addsnpeff","domsnpeff"))) %>% 
+    nest(EffectList=c(Trait,any_of(c("addsnpeff","domsnpeff")))) %>% #%$% EffectList[[1]] ->  EffectList
+    mutate(AddEffectList=map(EffectList,
+                             function(EffectList){
+                               addsnpeff<-map(EffectList$addsnpeff,~t(.))
+                               names(addsnpeff)<-EffectList$Trait
+                               return(addsnpeff)}))
+  if(modelType %in% c("AD")){
+    predvars<-predvars %>% 
+      mutate(DomEffectList=map(EffectList,
+                               function(EffectList){
+                                 domsnpeff<-map(EffectList$domsnpeff,~t(.))
+                                 names(domsnpeff)<-EffectList$Trait
+                                 return(domsnpeff) })) }
+  
+  predvars %<>%
+    left_join(parentfolds %>% 
+                dplyr::select(-testparents,-trainset,-testset)) %>% 
+    dplyr::select(-EffectList)
+  
+  require(furrr); options(mc.cores=ncores); plan(multicore)
+  options(future.globals.maxSize=30000*1024^2)
+
+  if(modelType=="A"){
+    predvars<-predvars %>%
+      mutate(predVars=future_map2(CrossesToPredict,AddEffectList,
+                           ~runMtCrossVarPredsA(CrossesToPredict=.x,
+                                                AlleleSubEffectList=.y,
+                                                haploMat=haploMat,
+                                                recombFreqMat=recombFreqMat,
+                                                ncores=1))) }
+  if(modelType=="AD"){
+    predvars<-predvars %>%
+      mutate(predVars=future_pmap(.,function(CrossesToPredict,
+                                             AddEffectList,
+                                             DomEffectList,...){
+        out<-runMtCrossVarPredsAD(CrossesToPredict=CrossesToPredict,
+                                  AddEffectList=AddEffectList,
+                                  DomEffectList=DomEffectList,
+                                  haploMat=haploMat,
+                                  recombFreqMat=recombFreqMat,
+                                  ncores=1)
+        return(out) })) }
+  return(predvars)
+}
+```
+
+```{r}
+#  run model A - v1
+markEffsA<-readRDS(here::here("output","markerEffectsA.rds"))
+
+starttime<-proc.time()
+predictedVarsA<-predictCrossVars(modelType="A",ncores=20,
+                                 snpeffs=markEffsA,parentfolds=parentfolds,
+                                 haploMat=haploMat,recombFreqMat=recombFreqMat)
+saveRDS(predictedVarsA,here::here("output","predictedVarsA.rds"))
+timeelapsed<-proc.time() - starttime; 
+print(paste0("Elapsed: ",timeelapsed[3]/60/60," hrs"))
+
+```
+
+```{r}
+#  run model AD - v1
+starttime<-proc.time()
+markEffsAD<-readRDS(here::here("output","markerEffectsAD.rds"))
+predictedVarsAD<-predictCrossVars(modelType="AD",ncores=30,
+                                  snpeffs=markEffsAD,parentfolds=parentfolds,
+                                  haploMat=haploMat,recombFreqMat=recombFreqMat)
+saveRDS(predictedVarsAD,here::here("output","predictedVarsAD.rds"))
+timeelapsed<-proc.time() - starttime; 
+print(paste0("Elapsed: ",timeelapsed[3]/60/60," hrs"))
+
+```
+
+
+### Version 2 of functions
+
+```{bash}
+cd /home/jj332_cas/marnin/implementGMSinCassava/; 
+export OMP_NUM_THREADS=5 # <-- for a 112 core machine. Use ncores=20 below
+screen; 
+R # initiate R session
+```
+
+Revised the functions in the **predCrossVar** package to increase their computational efficiency. Not yet included into the actual R package but instead sourced from `code/predCrossVar.R`. Additional speed increases were achieved by extra testing to optimize balance of `OMP_NUM_THREADS` setting (multi-core BLAS) and parallel processing of the  crosses-being-predicted.
+
+```{r inputs for predictCrossVars}
+require(tidyverse); require(magrittr); 
+parentfolds<-readRDS(file=here::here("output","parentfolds.rds"))
+parents<-parentfolds %>% 
+  select(Repeat,Fold,CrossesToPredict) %>% 
+  unnest(CrossesToPredict) %>% 
+  distinct(sireID,damID) %$%
+  union(sireID,damID)
+
+# Recomb frequency matrix
+recombFreqMat<-readRDS(file=here::here("data",
+                                       "recombFreqMat_1minus2c_2021May13.rds"))
+# Haplotype Matrix
+haploMat<-readRDS(file=here::here("data","haps_IITA_filtered_2021May13.rds"))
+## keep only haplos for parents-to-be-predicted, saves memory
+parenthaps<-sort(c(paste0(parents,"_HapA"),
+                   paste0(parents,"_HapB")))
+haploMat<-haploMat[parenthaps,colnames(recombFreqMat)]; 
+
+# Source predictCrossVar  predCrossVar function
+source(here::here("code","predCrossVar.R"))
+
+source(here::here("code","parentWiseCrossVal.R"))
+```
+
+```{r run model A}
+# cbsulm29
+markEffsA<-readRDS(here::here("output","markerEffectsA.rds"))
+
+starttime<-proc.time()[3]
+crossValPredsA<-predictCrossVars(modelType="A",ncores=20,
+                                 snpeffs=markEffsA,parentfolds=parentfolds,
+                                 haploMat=haploMat,recombFreqMat=recombFreqMat)
+crossValPredsA<-crossValPredsA %>% select(-AddEffectList,-CrossesToPredict)
+saveRDS(crossValPredsA,here::here("output","crossValPredsA.rds"))
+timeelapsed<-proc.time()[3] - starttime; 
+print(paste0("Elapsed: ",timeelapsed/60/60," hrs"))
+# [1] "Elapsed: 6.60880583333333 hrs"
+```
+
+```{r run model AD}
+# cbsulm29
+markEffsAD<-readRDS(here::here("output","markerEffectsAD.rds"))
+
+starttime<-proc.time()
+crossValPredsAD<-predictCrossVars(modelType="AD",ncores=20,
+                                  snpeffs=markEffsAD,parentfolds=parentfolds,
+                                  haploMat=haploMat,recombFreqMat=recombFreqMat)
+crossValPredsAD<-crossValPredsAD %>% select(-AddEffectList,-DomEffectList,-CrossesToPredict)
+saveRDS(crossValPredsAD,here::here("output","crossValPredsAD.rds"))
+timeelapsed<-proc.time()[3] - starttime; 
+print(paste0("Elapsed: ",timeelapsed/60/60," hrs"))
+# didn't record time... 12-14 hours max.
+```
+
+## Predict cross means
+
+```{r inputs for predictCrossMeans}
+require(tidyverse); require(magrittr); 
+parentfolds<-readRDS(file=here::here("output","parentfolds.rds"))
+parents<-parentfolds %>% 
+  select(Repeat,Fold,CrossesToPredict) %>% 
+  unnest(CrossesToPredict) %>% 
+  distinct(sireID,damID) %$%
+  union(sireID,damID)
+
+# Haplotype Matrix
+doseMat<-readRDS(file=here::here("data","dosages_IITA_filtered_2021May13.rds"))
+## keep only haplos for parents-to-be-predicted, saves memory
+doseMat<-doseMat[parents,]; 
+
+# # Source predictCrossVar  predCrossVar function
+source(here::here("code","predCrossVar.R"))
+
+source(here::here("code","parentWiseCrossVal.R"))
+```
+
+```{r run predictCrossMeans}
+markEffsA<-readRDS(here::here("output","markerEffectsA.rds"))
+markEffsAD<-readRDS(here::here("output","markerEffectsAD.rds"))
+
+cvPredMeansA<-predictCrossMeans(modelType="A",snpeffs=markEffsA,ncores=11,
+                                parentfolds=parentfolds,doseMat=doseMat)
+saveRDS(cvPredMeansA,here::here("output","cvPredMeansA.rds"))
+
+cvPredMeansAD<-predictCrossMeans(modelType="AD",snpeffs=markEffsAD,ncores=11,
+                                parentfolds=parentfolds,doseMat=doseMat)
+saveRDS(cvPredMeansAD,here::here("output","cvPredMeansAD.rds"))
+```
+
+
+## Compute prediction accuracies - v1
+
+```{r inputs for computeAccuracy}
+require(tidyverse); require(magrittr); 
+
+crossVarPreds<-readRDS(here::here("output","crossValPredsA.rds")) %>% 
+  bind_rows(readRDS(here::here("output","crossValPredsAD.rds")))
+markEffs<-readRDS(here::here("output","markerEffectsA.rds")) %>% 
+  bind_rows(readRDS(here::here("output","markerEffectsAD.rds")))
+
+ped<-read.table(here::here("output","verified_ped.txt"),
+                header = T, stringsAsFactors = F) %>% 
+  rename(GID=FullSampleName,
+         damID=DamID,
+         sireID=SireID)
+crossVarPreds %>% filter(modelType=="AD") %>% unnest(predVars) %>% unnest(predVars)
+# source(here::here("code","parentWiseCrossVal.R"))
+```
+
+```{r computeAccuracy - v1}
+# computeAccuracy<-function(crossValPreds,markEffs,ped){}
+
+# Extract and format the GBLUPs from the marker effects object
+retrieve_testset_gblups<-function(markEffs){
+  out<-markEffs %>% 
+    filter(Dataset=="testset") %>% 
+    mutate(testset_gblups=map(effects,
+                      function(effects){
+                        gblups<-effects %>% 
+                          mutate(gblups=map(modelOut,
+                                            ~select(.,gblups) %>% 
+                                              unnest())) %>% 
+                          select(-trainingdata,-modelOut) 
+                        return(gblups)})) %>% 
+    select(Repeat,Fold,modelType,testset_gblups)
+  return(out) }
+gblups<-retrieve_testset_gblups(markEffs)
+
+# Use the crossValPred object and the pedigree
+# Create a list of the actual members of each family that was predicted
+# in each repeat-fold-modelType
+# Join the GBLUPs for each family member for computing
+# cross sample means, variances, covariances
+getObsCrossMeansAndVars<-function(crossValPreds,markEffs,ped){
+  
+out<-crossVarPreds %>%
+  unnest(predVars) %>% 
+  select(Repeat,Fold,modelType,sireID,damID) %>% 
+  left_join(ped) %>% 
+  nest(CrossesToPredict=c(sireID,damID,GID)) %>% 
+  left_join(gblups) %>% 
+  # per rep-fold
+  mutate(validationData=pmap(.,function(CrossesToPredict,
+                                        testset_gblups,
+                                        modelType,...){
+    # CrossesToPredict<-x$CrossesToPredict[[1]]; 
+    # testset_gblups<-x$testset_gblups[[1]];
+    # modelType<-x$modelType[[1]];
+    CrossesToPredict %<>% 
+      left_join(testset_gblups %>% 
+                  unnest(gblups)) %>% 
+      pivot_longer(cols = c(GEBV,GETGV),
+                   names_to = "predOf",
+                   values_to = "GBLUP")
+    if(modelType=="A"){ CrossesToPredict %<>% filter(predOf=="GEBV") }
+    
+    CrossesToPredict %<>% 
+      nest(famgblups=c(GID,Trait,GBLUP))
+    CrossesToPredict %<>% 
+      mutate(famgblups=map(famgblups,function(famgblups){
+        #famgblups<-CrossesToPredict$famgblups[[1]]
+        
+        gblupmat<-famgblups %>% 
+          pivot_wider(names_from = "Trait", values_from = "GBLUP") %>% 
+          column_to_rownames(var="GID") 
+        
+        ## Make a list of pairwise var-covar to compute 
+        ## that matches predCrossVar output
+        traits<-colnames(gblupmat)
+        varcovars<-tibble::tibble(Trait1=traits,
+                                  Trait2=traits)
+        if(length(traits)>1){
+          ## Add covariances to-be-predicted
+          varcovars<-dplyr::bind_rows(varcovars, # trait variances
+                                      combn(traits,2,simplify = T) %>% # covariances
+                                        t(.) %>% #
+                                        `colnames<-`(.,c("Trait1","Trait2")) %>%
+                                        tibble::as_tibble(.)) }
+        ## Sample covariance of GBLUPs
+        covMat<-cov(gblupmat)
+        ## Matrix to long-form pairwise
+        ## subset to on the diagonal and off-diagonal 
+        ## in order to match predCrossVar output
+        pairwise_covs<-covMat %>% 
+          as.data.frame(.) %>% 
+          rownames_to_column(var = "Trait1") %>% 
+          pivot_longer(cols = c(-Trait1),
+                       names_to = "Trait2", 
+                       values_to = "obsVar") %>% 
+          semi_join(varcovars)
+        
+        ## Cross sample means for each trait
+        cross_means<-colMeans(gblupmat) %>% 
+          data.frame(obsMean=.) %>% 
+          rownames_to_column(var="Trait") %>% 
+          as_tibble
+        
+        ## Tidy output
+        out<-tibble(obsVars=list(pairwise_covs),
+                    obsMeans=list(cross_means),
+                    obsFamSize=nrow(gblupmat))
+        
+        return(out) 
+      })) %>% 
+      unnest(famgblups)
+    return(CrossesToPredict) }))
+return(out) }
+
+obsCrossMeansAndVars<-getObsCrossMeansAndVars(crossValPreds,markEffs,ped)
+saveRDS(obsCrossMeansAndVars,here::here("output","obsCrossMeansAndVars.rds"))
+```
+
+
+## Compute variance prediction accuracies - v2
+
+```{r inputs}
+require(tidyverse); require(magrittr); 
+
+cvPredVarsA<-readRDS(here::here("output","crossValPredsA.rds"))
+#cvPredVarsAD<-readRDS(here::here("output","crossValPredsAD.rds"))
+
+markEffsA<-readRDS(here::here("output","markerEffectsA.rds"))
+#markEffsAD<-readRDS(here::here("output","markerEffectsAD.rds"))
+
+ped<-read.table(here::here("output","verified_ped.txt"),
+                header = T, stringsAsFactors = F) %>% 
+  rename(GID=FullSampleName,
+         damID=DamID,
+         sireID=SireID)
+
+
+# source(here::here("code","parentWiseCrossVal.R"))
+```
+
+```{r computeVarPredAccuracy - v2}
+# computeAccuracy<-function(crossValOut,markEffs,ped,modelType){}
+
+# Extract and format the GBLUPs from the marker effects object
+retrieve_testset_gblups<-function(markEffs){
+  out<-markEffs %>% 
+    filter(Dataset=="testset") %>% 
+    mutate(testset_gblups=map(effects,
+                      function(effects){
+                        gblups<-effects %>% 
+                          mutate(gblups=map(modelOut,
+                                            ~select(.,gblups) %>% 
+                                              unnest())) %>% 
+                          select(-trainingdata,-modelOut) 
+                        return(gblups)})) %>% 
+    select(Repeat,Fold,modelType,testset_gblups)
+  return(out) }
+gblups<-retrieve_testset_gblups(markEffs)
+
+# Use the crossValPred object and the pedigree
+# Create a list of the actual members of each family that was predicted
+# in each repeat-fold-modelType
+# Join the GBLUPs for each family member for computing
+# cross sample means, variances, covariances
+getObsCrossMeansAndVars<-function(crossValPreds,markEffs,ped){
+  
+out<-crossVarPreds %>%
+  unnest(predVars) %>% 
+  select(Repeat,Fold,modelType,sireID,damID) %>% 
+  left_join(ped) %>% 
+  nest(CrossesToPredict=c(sireID,damID,GID)) %>% 
+  left_join(gblups) %>% 
+  # per rep-fold
+  mutate(validationData=pmap(.,function(CrossesToPredict,
+                                        testset_gblups,
+                                        modelType,...){
+    # CrossesToPredict<-x$CrossesToPredict[[1]]; 
+    # testset_gblups<-x$testset_gblups[[1]];
+    # modelType<-x$modelType[[1]];
+    CrossesToPredict %<>% 
+      left_join(testset_gblups %>% 
+                  unnest(gblups)) %>% 
+      pivot_longer(cols = c(GEBV,GETGV),
+                   names_to = "predOf",
+                   values_to = "GBLUP")
+    if(modelType=="A"){ CrossesToPredict %<>% filter(predOf=="GEBV") }
+    
+    CrossesToPredict %<>% 
+      nest(famgblups=c(GID,Trait,GBLUP))
+    CrossesToPredict %<>% 
+      mutate(famgblups=map(famgblups,function(famgblups){
+        #famgblups<-CrossesToPredict$famgblups[[1]]
+        
+        gblupmat<-famgblups %>% 
+          pivot_wider(names_from = "Trait", values_from = "GBLUP") %>% 
+          column_to_rownames(var="GID") 
+        
+        ## Make a list of pairwise var-covar to compute 
+        ## that matches predCrossVar output
+        traits<-colnames(gblupmat)
+        varcovars<-tibble::tibble(Trait1=traits,
+                                  Trait2=traits)
+        if(length(traits)>1){
+          ## Add covariances to-be-predicted
+          varcovars<-dplyr::bind_rows(varcovars, # trait variances
+                                      combn(traits,2,simplify = T) %>% # covariances
+                                        t(.) %>% #
+                                        `colnames<-`(.,c("Trait1","Trait2")) %>%
+                                        tibble::as_tibble(.)) }
+        ## Sample covariance of GBLUPs
+        covMat<-cov(gblupmat)
+        ## Matrix to long-form pairwise
+        ## subset to on the diagonal and off-diagonal 
+        ## in order to match predCrossVar output
+        pairwise_covs<-covMat %>% 
+          as.data.frame(.) %>% 
+          rownames_to_column(var = "Trait1") %>% 
+          pivot_longer(cols = c(-Trait1),
+                       names_to = "Trait2", 
+                       values_to = "obsVar") %>% 
+          semi_join(varcovars)
+        
+        ## Cross sample means for each trait
+        cross_means<-colMeans(gblupmat) %>% 
+          data.frame(obsMean=.) %>% 
+          rownames_to_column(var="Trait") %>% 
+          as_tibble
+        
+        ## Tidy output
+        out<-tibble(obsVars=list(pairwise_covs),
+                    obsMeans=list(cross_means),
+                    obsFamSize=nrow(gblupmat))
+        
+        return(out) 
+      })) %>% 
+      unnest(famgblups)
+    return(CrossesToPredict) }))
+return(out) }
+
+obsCrossMeansAndVars<-getObsCrossMeansAndVars(crossValPreds,markEffs,ped)
+saveRDS(obsCrossMeansAndVars,here::here("output","obsCrossMeansAndVars.rds"))
+```
+
+
+## [TODO] Add SelIndex Predictions
+
+# Results
+
+See [Results](05-Results.html): Home for plots and summary tables.
+
+# Next step
+
+4.  [Genomic prediction](04-GetGBLUPs.html): Predict *genomic* BLUPs (GEBV and GETGV) for all selection candidates using all available data.
+
+# Scratch
+
+## Set-up test data chunks
+
+```{r test 1}
+testmarkEffsAD<-readRDS(here::here("output","markerEffectsAD.rds")) %>% 
+#  filter(Repeat=="Repeat1", Fold=="Fold1", Dataset=="trainset")
+  filter(Dataset=="trainset") %>% slice(1:5)
+
+testparentfolds<-parentfolds %>% 
+  slice(1) %>% mutate(CrossesToPredict=map(CrossesToPredict,~slice(.,1:10)))
+
+starttime<-proc.time()
+testpredvarsAD<-predictCrossVars(modelType="AD",ncores=5,
+                                 snpeffs=testmarkEffsAD,
+                                 parentfolds=testparentfolds,
+                                 haploMat=haploMat,recombFreqMat=recombFreqMat)
+saveRDS(testpredvarsAD,here::here("output","testpredvarsAD.rds"))
+timeelapsed<-proc.time() - starttime; 
+print(paste0("Elapsed: ",timeelapsed[3]/60/60," hrs"))
+# [1] "Elapsed: 9.49027388888889 hrs"
+
+# Error: Problem with `mutate()` input `predVars`.
+# ✖ subscript out of bounds
+# ℹ Input `predVars` is `future_pmap(...)`
+```
+
+```{r test 2 predict func}
+# parallelize by family (using predCrossVar)
+# instead of by repeat-fold
+testPredictCrossVarsFunc<-function(modelType,snpeffs,parentfolds,haploMat,recombFreqMat,ncores){
+  predvars<-snpeffs %>%
+    unnest(effects) %>% 
+    unnest(modelOut) %>% 
+    filter(Dataset=="trainset") %>% 
+    dplyr::select(Repeat,Fold,Trait,modelType,
+                  any_of(c("addsnpeff","domsnpeff"))) %>% 
+    nest(EffectList=c(Trait,any_of(c("addsnpeff","domsnpeff")))) %>% #%$% EffectList[[1]] ->  EffectList
+    mutate(AddEffectList=map(EffectList,
+                             function(EffectList){
+                               addsnpeff<-map(EffectList$addsnpeff,~t(.))
+                               names(addsnpeff)<-EffectList$Trait
+                               return(addsnpeff)}))
+  if(modelType %in% c("AD")){
+    predvars<-predvars %>% 
+      mutate(DomEffectList=map(EffectList,
+                               function(EffectList){
+                                 domsnpeff<-map(EffectList$domsnpeff,~t(.))
+                                 names(domsnpeff)<-EffectList$Trait
+                                 return(domsnpeff) })) }
+  
+  predvars %<>%
+    left_join(parentfolds %>% 
+                dplyr::select(-testparents,-trainset,-testset)) %>% 
+    dplyr::select(-EffectList)
+  
+  require(furrr); options(mc.cores=ncores); plan(multicore)
+  options(future.globals.maxSize=30000*1024^2)
+
+  if(modelType=="A"){
+    predvars<-predvars %>%
+      mutate(predVars=map2(CrossesToPredict,AddEffectList,
+                           ~runMtCrossVarPredsA(CrossesToPredict=.x,
+                                                AlleleSubEffectList=.y,
+                                                haploMat=haploMat,
+                                                recombFreqMat=recombFreqMat,
+                                                ncores=ncores))) }
+  if(modelType=="AD"){
+    predvars<-predvars %>%
+      mutate(predVars=pmap(.,function(CrossesToPredict,
+                                             AddEffectList,
+                                             DomEffectList,...){
+        out<-runMtCrossVarPredsAD(CrossesToPredict=CrossesToPredict,
+                                  AddEffectList=AddEffectList,
+                                  DomEffectList=DomEffectList,
+                                  haploMat=haploMat,
+                                  recombFreqMat=recombFreqMat,
+                                  ncores=ncores)
+        return(out) })) }
+  return(predvars)
+}
+```
+
+```{r test 2}
+testmarkEffsAD<-readRDS(here::here("output","markerEffectsAD.rds")) %>% 
+#  filter(Repeat=="Repeat1", Fold=="Fold1", Dataset=="trainset")
+  filter(Dataset=="trainset") %>% slice(1:5)
+
+testparentfolds<-parentfolds %>% 
+  slice(1) %>% mutate(CrossesToPredict=map(CrossesToPredict,~slice(.,1:10)))
+
+starttime<-proc.time()
+testpredvarsAD<-testPredictCrossVarsFunc(modelType="AD",ncores=5,
+                                         snpeffs=testmarkEffsAD,
+                                         parentfolds=testparentfolds,
+                                         haploMat=haploMat,recombFreqMat=recombFreqMat)
+saveRDS(testpredvarsAD,here::here("output","testpredvarsAD_2.rds"))
+timeelapsed<-proc.time() - starttime; 
+print(paste0("Elapsed: ",timeelapsed[3]/60/60," hrs"))
+# [1] "Elapsed: 7.3367175 hrs"
+```
+
+### more tests
+
+```{r test data - v2}
+parentfolds<-readRDS(file=here::here("output","parentfolds.rds")) %>% 
+  filter(Repeat=="Repeat1",Fold=="Fold1") %>%   
+  mutate(CrossesToPredict=map(CrossesToPredict,~slice(.,1:2)))
+
+markEffsAD<-readRDS(here::here("output","markerEffectsAD.rds"))
+snpeffs<-markEffsAD %>% 
+  filter(Repeat=="Repeat1",Fold=="Fold1") %>%   
+  mutate(effects=map(effects,~slice(.,1:2)))
+modelType="AD"
+ncores<-2
+```
+
+```{r predictCrossVars - v2}
+testPredictCrossVarsFunc<-function(modelType,snpeffs,parentfolds,haploMat,recombFreqMat,ncores){
+  predvars<-snpeffs %>%
+    unnest(effects) %>% 
+    unnest(modelOut) %>% 
+    filter(Dataset=="trainset") %>% 
+    dplyr::select(Repeat,Fold,Trait,modelType,
+                  any_of(c("addsnpeff","domsnpeff"))) %>% 
+    nest(EffectList=c(Trait,any_of(c("addsnpeff","domsnpeff")))) %>% #%$% EffectList[[1]] ->  EffectList
+    mutate(AddEffectList=map(EffectList,
+                             function(EffectList){
+                               addsnpeff<-map(EffectList$addsnpeff,~t(.))
+                               names(addsnpeff)<-EffectList$Trait
+                               return(addsnpeff)}))
+  if(modelType %in% c("AD")){
+    predvars<-predvars %>% 
+      mutate(DomEffectList=map(EffectList,
+                               function(EffectList){
+                                 domsnpeff<-map(EffectList$domsnpeff,~t(.))
+                                 names(domsnpeff)<-EffectList$Trait
+                                 return(domsnpeff) })) }
+  
+  predvars %<>%
+    left_join(parentfolds %>% 
+                dplyr::select(-testparents,-trainset,-testset)) %>% 
+    dplyr::select(-EffectList)
+  
+  require(furrr); options(mc.cores=ncores); plan(multicore)
+  options(future.globals.maxSize=30000*1024^2)
+  
+  if(modelType=="A"){
+    predvars<-predvars %>%
+      mutate(predVars=future_map2(CrossesToPredict,AddEffectList,
+                                  ~runMtCrossVarPredsA(CrossesToPredict=.x,
+                                                       AlleleSubEffectList=.y,
+                                                       haploMat=haploMat,
+                                                       recombFreqMat=recombFreqMat,
+                                                       ncores=1))) }
+  if(modelType=="AD"){
+    predvars<-predvars %>%
+      mutate(predVars=future_pmap(.,function(CrossesToPredict,
+                                             AddEffectList,
+                                             DomEffectList,...){
+        out<-runMtCrossVarPredsAD(CrossesToPredict=CrossesToPredict,
+                                  AddEffectList=AddEffectList,
+                                  DomEffectList=DomEffectList,
+                                  haploMat=haploMat,
+                                  recombFreqMat=recombFreqMat,
+                                  ncores=1)
+        return(out) })) }
+  
+  # CrossesToPredict<-predvars$CrossesToPredict[[1]]
+  # AddEffectList<-predvars$AddEffectList[[1]]
+  # DomEffectList<-predvars$DomEffectList[[1]]
+  # out<-runMtCrossVarPredsAD(CrossesToPredict=CrossesToPredict,
+  #                           AddEffectList=AddEffectList,
+  #                           DomEffectList=DomEffectList,
+  #                           haploMat=haploMat,
+  #                           recombFreqMat=recombFreqMat,
+  #                           ncores=2)
+  # rm(CrossesToPredict,AddEffectList,DomEffectList)
+  
+  return(predvars)
+}
+```
+
+```{r run model AD - v2}
+
+starttime<-proc.time()
+predictedVarsAD<-predictCrossVars(modelType="AD",ncores=2,
+                                  snpeffs=snpeffs,parentfolds=parentfolds,
+                                  haploMat=haploMat,recombFreqMat=recombFreqMat)
+timeelapsed<-proc.time() - starttime; 
+print(paste0("Elapsed: ",timeelapsed[3]/60/60," hrs"))
+
+#saveRDS(predictedVarsAD,here::here("output","predictedVarsAD.rds"))
+
+```
