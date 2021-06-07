@@ -1,3 +1,36 @@
+predictCrossMeans<-function(modelType,snpeffs,parentfolds,
+                            doseMat,ncores){
+  predmeans<-snpeffs %>%
+    unnest(effects) %>%
+    unnest(modelOut) %>%
+    filter(Dataset=="trainset") %>%
+    dplyr::select(Repeat,Fold,Trait,modelType,
+                  any_of(c("addsnpeff","domsnpeff"))) %>%
+    nest(EffectList=c(Trait,any_of(c("addsnpeff","domsnpeff")))) %>%
+    mutate(AddEffectList=map(EffectList,
+                             function(EffectList){
+                               addsnpeff<-map(EffectList$addsnpeff,~t(.))
+                               names(addsnpeff)<-EffectList$Trait
+                               return(addsnpeff)}))
+
+  if(modelType %in% c("AD")){
+    predmeans<-predmeans %>%
+      mutate(DomEffectList=map(EffectList,
+                               function(EffectList){
+                                 domsnpeff<-map(EffectList$domsnpeff,~t(.))
+                                 names(domsnpeff)<-EffectList$Trait
+                                 return(domsnpeff) })) }
+
+  predmeans %<>%
+    left_join(parentfolds %>%
+                dplyr::select(-testparents,-trainset,-testset)) %>%
+    dplyr::select(-EffectList)
+
+  predmeans %<>%
+    mutate(predMeans=pmap(.,predCrossMeans,doseMat=doseMat,ncores=ncores)) %>%
+    select(-contains("EffectsList"),-CrossesToPredict)
+  return(predmeans) }
+
 predictCrossVars<-function(modelType,snpeffs,parentfolds,
                            haploMat,recombFreqMat,ncores){
   predvars<-snpeffs %>%
