@@ -1,3 +1,132 @@
+meanPredAccuracy<-function(crossValOut,markEffs,ped,modelType,
+                           selInd=FALSE,SIwts=NULL){
+
+  # Extract and format the GBLUPs from the marker effects object
+  gblups<-markEffs %>%
+    filter(Dataset=="testset") %>%
+    mutate(testset_gblups=map(effects,
+                              function(effects){
+                                gblups<-effects %>%
+                                  mutate(gblups=map(modelOut,
+                                                    ~select(.,gblups) %>%
+                                                      unnest())) %>%
+                                  select(-trainingdata,-modelOut)
+                                return(gblups)})) %>%
+    select(Repeat,Fold,modelType,testset_gblups)
+
+  # Use the crossValPred object and the pedigree
+  # Create a list of the actual members of each family that were predicted
+  # in each repeat-fold
+  # Join the GBLUPs for each family member for computing
+  # cross sample means
+  out<-crossValOut %>%
+    unnest(predMeans) %>%
+    distinct(Repeat,Fold,modelType,sireID,damID) %>%
+    left_join(ped) %>%
+    nest(CrossesToPredict=c(sireID,damID,GID)) %>%
+    left_join(gblups)
+
+  out %<>%
+    # remove any gebv/getgv NOT in the crosses-to-be-predicted to save mem
+    mutate(testset_gblups=map2(testset_gblups,CrossesToPredict,
+                               ~semi_join(.x %>% unnest(gblups),.y)))
+  # for modelType=="A" remove the GETGV as equiv. to GEBV
+  if(modelType=="A"){
+    out %<>%
+      mutate(testset_gblups=map(testset_gblups,
+                                ~pivot_longer(.,cols = c(GEBV,GETGV),
+                                              names_to = "predOf",
+                                              values_to = "GBLUP") %>%
+                                  nest(gblups=-predOf) %>%
+                                  filter(predOf=="GEBV")))
+  }
+  # for modelType=="AD" remove the GEDD, pivot to long form GEBV/GETGV
+  if(modelType=="AD"){
+    out %<>%
+      mutate(testset_gblups=map(testset_gblups,
+                                ~select(.,-GEDD) %>%
+                                  pivot_longer(cols = c(GEBV,GETGV),
+                                               names_to = "predOf",
+                                               values_to = "GBLUP") %>%
+                                  nest(gblups=-predOf)))
+  }
+  out %<>% unnest(testset_gblups)
+  # make a matrix of GBLUPs for all traits
+  # for each family-to-be-predicted
+  # in each rep-fold-predOf combination
+  out %<>%
+    mutate(famgblups=map2(gblups,CrossesToPredict,
+                          ~left_join(.x,.y) %>%
+                            pivot_wider(names_from = "Trait",
+                                        values_from = "GBLUP") %>%
+                            nest(gblupmat=c(-sireID,-damID)) %>%
+                            mutate(gblupmat=map(gblupmat,~column_to_rownames(.,var="GID"))))) %>%
+    select(-CrossesToPredict,-gblups)
+
+  out %<>%
+    # outer loop over rep-fold-predtype
+    mutate(obsMeans=map(famgblups,function(famgblups){
+      return(famgblups %>%
+               # inner loop over families
+               mutate(obsmeans=map(gblupmat,
+                                   function(gblupmat){
+                                     gblupmeans<-colMeans(gblupmat) %>% as.list
+                                     if(selInd==TRUE){
+                                       selIndMean<-list(SELIND=as.numeric(gblupmeans[names(SIwts)])%*%SIwts)
+                                       gblupmeans<-c(selIndMean,gblupmeans)
+                                     }
+                                     obsmeans<-tibble(Trait=names(gblupmeans),
+                                                      obsMean=as.numeric(gblupmeans))
+                                     return(obsmeans) }),
+                      famSize=map_dbl(gblupmat,nrow)) %>%
+               select(-gblupmat) %>%
+               unnest(obsmeans))})) %>%
+    select(-famgblups)
+
+  cvout<-crossValOut %>%
+    unnest(predMeans) %>%
+    select(Repeat,Fold,modelType,predOf,sireID,damID,Trait,predMean) %>%
+    nest(predMeans=c(sireID,damID,Trait,predMean))
+
+  if(selInd==TRUE){
+    # compute predicted selection index variances
+    cvout %<>%
+      ## loop over each rep-fold-predType
+      mutate(predMeans=map(predMeans,function(predMeans){
+        predmeans<-predMeans %>%
+          pivot_wider(names_from = "Trait",
+                      values_from = "predMean")
+        predmeans %<>%
+          select(sireID,damID) %>%
+          mutate(Trait="SELIND",
+                 predMean=(predmeans %>%
+                             select(any_of(names(SIwts))) %>%
+                             as.matrix(.)%*%SIwts)) %>%
+          ## add sel index predictions to component trait
+          ## mean predictions
+          bind_rows(predMeans)
+        return(predmeans) }))
+  }
+
+  out %<>%
+    mutate(predOf=ifelse(predOf=="GEBV","MeanBV","MeanTGV")) %>%
+    left_join(cvout)
+
+  out %<>%
+    mutate(predVSobs=map2(predMeans,obsMeans,
+                          ~left_join(.x,.y) %>%
+                            nest(predVSobs=c(sireID,damID,predMean,obsMean,famSize)))) %>%
+    select(-predMeans,-obsMeans) %>%
+    unnest(predVSobs) %>%
+    mutate(AccuracyEst=map_dbl(predVSobs,function(predVSobs){
+      out<-psych::cor.wt(predVSobs[,c("predMean","obsMean")],
+                         w = predVSobs$famSize) %$% r[1,2] %>%
+        round(.,3)
+      return(out) }))
+  return(out)
+}
+
+
 varPredAccuracy<-function(crossValOut,markEffs,ped,modelType,
                           selInd=FALSE,SIwts=NULL){
 
@@ -30,10 +159,6 @@ varPredAccuracy<-function(crossValOut,markEffs,ped,modelType,
                                ~semi_join(.x %>% unnest(gblups),.y)))
   # for modelType=="A" remove the GETGV as equiv. to GEBV
   if(modelType=="A"){
-    # out %<>%
-    #   mutate(testset_gblups=map(testset_gblups,
-    #                             ~rename(.,GBLUP=GEBV,predOf="GEBV") %>%
-    #                               nest(gblups=-predOf)))
     out %<>%
       mutate(testset_gblups=map(testset_gblups,
                                 ~pivot_longer(.,cols = c(GEBV,GETGV),
