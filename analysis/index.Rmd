@@ -44,5 +44,4 @@ Here I test cross-variance prediction in our current breeding pipeline's availab
   - Impact of phasing switch errors
 	- Quality and quantity of data available on parents
 	- Relatedness of parents
-	- Cross-mean and cross-variance prediction accuracy
-	  + Rleationship between the true accuracy and estimate of accuracy?
+	- What is the relationship between the true accuracy and estimate of accuracy?
