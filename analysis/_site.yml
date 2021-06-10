@@ -1,7 +1,7 @@
-name: "implementGMSinCassava"
+name: implementGMSinCassava
 output_dir: ../docs
 navbar:
-  title: "implementGMSinCassava"
+  title: implementGMSinCassava
   left:
   - text: Home
     href: index.html
@@ -25,6 +25,10 @@ navbar:
       href: about.html
     - text: License
       href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/wolfemd/implementGMSinCassava
 output:
   workflowr::wflow_html:
     toc: yes
