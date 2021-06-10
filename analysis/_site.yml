@@ -5,13 +5,29 @@ navbar:
   left:
   - text: Home
     href: index.html
-  - text: About
-    href: about.html
-  - text: License
-    href: license.html
+  - text: Preliminary Steps
+    menu:
+    - text: Data Cleaning
+      href: 01-cleanTPdata.html
+    - text: Get BLUPs
+      href: 02-GetBLUPs.html
+    - text: Verify pedigree records
+      href: 03-validatePedigree.html
+    - text: Preprocessing input data
+      href: 04-PreprocessDataFiles.html
+  - text: Cross-validation
+    href: 05-CrossValidation.html
+  - text: Results
+    href: 06-Results.html
+  - text: Other
+    menu:
+    - text: About
+      href: about.html
+    - text: License
+      href: license.html
 output:
   workflowr::wflow_html:
     toc: yes
     toc_float: yes
-    theme: cosmo
-    highlight: textmate
+    theme: yeti
+    highlight: breezedark

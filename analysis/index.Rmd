@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "Implementation Tests for Genomic Mate Selection in Cassava"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,4 +8,41 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+Available data and software make it hypothetically possible to predict cross variances (mendelian sampling variance) and use it to select mates, *e.g.* using the usefuleness criterion (UC).
+
+New information also adds new sources of uncertainty:
+
+- Phasing error
+- Use of a (or various) genetic map(s) to predict recombination frequencies
+- Inherent uncertainty in marker effects and their effect on variance prediction
+
+We used cross-validation to estimate the accuracy of predicting means, variances and the usefulness of crosses on selection indices. That analysis leveraged a high-quality validated pedigree-based phasing pipeline. That pipeline is considerably more involved and may not be implementable on the entire breeding germplasm.
+
+Here I test cross-variance prediction in our current breeding pipeline's available data. We will assess the whether and how to start using cross variance predictions in practice.
+
+# Cross-validation study
+
+1. [Prepare training dataset](01-cleanTPdata.html): Download data from DB, "Clean" and format DB data. Use the standard pipeline to obtain complete breeding trial data for IITA, generate de-regressed BLUPs for downstream analysis.
+  * Copy `gsFunctions.R` from `code/` of most recent NextGen prediction, [NRCRI C3b predicted April 2021](https://wolfemd.github.io/NRCRI_2021GS/). 
+  * Reference [previous analysis for IITA (2020)](https://wolfemd.github.io/IITA_2020GS/) in case there are variations.
+2.  [Get BLUPs combining all trial data](02-GetBLUPs.html): Combine data from all trait-trials to get BLUPs for downstream genomic prediction. Fit mixed-model to multi-trial dataset and extract BLUPs, de-regressed BLUPs and weights. Include two rounds of outlier removal.
+3. [Validate the pedigree obtained from cassavabase](03-validatePedigree.html): Before setting up a cross-validation scheme for  predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown relationships or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.
+
+4. [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map _and_ recombination frequency matrix, for use in predictions. 
+
+5. [Parent-wise cross-validation](05-CrossValidation.html): Compute parent-wise cross-validation folds using the validated pedigree. Fit models to get marker effects and make subsequent predictions of cross means and (co)variances.
+
+6. [Results](06-Results.html): Home for plots and summary tables.
+
+**Additional future analyses to do:**
+
+1. PHG imputed and phased marker data
+2. AWC's genetic map
+3. Multi-trait and/or Bayesian models
+4. Other efforts to improve variance prediction accuracy?
+5. Simulation to explore factors impacting estimate of accuracy
+  - Impact of phasing switch errors
+	- Quality and quantity of data available on parents
+	- Relatedness of parents
+	- Cross-mean and cross-variance prediction accuracy
+	  + Rleationship between the true accuracy and estimate of accuracy?

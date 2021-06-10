@@ -1,0 +1,495 @@
+---
+title: "Verify the pedigree entries"
+author: "Marnin Wolfe"
+date: "2021-May-12"
+output: 
+  workflowr::wflow_html:
+    toc: true
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F, 
+                      tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
+```
+
+# Previous step
+
+2.  [Get BLUPs combining all trial data](02-GetBLUPs.html): Combine data from all trait-trials to get BLUPs for downstream genomic prediction. Fit mixed-model to multi-trial dataset and extract BLUPs, de-regressed BLUPs and weights. Include two rounds of outlier removal.
+
+# Read pedigree
+
+Read the pedigree I downloaded for IITA
+
+```{r}
+library(tidyverse); library(magrittr)
+
+ped<-read_delim(here::here("data/DatabaseDownload_2021May04","pedigree.txt"), 
+           delim = "\t")
+```
+
+Number of full-sib families?
+
+```{r}
+ped %>% distinct(Female_Parent,Male_Parent) %>% nrow()
+```
+
+Filter: Keep only complete pedigree records.
+
+```{r}
+ped %<>% 
+  filter(!is.na(Female_Parent),
+         !is.na(Male_Parent))
+```
+
+Summarize distribution of full-sib family sizes
+
+```{r}
+ped %>%   
+  count(Female_Parent,Male_Parent) %>% arrange(desc(n))  %>%  summary(.$n)
+```
+
+```{r}
+ped %>% head
+```
+
+# Match SNP-to-pedigree names
+
+Goal is to identify DNA samples names for listed accessions and parents in the pedigree. Important to choose same samples used in genomic predictions where possible, esp. phenotyped training clones.
+
+However, there may be non-phenotyped clones that are genotyped genomic selection progeny, which I still want in my analysis.
+
+First with the union of the parent and accession IDs in the pedigree.
+
+```{r}
+pednames<-union(ped$Accession,union(ped$Female_Parent,ped$Male_Parent)) %>% 
+  tibble(germplasmName=.)
+pednames$germplasmName %>% length # number of names in ped
+```
+
+Add a "Cohort" variable corresponding to the genetic groups or cycles in the germplasm.
+
+```{r}
+pednames %<>%
+  mutate(Cohort=NA,
+         Cohort=ifelse(grepl("TMS18",germplasmName,ignore.case = T),"TMS18",
+                       ifelse(grepl("TMS15",germplasmName,ignore.case = T),"TMS15",
+                              ifelse(grepl("TMS14",germplasmName,ignore.case = T),"TMS14",
+                                     ifelse(grepl("TMS13|2013_",germplasmName,ignore.case = T),"TMS13","GGetc")))))
+pednames %>% 
+  count(Cohort)
+```
+
+The names in the pedigree downloaded from cassavabase should match the names in the **`germplasmName`** variable in the plot-basis pheno data, also downloaded from cassavabase.
+
+From that plot-basis data, make a data.frame of the unique **`germplasmName`-to-`FullSampleName`** matches, where **`FullSampleName`** is the column with names matching VCF files / DNA samples.
+
+```{r}
+dbdata<-readRDS(here::here("output","IITA_ExptDesignsDetected_2021May10.rds"))
+phenos2genos<-dbdata %>% 
+  distinct(GID,germplasmName,FullSampleName) %>% 
+  filter(!is.na(FullSampleName))
+phenos2genos %>% head
+```
+
+How many from each cohort in the pednames match a germplasmName with a FullSampleName in the plot-basis trial data?
+
+```{r}
+pednames %>%
+  inner_join(phenos2genos) %>% 
+  count(Cohort)
+```
+
+So about half of all the germplasmName in the pedigree I downloaded are genotyped *and* match plot-basis data that I have.
+
+Just to check: does that mostly correspond to the number that have a BLUP for at least one trait?
+
+```{r}
+blups<-readRDS(file=here::here("output","IITA_blupsForModelTraining_twostage_asreml_2021May10.rds"))
+blups %>% 
+  select(Trait,blups) %>% 
+  unnest(blups) %>% 
+  distinct(GID) %$% GID -> gidWithBLUPs
+pednames %>%
+  inner_join(phenos2genos) %>% 
+  filter(FullSampleName %in% gidWithBLUPs) %>% 
+  count(Cohort)
+```
+
+Almost all of those *also* translate into a BLUP for at least one trait.
+
+But I want haplotypes of genotyped progeny in the pedigree *even* if they aren't phenotyped.
+
+The `*.fam` file for the **RefPanelAndGSprogeny** VCF I will ultimately use to extract haplotypes and do predictions with is already in the `data/` directory because it's used in the [standard match-genos-to-phenos step](01-cleanTPdata.html#%5BUser_input%5D_Assign_genos_to_phenos).
+
+```{r}
+gids_in_fam<-read.table(here::here("data",
+                                   "chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam"), 
+                        stringsAsFactors = F, header = F)$V2
+length(gids_in_fam)
+```
+
+Split the names based on a ":" for the GBS samples, and "\_A" seems to work (for IITA) to split the DArT sample ID from the germplasmName for DArTseqLD samples. The suffix / ID added to DNA sample names at DARt seems to vary depending on what gets submitted to them. GBS-era samples (almost) 100% had the ":" separator.
+
+```{r}
+gids_in_fam %<>% 
+  tibble(FullSampleName=.) %>% 
+  separate(FullSampleName,c("germplasmName","DNA_ID"),":|_A",remove = F)
+gids_in_fam %>% 
+  filter(grepl("TMS18",FullSampleName)) %>% nrow()
+```
+
+There are 2420 "TMS18" clones genotyped.
+
+981 of them are in the pedigree *and* phenotyped.
+
+How many of the pednames *without* genos+phenos have genos-only?
+
+```{r}
+pednames %>%
+  anti_join(phenos2genos) %>% 
+  inner_join(gids_in_fam) %>% nrow()
+```
+
+Only 39 new pedigree lines get matched to genos.... none from TMS18.
+
+**Why are there so many genotyped "TMS18" that don't have pedigree?**
+
+I would expect more lines to exist and have a pedigree than we ultimately genotype.
+
+But anything genotyped *should* be pedigreed.
+
+I cannot solve this problem and will move on without those lines.
+
+```{r}
+pednames2genos<-pednames %>%
+  inner_join(phenos2genos) %>% 
+  bind_rows(pednames %>%
+              anti_join(phenos2genos) %>% 
+              inner_join(gids_in_fam %>% select(-DNA_ID)))
+pednames2genos %>% count(Cohort)  
+```
+
+Now make a pedigree with both Accession and parent names matching the genos (FullSampleName) rather than phenos (germplasmName).
+
+```{r}
+ped2genos<-ped %>% 
+  rename(germplasmName=Accession) %>% 
+  select(-Cross_Type) %>% 
+  inner_join(pednames2genos %>% select(-GID)) %>% 
+  left_join(pednames2genos %>% 
+              select(-GID,-Cohort) %>% 
+              rename(Female_Parent=germplasmName,
+                     DamID=FullSampleName)) %>%
+  left_join(pednames2genos %>% 
+              select(-GID,-Cohort) %>% 
+              rename(Male_Parent=germplasmName,
+                     SireID=FullSampleName)) 
+ped2genos %<>% 
+  filter(!is.na(FullSampleName),
+         !is.na(DamID),
+         !is.na(SireID))
+```
+
+In the end, considering only pedigree entries where the entire trio (offspring + both parents) are genotyped, the pedigree has 5921 entries to check.
+
+```{r}
+ped2genos %>% count(Cohort,DamID,SireID) %>% 
+  ggplot(.,aes(x=Cohort,y=n,fill=Cohort)) + 
+  geom_boxplot(notch = T) + theme_bw() +
+  ggtitle("Distribution of family sizes (genotyped only)")
+```
+
+```{r}
+ped2genos %>% 
+  count(Cohort,DamID,SireID) %$% summary(n)
+```
+
+Number of families with at least 10 genotyped members, by cohort:
+
+```{r}
+ped2genos %>% 
+  count(Cohort,DamID,SireID) %>% 
+  filter(n>=10) %>% 
+  count(Cohort)
+```
+
+```{r}
+ped2genos %>% 
+  select(FullSampleName,DamID,SireID) %>% 
+  write.table(.,file=here::here("output","ped2genos.txt"),row.names=F, col.names=F, quote=F)
+
+## Potential sires and dams files
+ped2genos %>% 
+  select(FullSampleName,DamID) %>% 
+  write.table(.,file=here::here("output","potential_dams.txt"),row.names=F, col.names=F, quote=F)
+ped2genos %>% 
+  select(FullSampleName,SireID) %>% 
+  write.table(.,file=here::here("output","potential_sires.txt"),row.names=F, col.names=F, quote=F)
+```
+
+# Prep. Genomic Data
+
+Move to remote server, with Python 3, to use AlphaAssign.
+
+[AlphaAssign Documentation](http://www.alphagenes.roslin.ed.ac.uk/wp-content/uploads/alphasuite/alphaassign/AlphaAssignDocs.pdf?x44213)
+
+Static downloaded version of AlphaAssing in **`code/AlphaAssign-Python/`**.
+
+AlphaAssign will accept a binary plink fileset.
+
+I have one for the **"RefPanelAndGSprogeny"** VCF set, here: `/home/jj332_cas/CassavaGenotypeData/nextgenImputation2019/ImputationStageIII_72619/`
+
+Same filenames as the VCFs **`chr*_RefPanelAndGSprogeny_ReadyForGP_72719.`**.
+
+Concatenate across chromosomes.
+
+## Concat chroms
+
+```{r, eval=F}
+require(furrr); options(mc.cores=18); plan(multiprocess)
+
+pathIn<-"/home/jj332_cas/CassavaGenotypeData/nextgenImputation2019/ImputationStageIII_72619/"
+pathOut<-"/home/jj332_cas/marnin/implementGMSinCassava/data/"
+nameOfchromWiseVCFs<-"RefPanelAndGSprogeny_ReadyForGP_72719"
+chroms<-1:18
+furrr::future_map(chroms,function(chroms){ 
+  system(paste0("tabix -f -p vcf ",pathIn,"chr",chroms,"_",
+                nameOfchromWiseVCFs,".vcf.gz")) })
+
+system(paste0("bcftools concat --allow-overlaps ",
+              "--output ",pathOut,
+              "AllChrom_",nameOfchromWiseVCFs,".vcf.gz ",
+              "--output-type z --threads 6 ",
+              paste0(pathIn,"chr",chroms,"_",nameOfchromWiseVCFs,".vcf.gz",
+                     collapse = " "))) 
+  
+```
+
+## Convert to binary blink (bed/bim/fam)
+
+```{r, eval=F}
+pathIn<-"/home/jj332_cas/marnin/implementGMSinCassava/data/"
+pathOut<-pathIn
+vcfName<-"AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719"
+system(paste0("export PATH=/programs/plink-1.9-x86_64-beta3.30:$PATH;",
+              "plink --vcf ",pathIn,vcfName,".vcf.gz ",
+              "--make-bed --const-fid --keep-allele-order ",
+              "--out ",pathOut,vcfName))
+```
+
+# Run AlphaAssign [attempted but not used]
+
+First try to run AlphaAssign
+```{bash, eval=F}
+cd /home/jj332_cas/marnin/implementGMSinCassava/code/AlphaAssign-Python/
+
+python AlphaAssign.py bfile=/home/jj332_cas/marnin/implementGMSinCassava/data/AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719 \
+out=/home/jj332_cas/marnin/implementGMSinCassava/output/alphaAssignOutput_iita_pedigree.txt \
+pedigree=/home/jj332_cas/marnin/implementGMSinCassava/output/ped2genos.txt \
+potentialSires=/home/jj332_cas/marnin/implementGMSinCassava/output/potential_sires.txt \
+potentialDams=/home/jj332_cas/marnin/implementGMSinCassava/output/potential_dams.txt \
+checkPedigree=TRUE fullOutput=TRUE
+```
+Results did not seem right. Most parents rejected.
+
+
+
+Try again, after reviewing emails with Andrew Whalen from 2018, try running without the pedigree supplied.
+
+```{bash, eval=F}
+cd /home/jj332_cas/marnin/implementGMSinCassava/code/AlphaAssign-Python/
+
+python AlphaAssign.py bfile=/home/jj332_cas/marnin/implementGMSinCassava/data/AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719 \
+out=/home/jj332_cas/marnin/implementGMSinCassava/output/alphaAssignOutput_iita_pedigree \
+potentialSires=/home/jj332_cas/marnin/implementGMSinCassava/output/potential_sires.txt \
+potentialDams=/home/jj332_cas/marnin/implementGMSinCassava/output/potential_dams.txt \
+checkPedigree=TRUE fullOutput=TRUE
+```
+The call above threw an error at the very end of a 6 hour run, and left no output or record of the log.
+
+**ABORTED use of AlphaAssign for current purposes. Return to an approach I originally worked out in 2016 using the IBD calculator in plink1.9. 
+
+# Run plink IBD (--genome)
+
+**Alternative to the below:** Could compute everything manually based on mendelian rules. Kinship coefficients directly from the relationship matrix used for prediction would also be useful, for example, the estimated inbreeding coefficient of an individual is 1/2 the relationship of its parents.
+
+PLINK1.9 pipeline to use:
+
+1.  Subset whole-pop. plink file (`AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719`) to only lines in the pedigree.
+2.  LD-prune `--indep-pairwise 100 25 0.25` stringent, but somewhat arbitrary
+3.  Compute IBD-relationships `--genome`
+4.  Parent-offspring relationships determination (see below)
+
+**Determine parent-offspring relationship status based on `plink` IBD:**
+
+-   should have a kinship $\hat{\pi} \approx 0.5$.
+
+-   Three standard IBD probabilities are defined for each pair; the probability of sharing zero (Z0), one (Z1) or two (Z2) alleles at a randomly chosen locus IBD.
+
+-   The expectation for siblings in terms of these probabilities is Z0=0.25, Z1=0.5 and Z2=0.25.
+
+-   The expectation for parent-offspring pairs is Z0=0, Z1=1 and Z2=0.
+
+-   Based on work I did in *2016* (never published), declare a parent-offspring pair where: Z0\<0.313 and Z1\>0.668.
+
+```{r, eval=F}
+ped2check<-read.table(file=here::here("output","ped2genos.txt"),
+                      header = F, stringsAsFactors = F)
+
+pednames<-union(ped2check$V1,union(ped2check$V2,ped2check$V3)) %>% 
+  tibble(FID=0,IID=.)
+write.table(pednames,file=here::here("output","pednames2keep.txt"), 
+            row.names = F, col.names = F, quote = F)
+```
+
+Checked plink's order-of-operations and combing --keep and --indep-pairwise 
+in the same filter call should result in the correct ordering 
+of subset samples first and then LD prune. 
+
+```{c, eval=F}
+cd /home/jj332_cas/marnin/implementGMSinCassava/
+export PATH=/programs/plink-1.9-x86_64-beta3.30:$PATH;
+plink --bfile data/AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719 \
+  --keep output/pednames2keep.txt \
+  --indep-pairwise 100 25 0.25 \
+  --genome \
+  --out output/pednames_Prune100_25_pt25;
+```
+
+Creates a 2GB `*.genome`, 5634 samples worth of pairwise relationships. 
+
+
+```{bash, eval=F}
+cd /home/jj332_cas/marnin/implementGMSinCassava/
+export PATH=/programs/plink-1.9-x86_64-beta3.30:$PATH;
+plink --bfile data/AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719 \
+  --indep-pairwise 100 25 0.25 --out output/Prune100_25_pt25;
+plink --bfile data/AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719 \
+  --extract output/Prune100_25_pt25.prune.in --genome \
+  --out output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719_Prune100_25_pt25
+```
+
+That wastefully creates a 40GB `*.genome` file with all pairwise relationships.
+
+Brute force solution is to read that, grab the needed relationships, and delete it....
+
+```{r, eval=F}
+library(tidyverse); library(magrittr); library(data.table)
+
+genome<-fread(here::here("output/", 
+                         "pednames_Prune100_25_pt25.genome"),
+              stringsAsFactors = F,header = T) %>% 
+  as_tibble
+
+ped2check<-read.table(file=here::here("output","ped2genos.txt"),
+                      header = F, stringsAsFactors = F)
+
+head(genome)
+# # A tibble: 6 x 14
+#    FID1 IID1      FID2 IID2    RT       EZ    Z0    Z1     Z2 PI_HAT   PHE   DST
+#   <int> <chr>    <int> <chr>   <chr> <int> <dbl> <dbl>  <dbl>  <dbl> <int> <dbl>
+# 1     0 TMS15F1…     0 TMS15F… OT        0 1     0     0      0         -1 0.727
+# 2     0 TMS15F1…     0 TMS15F… OT        0 0.892 0.056 0.0525 0.0805    -1 0.765
+# 3     0 TMS15F1…     0 TMS15F… OT        0 1     0     0      0         -1 0.723
+# 4     0 TMS15F1…     0 TMS15F… OT        0 1     0     0      0         -1 0.729
+# 5     0 TMS15F1…     0 TMS15F… OT        0 0.407 0.593 0      0.296     -1 0.780
+# 6     0 TMS15F1…     0 TMS15F… OT        0 1     0     0      0         -1 0.721
+dim(genome)
+# [1] 15868161       14
+```
+
+```{r, eval=F}
+ped2check_genome<-genome %>% 
+  semi_join(ped2check %>% rename(IID1=V1,IID2=V2)) %>% 
+  bind_rows(genome %>% semi_join(ped2check %>% rename(IID1=V2,IID2=V1))) %>% 
+  bind_rows(genome %>% semi_join(ped2check %>% rename(IID1=V1,IID2=V3))) %>% 
+  bind_rows(genome %>% semi_join(ped2check %>% rename(IID1=V3,IID2=V1)))
+saveRDS(ped2check_genome,file=here::here("output","ped2check_genome.rds"))
+```
+
+```{bash, eval=F}
+cd /home/jj332_cas/marnin/implementGMSinCassava/output/;
+rm pednames_Prune100_25_pt25.genome
+```
+
+# Verify and Correct Pedigree
+
+```{r}
+library(tidyverse); library(magrittr);
+ped2check_genome<-readRDS(file=here::here("output","ped2check_genome.rds"))
+ped2check_genome %<>% 
+  select(IID1,IID2,Z0,Z1,Z2,PI_HAT)
+
+ped2check<-read.table(file=here::here("output","ped2genos.txt"),
+                      header = F, stringsAsFactors = F) %>% 
+  rename(FullSampleName=V1,DamID=V2,SireID=V3)
+
+ped2check %<>% 
+  select(FullSampleName,DamID,SireID) %>% 
+  inner_join(ped2check_genome %>% 
+               rename(FullSampleName=IID1,DamID=IID2) %>% 
+               bind_rows(ped2check_genome %>% 
+                           rename(FullSampleName=IID2,DamID=IID1))) %>% 
+  distinct %>% 
+  mutate(ConfirmFemaleParent=case_when(Z0<0.32 & Z1>0.67~"Confirm",
+                                       SireID==DamID & PI_HAT>0.6 & Z0<0.3 & Z2>0.32~"Confirm",
+                                       TRUE~"Reject")) %>% 
+  select(-Z0,-Z1,-Z2,-PI_HAT) %>% 
+  inner_join(ped2check_genome %>% 
+               rename(FullSampleName=IID1,SireID=IID2) %>% 
+               bind_rows(ped2check_genome %>% 
+                           rename(FullSampleName=IID2,SireID=IID1))) %>% 
+  distinct %>% 
+  mutate(ConfirmMaleParent=case_when(Z0<0.32 & Z1>0.67~"Confirm",
+                                       SireID==DamID & PI_HAT>0.6 & Z0<0.3 & Z2>0.32~"Confirm",
+                                       TRUE~"Reject")) %>% 
+  select(-Z0,-Z1,-Z2,-PI_HAT)
+```
+
+
+```{r}
+ped2check %>% 
+  count(ConfirmFemaleParent,ConfirmMaleParent) %>% mutate(Prop=round(n/sum(n),2))
+```
+
+I'm only interested in families / trios that are confirmed. Remove any without both parents confirmed.
+```{r}
+correctedped<-ped2check %>% 
+  filter(ConfirmFemaleParent=="Confirm",
+         ConfirmMaleParent=="Confirm") %>% 
+  select(-contains("Confirm"))
+```
+```{r}
+correctedped %>% 
+  count(SireID,DamID) %>% arrange(desc(n))
+```
+```{r}
+correctedped %>% 
+  count(SireID,DamID) %$% summary(n)
+```
+
+```{r}
+correctedped %>% 
+  count(SireID,DamID) %>% 
+  filter(n>=5) %>% arrange(desc(n)) %$% union(SireID,DamID) %>% 
+  tibble(ParentsMoreThanFiveProg=.) %>% 
+  mutate(Cohort=NA,
+         Cohort=ifelse(grepl("TMS18",ParentsMoreThanFiveProg,ignore.case = T),"TMS18",
+                       ifelse(grepl("TMS15",ParentsMoreThanFiveProg,ignore.case = T),"TMS15",
+                              ifelse(grepl("TMS14",ParentsMoreThanFiveProg,ignore.case = T),"TMS14",
+                                     ifelse(grepl("TMS13|2013_",ParentsMoreThanFiveProg,ignore.case = T),"TMS13","GGetc"))))) %>% 
+  count(Cohort, name="ParentsWithLeast5offspring")
+```
+
+### --> Write verified pedigree
+```{r}
+correctedped %>% 
+  write.table(.,here::here("output","verified_ped.txt"),
+              row.names = F, col.names = T, quote = F)
+```
+
+# Next Step
+
+4. [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map _and_ recombination frequency matrix, for use in predictions. 

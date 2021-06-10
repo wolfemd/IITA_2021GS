@@ -1,0 +1,462 @@
+---
+title: "Review and QC of IITA training data"
+site: workflowr::wflow_site
+date: "2021-May-10"
+output: 
+  workflowr::wflow_html:
+    highlight: breezedark
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F, 
+                      eval = FALSE, # <- NOTE THAT EVAL SET TO FALSE! 
+                      tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
+```
+
+Follow outlined GenomicPredictionChecklist and previous pipeline to process cassavabase data for ultimate genomic prediction.
+
+Below we will clean and format training data.
+
+-   Inputs: "Raw" field trial data
+-   Expected outputs: "Cleaned" field trial data
+
+# [User input] Cassavabase download
+
+Downloaded **all** IITA field trials.
+
+1.  [Cassavabase search wizard](https://www.cassavabase.org/breeders/search):
+
+2.  Selected *all* IITA trials currently available. Make a list. Named it **ALL_IITA_TRIALS_2021May04**.
+
+3.  Go to **Manage** --\> **Download** [here](https://www.cassavabase.org/breeders/download). Download phenotypes (plot-basis only) and meta-data as CSV using the corresponding boxes / drop-downs.
+
+4.  Store flatfiles, unaltered in directory `data/DatabaseDownload_2021May04/`.
+
+```{bash, eval=F, include=F}
+cd /home/jj332_cas/marnin/implementGMSinCassava
+```
+
+```{r}
+rm(list=ls())
+library(tidyverse); library(magrittr);
+source(here::here("code","gsFunctions.R"))
+```
+
+Read DB data.
+
+```{r}
+dbdata<-readDBdata(phenotypeFile = here::here("data/DatabaseDownload_2021May04"
+                                              ,"2021-05-04T193557phenotype_download.csv"),
+                  metadataFile = here::here("data/DatabaseDownload_2021May04"
+                                              ,"2021-05-04T194847metadata_download.csv"))
+```
+
+# Group and select trials to analyze
+
+Make TrialType Variable
+
+```{r}
+dbdata<-makeTrialTypeVar(dbdata) 
+dbdata %>% 
+  count(TrialType) %>% rmarkdown::paged_table()
+```
+
+## Trials NOT included
+
+Looking at the **studyName**'s of trials getting NA for TrialType, which can't be classified at present.
+
+Here is the list of trials I am *not* including.
+
+```{r}
+dbdata %>% filter(is.na(TrialType)) %$% unique(studyName) %>% 
+  write.csv(.,file = here::here("output","IITA_trials_NOT_identifiable.csv"), row.names = F)
+```
+
+Wrote to disk a CSV in the `output/` sub-directory.
+
+Should any of these trials have been included?
+
+Especially among the following new trials (post 2018):
+
+```{r}
+dbdata %>% 
+  filter(is.na(TrialType),
+         as.numeric(studyYear)>2018) %$% unique(studyName)
+```
+
+## Remove unclassified trials
+
+```{r}
+dbdata %<>% 
+    filter(!is.na(TrialType)) 
+dbdata %>% 
+    group_by(programName) %>% 
+    summarize(N=n()) %>% rmarkdown::paged_table()
+#	May 2021:	524390 (now including a ~200K plot seedling nursery) plots
+## Dec 2020: 475097 plots (~155K are seedling nurseries which will be excluded from most analyses)
+```
+
+# Traits and TraitAbbreviations
+
+Making a table of abbreviations for renaming. Since July 2019 version: added chromometer traits (L, a, b) and added branching levels count (BRLVLS) at IYR's request. 
+```{r}
+traitabbrevs<-tribble(~TraitAbbrev,~TraitName,
+        "CMD1S","cassava.mosaic.disease.severity.1.month.evaluation.CO_334.0000191",
+        "CMD3S","cassava.mosaic.disease.severity.3.month.evaluation.CO_334.0000192",
+        "CMD6S","cassava.mosaic.disease.severity.6.month.evaluation.CO_334.0000194",
+        "CMD9S","cassava.mosaic.disease.severity.9.month.evaluation.CO_334.0000193",
+        "CGM","Cassava.green.mite.severity.CO_334.0000033",
+        "CGMS1","cassava.green.mite.severity.first.evaluation.CO_334.0000189",
+        "CGMS2","cassava.green.mite.severity.second.evaluation.CO_334.0000190",
+        "DM","dry.matter.content.percentage.CO_334.0000092",
+        "PLTHT","plant.height.measurement.in.cm.CO_334.0000018",
+        "BRNHT1","first.apical.branch.height.measurement.in.cm.CO_334.0000106",
+        "BRLVLS","branching.level.counting.CO_334.0000079",
+        "SHTWT","fresh.shoot.weight.measurement.in.kg.per.plot.CO_334.0000016",
+        "RTWT","fresh.storage.root.weight.per.plot.CO_334.0000012",
+        "RTNO","root.number.counting.CO_334.0000011",
+        "TCHART","total.carotenoid.by.chart.1.8.CO_334.0000161",
+        "LCHROMO","L.chromometer.value.CO_334.0002065",
+        "ACHROMO","a.chromometer.value.CO_334.0002066",
+        "BCHROMO","b.chromometer.value.CO_334.0002064",
+        "NOHAV","plant.stands.harvested.counting.CO_334.0000010")
+traitabbrevs %>% rmarkdown::paged_table()
+```
+
+Run function `renameAndSelectCols()` to rename columns and remove everything unecessary
+
+```{r}
+dbdata<-renameAndSelectCols(traitabbrevs,indata=dbdata,customColsToKeep = c("TrialType","observationUnitName"))
+```
+
+# QC Trait values
+
+```{r}
+dbdata<-dbdata %>% 
+  mutate(CMD1S=ifelse(CMD1S<1 | CMD1S>5,NA,CMD1S),
+         CMD3S=ifelse(CMD3S<1 | CMD3S>5,NA,CMD3S),
+         CMD6S=ifelse(CMD6S<1 | CMD6S>5,NA,CMD6S), 
+         CMD9S=ifelse(CMD9S<1 | CMD9S>5,NA,CMD9S),
+         CGM=ifelse(CGM<1 | CGM>5,NA,CGM),
+         CGMS1=ifelse(CGMS1<1 | CGMS1>5,NA,CGMS1),
+         CGMS2=ifelse(CGMS2<1 | CGMS2>5,NA,CGMS2),
+         DM=ifelse(DM>100 | DM<=0,NA,DM),
+         RTWT=ifelse(RTWT==0 | NOHAV==0 | is.na(NOHAV),NA,RTWT),
+         SHTWT=ifelse(SHTWT==0 | NOHAV==0 | is.na(NOHAV),NA,SHTWT),
+         RTNO=ifelse(RTNO==0 | NOHAV==0 | is.na(NOHAV),NA,RTNO),
+         NOHAV=ifelse(NOHAV==0,NA,NOHAV),
+         NOHAV=ifelse(NOHAV>42,NA,NOHAV),
+         RTNO=ifelse(!RTNO %in% 1:10000,NA,RTNO))
+```
+
+# Post-QC traits
+
+## Harvest index
+
+```{r}
+dbdata<-dbdata %>% 
+    mutate(HI=RTWT/(RTWT+SHTWT))
+```
+
+## Unit area traits
+
+I anticipate this will not be necessary as it will be computed before or during data upload.
+
+For calculating fresh root yield:
+
+1.  **PlotSpacing:** Area in $m^2$ per plant. plotWidth and plotLength metadata would hypothetically provide this info, but is missing for vast majority of trials. Therefore, use info from Fola.
+2.  **maxNOHAV:** Instead of ExpectedNOHAV. Need to know the max number of plants in the area harvested. For some trials, only the inner (or "net") plot is harvested, therefore the PlantsPerPlot meta-variable will not suffice. Besides, the PlantsPerPlot information is missing for the vast majority of trials. Instead, use observed max(NOHAV) for each trial. We use this plus the PlotSpacing to calc. the area over which the RTWT was measured. During analysis, variation in the actual number of plants harvested will be accounted for.
+
+```{r, message=F, warning=F}
+dbdata<-dbdata %>% 
+    mutate(PlotSpacing=ifelse(programName!="IITA",1,
+                              ifelse(studyYear<2013,1,
+                              ifelse(TrialType %in% c("CET","GeneticGain","ExpCET"),1,0.8))))
+maxNOHAV_byStudy<-dbdata %>% 
+  group_by(programName,locationName,studyYear,studyName,studyDesign) %>% 
+  summarize(MaxNOHAV=max(NOHAV, na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate(MaxNOHAV=ifelse(MaxNOHAV=="-Inf",NA,MaxNOHAV))
+
+write.csv(maxNOHAV_byStudy %>% arrange(studyYear),file=here::here("output","maxNOHAV_byStudy.csv"), row.names = F)
+```
+
+```{r}
+# I log transform yield traits 
+# to satisfy homoskedastic residuals assumption 
+# of linear mixed models
+dbdata<-left_join(dbdata,maxNOHAV_byStudy) %>% 
+  mutate(RTWT=ifelse(NOHAV>MaxNOHAV,NA,RTWT),
+         SHTWT=ifelse(NOHAV>MaxNOHAV,NA,SHTWT),
+         RTNO=ifelse(NOHAV>MaxNOHAV,NA,RTNO),
+         HI=ifelse(NOHAV>MaxNOHAV,NA,HI),
+         FYLD=RTWT/(MaxNOHAV*PlotSpacing)*10,
+         DYLD=FYLD*(DM/100),
+         logFYLD=log(FYLD),
+         logDYLD=log(DYLD),
+         logTOPYLD=log(SHTWT/(MaxNOHAV*PlotSpacing)*10),
+         logRTNO=log(RTNO),
+         PropNOHAV=NOHAV/MaxNOHAV) 
+# remove non transformed / per-plot (instead of per area) traits
+dbdata %<>% select(-RTWT,-SHTWT,-RTNO,-FYLD,-DYLD)
+```
+
+## Season-wide mean disease severity
+
+```{r}
+# [NEW AS OF APRIL 2021]
+## VERSION with vs. without CBSD
+## Impervious to particular timepoints between 1, 3, 6 and 9 scores
+
+# Without CBSD (West Africa)
+dbdata<-dbdata %>% 
+  mutate(MCMDS=rowMeans(.[,colnames(.) %in% c("CMD1S","CMD3S","CMD6S","CMD9S")], na.rm = T)) %>% 
+  select(-any_of(c("CMD1S","CMD3S","CMD6S","CMD9S")))
+
+# With CBSD (East Africa)
+# dbdata<-dbdata %>% 
+#   mutate(MCMDS=rowMeans(.[,colnames(.) %in% c("CMD1S","CMD3S","CMD6S","CMD9S")], na.rm = T),
+#          MCBSDS=rowMeans(.[,colnames(.) %in% c("CBSD1S","CBSD3S","CBSD6S","CBSD9S")], na.rm = T)) %>% 
+#   select(-any_of(c("CMD1S","CMD3S","CMD6S","CMD9S","CBSD1S","CBSD3S","CBSD6S","CBSD9S")))
+```
+
+# [User input] Assign genos to phenos
+
+This step is mostly copy-pasted from previous processing of IITA- and IITA-specific data. 
+
+Uses 4 flat files, which are available e.g. [here](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2020GS/data/). Specifically, `IITA_GBStoPhenoMaster_33018.csv`, `GBSdataMasterList_31818.csv` and `IITA_GBStoPhenoMaster_40318.csv` and `chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam`. I copy them to the `data/` sub-directory for the current analysis. 
+
+In addition, DArT-only samples are now expected to also have phenotypes. Therefore, checking for matches in new flatfiles, deposited in the `data/` (see code below).
+
+```{r}
+library(tidyverse); library(magrittr)
+gbs2phenoMaster<-dbdata %>% 
+  select(germplasmName) %>% 
+  distinct %>% 
+  left_join(read.csv(here::here("data","NRCRI_GBStoPhenoMaster_40318.csv"), 
+                     stringsAsFactors = F)) %>% 
+  mutate(FullSampleName=ifelse(grepl("C2a",germplasmName,ignore.case = T) & 
+                                 is.na(FullSampleName),germplasmName,FullSampleName)) %>% 
+  filter(!is.na(FullSampleName)) %>% 
+  select(germplasmName,FullSampleName) %>% 
+  bind_rows(dbdata %>% 
+              select(germplasmName) %>% 
+              distinct %>% 
+              left_join(read.csv(here::here("data","IITA_GBStoPhenoMaster_33018.csv"), 
+                                 stringsAsFactors = F)) %>% 
+              filter(!is.na(FullSampleName)) %>% 
+              select(germplasmName,FullSampleName)) %>% 
+  bind_rows(dbdata %>% 
+              select(germplasmName) %>% 
+              distinct %>% 
+              left_join(read.csv(here::here("data","GBSdataMasterList_31818.csv"), 
+                                 stringsAsFactors = F) %>% 
+                          select(DNASample,FullSampleName) %>% 
+                          rename(germplasmName=DNASample)) %>% 
+              filter(!is.na(FullSampleName)) %>% 
+              select(germplasmName,FullSampleName)) %>% 
+  bind_rows(dbdata %>% 
+              select(germplasmName) %>% 
+              distinct %>% 
+              mutate(germplasmSynonyms=ifelse(grepl("^UG",germplasmName,ignore.case = T),
+                                              gsub("UG","Ug",germplasmName),germplasmName)) %>% 
+              left_join(read.csv(here::here("data","GBSdataMasterList_31818.csv"), 
+                                 stringsAsFactors = F) %>% 
+                          select(DNASample,FullSampleName) %>% 
+                          rename(germplasmSynonyms=DNASample)) %>% 
+              filter(!is.na(FullSampleName)) %>% 
+              select(germplasmName,FullSampleName)) %>%  
+  bind_rows(dbdata %>% 
+              select(germplasmName) %>% 
+              distinct %>% 
+              mutate(germplasmSynonyms=ifelse(grepl("^TZ",germplasmName,
+                                                    ignore.case = T),
+                                              gsub("TZ","",germplasmName),germplasmName)) %>% 
+              left_join(read.csv(here::here("data","GBSdataMasterList_31818.csv"), 
+                                 stringsAsFactors = F) %>% 
+                          select(DNASample,FullSampleName) %>% 
+                          rename(germplasmSynonyms=DNASample)) %>% 
+              filter(!is.na(FullSampleName)) %>%
+              select(germplasmName,FullSampleName)) %>% 
+  distinct %>% 
+  left_join(read.csv(here::here("data","GBSdataMasterList_31818.csv"), 
+                     stringsAsFactors = F) %>% 
+              select(FullSampleName,OrigKeyFile,Institute) %>% 
+              rename(OriginOfSample=Institute)) %>% 
+  mutate(OrigKeyFile=ifelse(grepl("C2a",germplasmName,ignore.case = T),
+                            ifelse(is.na(OrigKeyFile),"LavalGBS",OrigKeyFile),
+                            OrigKeyFile),
+         OriginOfSample=ifelse(grepl("C2a",germplasmName,ignore.case = T),
+                               ifelse(is.na(OriginOfSample),"NRCRI",OriginOfSample),
+                               OriginOfSample))
+
+## NEW: check for germName-DArT name matches
+germNamesWithoutGBSgenos<-dbdata %>% 
+  select(programName,germplasmName) %>% 
+  distinct %>% 
+  left_join(gbs2phenoMaster) %>% 
+  filter(is.na(FullSampleName)) %>% 
+  select(-FullSampleName)
+## NEW: check for germName-DArT name matches
+germNamesWithoutGBSgenos<-dbdata %>% 
+  select(programName,germplasmName) %>% 
+  distinct %>% 
+  left_join(gbs2phenoMaster) %>% 
+  filter(is.na(FullSampleName)) %>% 
+  select(-FullSampleName)
+
+germNamesWithDArT<-germNamesWithoutGBSgenos %>% 
+  inner_join(read.table(here::here("data","chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam"), 
+                        header = F, stringsAsFactors = F)$V2 %>% 
+               grep("TMS16|TMS17|TMS18|TMS19|TMS20",.,value = T, ignore.case = T) %>% 
+               tibble(dartName=.) %>% 
+               separate(dartName,c("germplasmName","dartID"),"_",extra = 'merge',remove = F)) %>% 
+  group_by(germplasmName) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  rename(FullSampleName=dartName) %>% 
+  mutate(OrigKeyFile="DArTseqLD", OriginOfSample="IITA") %>% 
+  select(-dartID)
+print(paste0(nrow(germNamesWithDArT)," germNames with DArT-only genos"))
+
+# first, filter to just program-DNAorigin matches
+germNamesWithGenos<-dbdata %>% 
+  select(programName,germplasmName) %>% 
+  distinct %>% 
+  left_join(gbs2phenoMaster) %>% 
+  filter(!is.na(FullSampleName))
+print(paste0(nrow(germNamesWithGenos)," germNames with GBS genos"))
+
+# program-germNames with locally sourced GBS samples
+germNamesWithGenos_HasLocalSourcedGBS<-germNamesWithGenos %>% 
+  filter(programName==OriginOfSample) %>% 
+  select(programName,germplasmName) %>% 
+  semi_join(germNamesWithGenos,.) %>% 
+  group_by(programName,germplasmName) %>% # select one DNA per germplasmName per program
+  slice(1) %>% ungroup() 
+print(paste0(nrow(germNamesWithGenos_HasLocalSourcedGBS)," germNames with local GBS genos"))
+
+# the rest (program-germNames) with GBS but coming from a different breeding program
+germNamesWithGenos_NoLocalSourcedGBS<-germNamesWithGenos %>% 
+  filter(programName==OriginOfSample) %>% 
+  select(programName,germplasmName) %>% 
+  anti_join(germNamesWithGenos,.) %>% 
+  # select one DNA per germplasmName per program
+  group_by(programName,germplasmName) %>% 
+  slice(1) %>% ungroup() 
+print(paste0(nrow(germNamesWithGenos_NoLocalSourcedGBS)," germNames without local GBS genos"))
+
+genosForPhenos<-bind_rows(germNamesWithGenos_HasLocalSourcedGBS,
+                        germNamesWithGenos_NoLocalSourcedGBS) %>% 
+  bind_rows(germNamesWithDArT)
+
+print(paste0(nrow(genosForPhenos)," total germNames with genos either GBS or DArT"))
+
+dbdata %<>% 
+    left_join(genosForPhenos) 
+
+# Create a new identifier, GID
+## Equals the value SNP data name (FullSampleName) 
+## else germplasmName if no SNP data
+dbdata %<>% 
+  mutate(GID=ifelse(is.na(FullSampleName),germplasmName,FullSampleName))
+
+```
+
+```{r}
+# # going to check against SNP data
+# snps<-readRDS(file=url(paste0("ftp://ftp.cassavabase.org/marnin_datasets/NGC_BigData/",
+#                               "DosageMatrix_RefPanelAndGSprogeny_ReadyForGP_73019.rds")))
+# rownames_snps<-rownames(snps); rm(snps); gc()
+# # current matches to SNP data
+# dbdata %>%
+#   distinct(GID,germplasmName,FullSampleName) %>%
+#   semi_join(tibble(GID=rownames_snps)) %>% nrow() # 10707
+# dbdata %>%
+#   distinct(GID,germplasmName,FullSampleName) %>%
+#   semi_join(tibble(GID=rownames_snps)) %>%
+#   filter(grepl("TMS13|2013_",GID,ignore.case = F)) %>% nrow() # 2424 TMS13
+# dbdata %>%
+#   distinct(GID,germplasmName,FullSampleName) %>%
+#   semi_join(tibble(GID=rownames_snps)) %>%
+#   filter(grepl("TMS14",GID,ignore.case = F)) %>% nrow() # 2236 TMS14
+# dbdata %>%
+#   distinct(GID,germplasmName,FullSampleName) %>%
+#   semi_join(tibble(GID=rownames_snps)) %>%
+#   filter(grepl("TMS15",GID,ignore.case = F)) %>% nrow() # 2287 TMS15
+# dbdata %>%
+#   distinct(GID,germplasmName,FullSampleName) %>%
+#   semi_join(tibble(GID=rownames_snps)) %>%
+#   filter(grepl("TMS18",GID,ignore.case = F)) %>% nrow() # 2401 TMS18
+```
+
+# [User input] Choose locations
+
+*WARNING: User input required!* If I had preselected locations before downloading, this wouldn't have been necessary. 
+
+Based on previous locations used for IITA analysis, but adding based on list of locations used in IYR's trial list `data/2019_GS_PhenoUpload.csv`: "Ago-Owu" wasn't used last year.
+```{r}
+dbdata %<>% 
+  filter(locationName %in% c("Abuja","Ago-Owu","Ibadan","Ikenne","Ilorin","Jos","Kano",
+                             "Malam Madori","Mokwa","Ubiaja","Umudike","Warri","Zaria"))
+nrow(dbdata) # [1] 479588
+```
+
+
+## Output "cleaned" file
+
+```{r}
+saveRDS(dbdata,file=here::here("output","IITA_CleanedTrialData_2021May10.rds"))
+```
+
+# Detect experimental designs
+
+The next step is to check the experimental design of each trial. If you are absolutely certain of the usage of the design variables in your dataset, you might not need this step.
+
+Examples of reasons to do the step below:
+
+-   Some trials appear to be complete blocked designs and the blockNumber is used instead of replicate, which is what most use.
+-   Some complete block designs have nested, incomplete sub-blocks, others simply copy the "replicate" variable into the "blockNumber variable"
+-   Some trials have only incomplete blocks *but* the incomplete block info might be in the replicate *and/or* the blockNumber column
+
+One reason it might be important to get this right is that the variance among complete blocks might not be the same among incomplete blocks. If we treat a mixture of complete and incomplete blocks as part of the same random-effect (replicated-within-trial), we assume they have the same variance.
+
+Also error variances might be heterogeneous among different trial-types (blocking scheme available) *and/or* plot sizes (maxNOHAV).
+
+Start with cleaned data from previous step.
+
+```{r, warning=F, message=F}
+rm(list=ls()); gc()
+library(tidyverse); library(magrittr);
+source(here::here("code","gsFunctions.R"))
+dbdata<-readRDS(here::here("output","IITA_CleanedTrialData_2021May10.rds"))
+```
+
+```{r}
+dbdata %>% head %>% rmarkdown::paged_table()
+```
+
+Detect designs
+
+```{r}
+dbdata<-detectExptDesigns(dbdata)
+```
+
+```{r}
+dbdata %>% 
+    count(programName,CompleteBlocks,IncompleteBlocks) %>% rmarkdown::paged_table()
+```
+
+## Output file
+
+```{r}
+saveRDS(dbdata,file=here::here("output","IITA_ExptDesignsDetected_2021May10.rds"))
+```
+
+# Next step
+
+2.  [Get BLUPs combining all trial data](02-GetBLUPs.html): Combine data from all trait-trials to get BLUPs for downstream genomic prediction. Fit mixed-model to multi-trial dataset and extract BLUPs, de-regressed BLUPs and weights. Include two rounds of outlier removal.
+
+
