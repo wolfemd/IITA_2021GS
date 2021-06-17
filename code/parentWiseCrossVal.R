@@ -1,3 +1,74 @@
+runParentWiseCrossVal<-function(nrepeats,nfolds,seed=NULL,modelType,
+                                ncores=1,outName=NULL,
+                                ped=ped,gid="GID",blups,
+                                dosages,grms,haploMat,recombFreqMat,
+                                selInd,SIwts = NULL,...){
+  initime<-proc.time()[3]
+
+  ## Make parent-wise folds
+  parentfolds<-makeParentFolds(ped=ped,gid="GID",
+                               nrepeats=nrepeats,
+                               nfolds=nfolds,
+                               seed=seed)
+  if(!is.null(outName)){ saveRDS(parentfolds,file=paste0(outName,"_parentfolds.rds")) }
+  print("Set-up parent-wise cross-validation folds")
+
+  ## Get univariate REML marker effects
+  #### modelType=="AD"
+  print("Fitting models to get marker effects")
+  starttime<-proc.time()[3]
+  markEffs<-getMarkEffs(parentfolds,blups=blups,gid=gid,modelType=modelType,
+                        grms=grms,dosages=dosages,ncores=ncores)
+  if(!is.null(outName)){ saveRDS(markEffs,file=paste0(outName,"_markerEffects.rds")) }
+  print(paste0("Marker-effects Computed. Took  ",
+               round((proc.time()[3] - starttime)/60/60,5)," hrs"))
+
+  ## Predict cross variances
+  print("Predicting cross variances and covariances")
+  starttime<-proc.time()[3]
+  cvPredVars<-predictCrossVars(modelType=modelType,ncores=ncores,
+                               snpeffs=markEffs,
+                               parentfolds=parentfolds,
+                               haploMat=haploMat,
+                               recombFreqMat=recombFreqMat)
+  cvPredVars %<>% select(-AddEffectList,-DomEffectList,-CrossesToPredict)
+  if(!is.null(outName)){ saveRDS(cvPredVars,file=paste0(outName,"_predVars.rds")) }
+  print(paste0("Cross variance parameters predicted. Took  ",
+               round((proc.time()[3] - starttime)/60/60,5)," hrs"))
+
+  print("Predicting cross means")
+  starttime<-proc.time()[3]
+  cvPredMeans<-predictCrossMeans(modelType=modelType,snpeffs=markEffs,
+                                 ncores=ncores,
+                                 parentfolds=parentfolds,doseMat=dosages)
+  if(!is.null(outName)){ saveRDS(cvPredMeans,file=paste0(outName,"_predMeans.rds")) }
+  print(paste0("Cross means predicted. Took  ",
+               round((proc.time()[3] - starttime)/60/60,5)," hrs"))
+
+  print("Compute prediction accuracies and wrap up.")
+  ## Variance prediction accuracies
+  starttime<-proc.time()[3]
+  varPredAccuracy<-varPredAccuracy(modelType = modelType,
+                                   crossValOut = cvPredVars,
+                                   markEffs = markEffs,
+                                   ped = ped,selInd = selInd,SIwts = SIwts)
+  if(!is.null(outName)){ saveRDS(varPredAccuracy,file=paste0(outName,"_varPredAccuracy.rds")) }
+
+  ## Mean prediction accuracies
+  meanPredAccuracy<-meanPredAccuracy(modelType = modelType,
+                                     crossValOut = cvPredMeans,
+                                     markEffs = markEffs,
+                                     ped = ped,selInd = selInd,SIwts = SIwts)
+  if(!is.null(outName)){ saveRDS(meanPredAccuracy,file=paste0(outName,"_meanPredAccuracy.rds")) }
+
+  accuracy_out<-list(meanPredAccuracy=meanPredAccuracy,
+                     varPredAccuracy=varPredAccuracy)
+  print(paste0("Accuracies predicted. Took  ",
+               round((proc.time()[3] - initime)/60/60,5),
+               " hrs total.\n Goodbye!"))
+  return(accuracy_out)
+}
+
 meanPredAccuracy<-function(crossValOut,markEffs,ped,modelType,
                            selInd=FALSE,SIwts=NULL){
 
@@ -472,14 +543,20 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
                                                   blups=blups,grms=grms,
                                                   modelType=modelType)),
            modelType=modelType)
+  # this is to remove conflicts with dplyr function select() downstream
+  detach("package:sommer",unload = T); detach("package:MASS",unload = T)
+
   return(traintestdata)
 }
+
+
 
 # Prunes out offspring, grandkids, greatgrandkids (up to X4) steps of
 # great ancestors.  It is not automatically recursive across any depth of
 # pedigree. That depth works for current test pedigree (IITA 2021).
 # Must name parent columns in ped "sireID" and "damID".
 makeParentFolds<-function(ped,gid,nrepeats=5,nfolds=5,seed=NULL){
+  require(rsample)
   set.seed(seed)
   parentfolds<-rsample::vfold_cv(tibble(Parents=union(ped$sireID,
                                                       ped$damID)),
@@ -530,9 +607,19 @@ makeParentFolds<-function(ped,gid,nrepeats=5,nfolds=5,seed=NULL){
                   trainset=list(trainset),
                   testset=list(testset))
       return(out) })) %>%
-    unnest(folds) %>%
-    rename(Repeat=id,Fold=id2) %>%
-    select(-splits)
+    unnest(folds)
+  if(nrepeats>1){
+    parentfolds %<>%
+      rename(Repeat=id,Fold=id2) %>%
+      select(-splits)
+  }
+  if(nrepeats==1){
+    parentfolds %<>%
+      mutate(Repeat="Repeat1") %>%
+      rename(Fold=id) %>%
+      select(-splits)
+    }
+
 
   # Crosses To Predict
   parentfolds %<>%
@@ -545,3 +632,4 @@ makeParentFolds<-function(ped,gid,nrepeats=5,nfolds=5,seed=NULL){
   return(parentfolds)
 }
 
+#nfolds=5; nrepeats=1; gid="GID"; seed=53;
