@@ -36,6 +36,8 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
 <script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
@@ -475,7 +477,13 @@ div.tocify {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/wolfemd/implementGMSinCassava">
+    <span class="fas fa-github"></span>
+     
+    Source code
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -519,7 +527,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-06-10
+<strong>Last updated:</strong> 2021-06-18
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -610,16 +618,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstronga8452ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> a8452ba </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatreefa20501dee30687835944226167a35bb119ab46dtargetblankfa20501a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/implementGMSinCassava/tree/fa20501dee30687835944226167a35bb119ab46d" target="_blank">fa20501</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstronga8452ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatreefa20501dee30687835944226167a35bb119ab46dtargetblankfa20501a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version a8452ba. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/implementGMSinCassava/tree/fa20501dee30687835944226167a35bb119ab46d" target="_blank">fa20501</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -702,9 +710,6 @@ Untracked files:
     Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.out
     Untracked:  output/verified_ped.txt
 
-Unstaged changes:
-    Modified:   README.md
-
 </code></pre>
 <p>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
@@ -747,7 +752,41 @@ Message
 Rmd
 </td>
 <td>
-a8452ba
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/fa20501dee30687835944226167a35bb119ab46d/analysis/06-Results.Rmd" target="_blank">fa20501</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-18
+</td>
+<td>
+Initial results are ready to publish and share with colleagues for
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/implementGMSinCassava/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/06-Results.html" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/a8452bafa0ab7a515967a022ca5c4b2638bb97ce/analysis/06-Results.Rmd" target="_blank">a8452ba</a>
 </td>
 <td>
 wolfemd
@@ -810,7 +849,45 @@ Initial build of the entire page upon completion of all
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>Value,<span class="at">fill=</span>Trait)) <span class="sc">+</span> <span class="fu">geom_histogram</span>() <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span>Trait, <span class="at">scales=</span><span class="st">&#39;free&#39;</span>) <span class="sc">+</span> </span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">scale_fill_viridis_d</span>() <span class="sc">+</span> </span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution of Raw Phenotypic Values&quot;</span>)</span></code></pre></div>
-<p><img src="figure/06-Results.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> How many genotyped-and-phenotyped clones?</p>
+<p><img src="figure/06-Results.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/figure/06-Results.Rmd/unnamed-chunk-4-1.png" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>How many genotyped-and-phenotyped clones?</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>rawdata <span class="sc">%&gt;%</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(locationName,studyYear,studyName,TrialType,germplasmName,FullSampleName,GID,<span class="fu">any_of</span>(traits)) <span class="sc">%&gt;%</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">any_of</span>(traits), <span class="at">values_to =</span> <span class="st">&quot;Value&quot;</span>, <span class="at">names_to =</span> <span class="st">&quot;Trait&quot;</span>) <span class="sc">%&gt;%</span></span>
@@ -859,6 +936,43 @@ Initial build of the entire page upon completion of all
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">scale_fill_viridis_d</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span> </span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution of de-regressed BLUP Values&quot;</span>)</span></code></pre></div>
 <p><img src="figure/06-Results.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/figure/06-Results.Rmd/unnamed-chunk-7-1.png" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>blups <span class="sc">%&gt;%</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Trait,blups) <span class="sc">%&gt;%</span> </span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(blups) <span class="sc">%&gt;%</span> </span>
@@ -867,7 +981,47 @@ Initial build of the entire page upon completion of all
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>),</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span> </span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution of BLUP Reliabilities&quot;</span>)</span></code></pre></div>
-<p><img src="figure/06-Results.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /> # Marker density and distribution</p>
+<p><img src="figure/06-Results.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/figure/06-Results.Rmd/unnamed-chunk-8-1.png" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="marker-density-and-distribution" class="section level1">
+<h1>Marker density and distribution</h1>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(magrittr);</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>snps<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;dosages_IITA_filtered_2021May13.rds&quot;</span>))</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>mrks<span class="ot">&lt;-</span><span class="fu">colnames</span>(snps) <span class="sc">%&gt;%</span> </span>
@@ -881,6 +1035,43 @@ Initial build of the entire page upon completion of all
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>,</span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>))</span></code></pre></div>
 <p><img src="figure/06-Results.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/figure/06-Results.Rmd/unnamed-chunk-9-1.png" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mrks <span class="sc">%&gt;%</span> <span class="fu">count</span>(Chr) <span class="sc">%&gt;%</span> rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -1060,6 +1251,43 @@ Initial build of the entire page upon completion of all
 <span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Selection Index Prediction Accuracy&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="fl">1.2</span>, <span class="cn">NA</span>))</span></code></pre></div>
 <p><img src="figure/06-Results.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/figure/06-Results.Rmd/unnamed-chunk-21-1.png" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="accuracy-predicting-cross-means" class="section level3">
 <h3>Accuracy predicting cross-means</h3>
@@ -1092,9 +1320,46 @@ Initial build of the entire page upon completion of all
 <span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&#39;bold&#39;</span>),</span>
 <span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.spacing =</span> <span class="fu">unit</span>(<span class="fl">0.05</span>, <span class="st">&quot;lines&quot;</span>))</span></code></pre></div>
 <p><img src="figure/06-Results.Rmd/unnamed-chunk-22-1.png" width="720" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/figure/06-Results.Rmd/unnamed-chunk-22-1.png" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="accuracy-predicting-cross-variance-params" class="section level3">
-<h3>Accuracy predicting cross-variance params</h3>
+</div>
+</div>
+<div id="accuracy-predicting-variance-params" class="section level3">
+<h3>Accuracy predicting variance params</h3>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>cvvars<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;cvVarPredAccuracyAD.rds&quot;</span>))</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># cvvars&lt;-readRDS(here::here(&quot;output&quot;,&quot;cvVarPredAccuracyA.rds&quot;)) %&gt;% </span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   bind_rows(readRDS(here::here(&quot;output&quot;,&quot;cvVarPredAccuracyAD.rds&quot;)))</span></span>
@@ -1126,6 +1391,43 @@ Initial build of the entire page upon completion of all
 <span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&#39;bold&#39;</span>),</span>
 <span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.spacing =</span> <span class="fu">unit</span>(<span class="fl">0.05</span>, <span class="st">&quot;lines&quot;</span>))</span></code></pre></div>
 <p><img src="figure/06-Results.Rmd/unnamed-chunk-23-1.png" width="720" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-23-1">
+Past versions of unnamed-chunk-23-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-23-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/figure/06-Results.Rmd/unnamed-chunk-23-1.png" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>cvvars <span class="sc">%&gt;%</span> </span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Trait1<span class="sc">!=</span>Trait2) <span class="sc">%&gt;%</span> </span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>predOf,<span class="at">y=</span>AccuracyEst,<span class="at">fill=</span>predOf)) <span class="sc">+</span> </span>
@@ -1148,7 +1450,94 @@ Initial build of the entire page upon completion of all
 <span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&#39;bold&#39;</span>),</span>
 <span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.spacing =</span> <span class="fu">unit</span>(<span class="fl">0.05</span>, <span class="st">&quot;lines&quot;</span>))</span></code></pre></div>
 <p><img src="figure/06-Results.Rmd/unnamed-chunk-24-1.png" width="720" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-24-1">
+Past versions of unnamed-chunk-24-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-24-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e66bdadd9561b8bf0e6bd6d77bd02621f05a9341/docs/figure/06-Results.Rmd/unnamed-chunk-24-1.png" target="_blank">e66bdad</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-10
+</td>
+</tr>
+</tbody>
+</table>
 </div>
+</div>
+</div>
+</div>
+<div id="accuracy-based-only-on-large-families" class="section level2">
+<h2>Accuracy based only on large families</h2>
+<p>What if we only compute accuracy with families having &gt;10 or &gt;20 members?</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(magrittr)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>cvvars<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;cvVarPredAccuracyAD.rds&quot;</span>))</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>big_acc<span class="ot">&lt;-</span>cvvars <span class="sc">%&gt;%</span> </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AccuracyEst_n10=</span><span class="fu">map_dbl</span>(predVSobs,<span class="cf">function</span>(predVSobs){</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    z<span class="ot">&lt;-</span>predVSobs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(famSize<span class="sc">&gt;=</span><span class="dv">10</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    out<span class="ot">&lt;-</span>psych<span class="sc">::</span><span class="fu">cor.wt</span>(z[,<span class="fu">c</span>(<span class="st">&quot;predVar&quot;</span>,<span class="st">&quot;obsVar&quot;</span>)],</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">w =</span> z<span class="sc">$</span>famSize) <span class="sc">%$%</span> r[<span class="dv">1</span>,<span class="dv">2</span>] <span class="sc">%&gt;%</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">round</span>(.,<span class="dv">3</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(out) }),</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">AccuracyEst_n20=</span><span class="fu">map_dbl</span>(predVSobs,<span class="cf">function</span>(predVSobs){</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>      z<span class="ot">&lt;-</span>predVSobs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(famSize<span class="sc">&gt;=</span><span class="dv">20</span>)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>      out<span class="ot">&lt;-</span>psych<span class="sc">::</span><span class="fu">cor.wt</span>(z[,<span class="fu">c</span>(<span class="st">&quot;predVar&quot;</span>,<span class="st">&quot;obsVar&quot;</span>)],</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>                         <span class="at">w =</span> z<span class="sc">$</span>famSize) <span class="sc">%$%</span> r[<span class="dv">1</span>,<span class="dv">2</span>] <span class="sc">%&gt;%</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">round</span>(.,<span class="dv">3</span>)</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(out) }))</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>big_acc <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Trait1=</span><span class="fu">factor</span>(Trait1,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;SELIND&quot;</span>,blups<span class="sc">$</span>Trait)),</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">Trait2=</span><span class="fu">factor</span>(Trait2,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;SELIND&quot;</span>,blups<span class="sc">$</span>Trait)),</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">predOf=</span><span class="fu">factor</span>(predOf,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;VarBV&quot;</span>,<span class="st">&quot;VarTGV&quot;</span>)))</span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>big_acc <span class="sc">%&gt;%</span> </span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Trait1<span class="sc">==</span>Trait2,predOf<span class="sc">==</span><span class="st">&quot;VarBV&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>predVSobs) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">contains</span>(<span class="st">&quot;Accuracy&quot;</span>), <span class="at">names_to =</span> <span class="st">&quot;FamilySizeForValidation&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;AccuracyEst&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>predOf,<span class="at">y=</span>AccuracyEst,<span class="at">fill=</span>FamilySizeForValidation, <span class="at">color=</span>predOf)) <span class="sc">+</span> </span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width=</span><span class="fl">0.4</span>,<span class="at">notch =</span> <span class="cn">TRUE</span>,<span class="at">color=</span><span class="st">&#39;gray40&#39;</span>) <span class="sc">+</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> viridis<span class="sc">::</span><span class="fu">viridis</span>(<span class="dv">4</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]) <span class="sc">+</span> </span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">#scale_color_manual(values = viridis::viridis(4)[1:3]) + </span></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color=</span><span class="st">&#39;black&#39;</span>, <span class="at">size=</span><span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(predOf<span class="sc">~</span>Trait1) <span class="sc">+</span> </span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Accuracy predicting cross-variances in bigger famiilies only?&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&#39;bold&#39;</span>),</span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text.x =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&#39;bold&#39;</span>),</span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position=</span><span class="st">&#39;bottom&#39;</span>,</span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&#39;bold&#39;</span>),</span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.spacing =</span> <span class="fu">unit</span>(<span class="fl">0.05</span>, <span class="st">&quot;lines&quot;</span>))</span></code></pre></div>
+<p><img src="figure/06-Results.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The results above are a bit ambiguous, but there is a trend wherei <em>most</em> trait, but not FYLD :( , seem more accurately predicted based on larger families.</p>
 </div>
 </div>
 <div id="genomic-mate-selection" class="section level1">
@@ -1164,7 +1553,7 @@ Initial build of the entire page upon completion of all
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
 <pre><code>R version 4.1.0 (2021-05-18)
 Platform: x86_64-apple-darwin17.0 (64-bit)
 Running under: macOS Big Sur 10.16
@@ -1186,29 +1575,31 @@ other attached packages:
 [13] workflowr_1.6.2
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.6           here_1.0.1           lubridate_1.7.10    
- [4] assertthat_0.2.1     rprojroot_2.0.2      digest_0.6.27       
- [7] utf8_1.2.1           R6_2.5.0             cellranger_1.1.0    
-[10] backports_1.2.1      reprex_2.0.0         evaluate_0.14       
-[13] highr_0.9            httr_1.4.2           pillar_1.6.1        
-[16] rlang_0.4.11         readxl_1.3.1         rstudioapi_0.13     
-[19] whisker_0.4          jquerylib_0.1.4      rmarkdown_2.8       
-[22] labeling_0.4.2       textshaping_0.3.4    munsell_0.5.0       
-[25] broom_0.7.6          compiler_4.1.0       httpuv_1.6.1        
-[28] modelr_0.1.8         xfun_0.23            pkgconfig_2.0.3     
-[31] systemfonts_1.0.2    htmltools_0.5.1.1    tidyselect_1.1.1    
-[34] gridExtra_2.3        viridisLite_0.4.0    fansi_0.5.0         
-[37] crayon_1.4.1         dbplyr_2.1.1         withr_2.4.2         
-[40] later_1.2.0          distributional_0.2.2 grid_4.1.0          
-[43] jsonlite_1.7.2       gtable_0.3.0         lifecycle_1.0.0     
-[46] DBI_1.1.1            git2r_0.28.0         scales_1.1.1        
-[49] cli_2.5.0            stringi_1.6.2        farver_2.1.0        
-[52] viridis_0.6.1        fs_1.5.0             promises_1.2.0.1    
-[55] xml2_1.3.2           bslib_0.2.5.1        ellipsis_0.3.2      
-[58] generics_0.1.0       vctrs_0.3.8          tools_4.1.0         
-[61] beeswarm_0.4.0       glue_1.4.2           hms_1.1.0           
-[64] yaml_2.2.1           colorspace_2.0-1     rvest_1.0.0         
-[67] knitr_1.33           haven_2.4.1          sass_0.4.0          </code></pre>
+ [1] viridis_0.6.1        httr_1.4.2           sass_0.4.0          
+ [4] jsonlite_1.7.2       viridisLite_0.4.0    tmvnsim_1.0-2       
+ [7] here_1.0.1           modelr_0.1.8         bslib_0.2.5.1       
+[10] assertthat_0.2.1     distributional_0.2.2 highr_0.9           
+[13] cellranger_1.1.0     yaml_2.2.1           lattice_0.20-44     
+[16] pillar_1.6.1         backports_1.2.1      glue_1.4.2          
+[19] digest_0.6.27        promises_1.2.0.1     rvest_1.0.0         
+[22] colorspace_2.0-1     htmltools_0.5.1.1    httpuv_1.6.1        
+[25] psych_2.1.3          pkgconfig_2.0.3      broom_0.7.6         
+[28] haven_2.4.1          scales_1.1.1         whisker_0.4         
+[31] later_1.2.0          git2r_0.28.0         generics_0.1.0      
+[34] farver_2.1.0         ellipsis_0.3.2       withr_2.4.2         
+[37] cli_2.5.0            mnormt_2.0.2         crayon_1.4.1        
+[40] readxl_1.3.1         evaluate_0.14        fs_1.5.0            
+[43] fansi_0.5.0          nlme_3.1-152         xml2_1.3.2          
+[46] beeswarm_0.4.0       textshaping_0.3.4    tools_4.1.0         
+[49] hms_1.1.0            lifecycle_1.0.0      munsell_0.5.0       
+[52] reprex_2.0.0         compiler_4.1.0       jquerylib_0.1.4     
+[55] systemfonts_1.0.2    rlang_0.4.11         grid_4.1.0          
+[58] rstudioapi_0.13      labeling_0.4.2       rmarkdown_2.8       
+[61] gtable_0.3.0         DBI_1.1.1            R6_2.5.0            
+[64] gridExtra_2.3        lubridate_1.7.10     knitr_1.33          
+[67] utf8_1.2.1           rprojroot_2.0.2      stringi_1.6.2       
+[70] parallel_4.1.0       Rcpp_1.0.6           vctrs_0.3.8         
+[73] dbplyr_2.1.1         tidyselect_1.1.1     xfun_0.23           </code></pre>
 </div>
 </div>
 
