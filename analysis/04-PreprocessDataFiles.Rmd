@@ -193,9 +193,21 @@ A<-predCrossVar::kinship(dosages,type="add")
 D<-predCrossVar::kinship(dosages,type="dom")
 saveRDS(A,file=here::here("output","kinship_A_IITA_2021May13.rds"))
 saveRDS(D,file=here::here("output","kinship_D_IITA_2021May13.rds"))
-
 ```
 
+```{bash, eval=F}
+cd /home/mw489/implementGMSinCassava/;
+screen; 
+singularity shell rocker.sif; R
+```
+
+```{r, eval=F}
+dosages<-readRDS(file=here::here("data","dosages_IITA_filtered_2021May13.rds"))
+source(here::here("code","gsFunctions.R"))
+RhpcBLASctl::blas_set_num_threads(56)
+D<-kinship(dosages,type="domGenotypic")
+saveRDS(D,file=here::here("output","kinship_domGenotypic_IITA_2021July5.rds"))
+```
 
 
 # Genetic Map
