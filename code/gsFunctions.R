@@ -446,7 +446,9 @@ runCrossVal<-function(TrainTestData,modelType,grms,nrepeats,nfolds,ncores=1,
   },otherwise = NA)
   ## Run models across all train-test splits
   ## Parallelize
-  require(furrr); plan(multiprocess); options(mc.cores=ncores);
+  require(furrr); plan(multicore, workers = ncores)
+  options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+
   cvsamples<-cvsamples %>%
     mutate(accuracy=future_map2(splits,GroupName,
                                 ~fitModel(splits=.x,GroupName=.y,
@@ -519,7 +521,8 @@ runGenomicPredictions<-function(blups,modelType,grms,ncores=1,gid="GID",...){
   },otherwise = NA)
   ## Run models across all train-test splits
   ## Parallelize
-  require(furrr); plan(multiprocess); options(mc.cores=ncores);
+  require(furrr); plan(multicore, workers = ncores)
+  options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
   predictions<-blups %>%
     mutate(genomicPredOut=future_map(TrainingData,~runOnePred(trainingdata=.,
                                                               modelType=modelType,grms=grms)))
