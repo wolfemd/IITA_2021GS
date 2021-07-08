@@ -62,13 +62,13 @@ runParentWiseCrossVal<-function(nrepeats,nfolds,seed=NULL,modelType,
   print("Compute prediction accuracies and wrap up.")
   ## Variance prediction accuracies
   starttime<-proc.time()[3]
-  varPredAccuracy<-varPredAccuracy(modelType = modelType,
+  varPredAcc<-varPredAccuracy(modelType = modelType,
                                    crossValOut = cvPredVars,
                                    snpeffs = markEffs,
                                    ped = ped,selInd = selInd,SIwts = SIwts)
 
   ## Mean prediction accuracies
-  meanPredAccuracy<-meanPredAccuracy(modelType = modelType,
+  meanPredAcc<-meanPredAccuracy(modelType = modelType,
                                      crossValOut = cvPredMeans,
                                      snpeffs = markEffs,
                                      ped = ped,selInd = selInd,SIwts = SIwts)
@@ -79,12 +79,12 @@ runParentWiseCrossVal<-function(nrepeats,nfolds,seed=NULL,modelType,
     saveRDS(markEffs,file=paste0(outName,"_markerEffects.rds"))
     saveRDS(cvPredVars,file=paste0(outName,"_predVars.rds"))
     saveRDS(cvPredMeans,file=paste0(outName,"_predMeans.rds"))
-    saveRDS(varPredAccuracy,file=paste0(outName,"_varPredAccuracy.rds"))
-    saveRDS(meanPredAccuracy,file=paste0(outName,"_meanPredAccuracy.rds"))
+    saveRDS(varPredAcc,file=paste0(outName,"_varPredAccuracy.rds"))
+    saveRDS(meanPredAcc,file=paste0(outName,"_meanPredAccuracy.rds"))
   }
 
-  accuracy_out<-list(meanPredAccuracy=meanPredAccuracy,
-                     varPredAccuracy=varPredAccuracy)
+  accuracy_out<-list(meanPredAccuracy=meanPredAcc,
+                     varPredAccuracy=varPredAcc)
   print(paste0("Accuracies predicted. Took  ",
                round((proc.time()[3] - initime)/60/60,5),
                " hrs total.\n Goodbye!"))
@@ -234,7 +234,7 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
                                 dosages=dosages),
            modelType=modelType)
   # this is to remove conflicts with dplyr function select() downstream
-  detach("package:sommer",unload = T); detach("package:MASS",unload = T)
+  # detach("package:sommer",unload = T); detach("package:MASS",unload = T)
 
   traintestdata %<>%
     select(-blupsMat,-sampleIDs) %>%
@@ -278,6 +278,7 @@ predictCrossVars<-function(modelType,snpeffs,parentfolds,
                                  domsnpeff<-map(EffectList$domsnpeff,~t(.))
                                  names(domsnpeff)<-EffectList$Trait
                                  return(domsnpeff) })) }
+
   predvars %<>%
     left_join(parentfolds %>%
                 dplyr::select(-testparents,-trainset,-testset)) %>%
@@ -292,7 +293,7 @@ predictCrossVars<-function(modelType,snpeffs,parentfolds,
       mutate(predVars=map2(CrossesToPredict,AlleleSubEffectList,
                            ~predCrossVars(CrossesToPredict=.x,
                                           AddEffectList=.y,
-                                          modelType=modelType,
+                                          modelType="A",
                                           haploMat=haploMat,
                                           recombFreqMat=recombFreqMat,
                                           ncores=ncores) %>%
@@ -307,7 +308,7 @@ predictCrossVars<-function(modelType,snpeffs,parentfolds,
         out<-predCrossVars(CrossesToPredict=CrossesToPredict,
                            AddEffectList=AlleleSubEffectList,
                            DomEffectList=DomDevEffectList,
-                           modelType=modelType,
+                           modelType="AD",
                            haploMat=haploMat,
                            recombFreqMat=recombFreqMat,
                            ncores=ncores)
