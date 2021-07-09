@@ -87,7 +87,7 @@ runParentWiseCrossVal<-function(nrepeats,nfolds,seed=NULL,modelType,
                      varPredAccuracy=varPredAcc)
   print(paste0("Accuracies predicted. Took  ",
                round((proc.time()[3] - initime)/60/60,5),
-               " hrs total.\n Goodbye!"))
+               " hrs total.Goodbye!"))
   return(accuracy_out)
 }
 
@@ -634,12 +634,15 @@ meanPredAccuracy<-function(crossValOut,snpeffs,ped,modelType,
   out %<>%
     # outer loop over rep-fold-predtype
     mutate(obsMeans=map(gblupmat,function(gblupmat){
-      gblupmeans<-colMeans(gblupmat) %>% as.list
+      #      gblupmeans<-colMeans(gblupmat) %>% as.list
+      gblupmeans<-colMeans(gblupmat) %>% as.data.frame %>% as.matrix
+
       if(selInd==TRUE){
-        selIndMean<-list(SELIND=as.numeric(gblupmeans[names(SIwts)])%*%SIwts)
-        gblupmeans<-c(selIndMean,gblupmeans)
+        selIndMean<-gblupmeans[names(SIwts),]%*%SIwts %>%
+          `row.names<-`(.,"SELIND")
+        gblupmeans<-rbind(selIndMean,gblupmeans)
       }
-      obsmeans<-tibble(Trait=names(gblupmeans),
+      obsmeans<-tibble(Trait=rownames(gblupmeans),
                        obsMean=as.numeric(gblupmeans))
       return(obsmeans) }),
       famSize=map_dbl(gblupmat,nrow)) %>%
@@ -661,7 +664,7 @@ meanPredAccuracy<-function(crossValOut,snpeffs,ped,modelType,
                                              values_from = "predMean") %>%
                                  select(any_of(names(SIwts))) %>%
                                  as.matrix(.)%*%SIwts)) %>%
-      pivot_longer(cols = c(SELIND,names(SIwts)),
+      pivot_longer(cols = c("SELIND",unique(cvout$Trait)),
                    names_to = "Trait",
                    values_to = "predMean")
   }

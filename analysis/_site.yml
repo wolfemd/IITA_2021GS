@@ -17,6 +17,8 @@ navbar:
       href: 04-PreprocessDataFiles.html
   - text: Cross-validation
     href: 05-CrossValidation.html
+  - text: Genomic (mate) predictions
+    href: 06-GenomicPredictions.html
   - text: Results
     href: 06-Results.html
   - text: Other
