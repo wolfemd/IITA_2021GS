@@ -102,7 +102,7 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
     left_join(blups) %>%
     rename(blupsMat=blups)
 
-  fitModel<-function(sampleIDs,blupsMat,modelType,gid,grms,dosages,...){
+  fitModel<-possibly(function(sampleIDs,blupsMat,modelType,gid,grms,dosages,...){
     # debug
     # sampleIDs<-traintestdata$sampleIDs[[2]]; blupsMat<-traintestdata$blupsMat[[2]]
 
@@ -222,7 +222,7 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
 
     # return results
     return(results)
-  }
+  },otherwise = NA)
 
   require(furrr); plan(multicore, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
@@ -238,7 +238,7 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
 
   traintestdata %<>%
     select(-blupsMat,-sampleIDs) %>%
-    unnest(modelOut) %>%
+    unnest(modelOut,keep_empty = FALSE) %>% # dropped failed models on unnest
     nest(effects=c(-Repeat,-Fold,-Dataset,-modelType))
 
   return(traintestdata)
@@ -247,7 +247,7 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
 predictCrossVars<-function(modelType,snpeffs,parentfolds,
                            haploMat,recombFreqMat,ncores){
   predvars<-snpeffs %>%
-    unnest(effects) %>%
+    unnest(effects,keep_empty = FALSE) %>%
     filter(Dataset=="trainset") %>%
     dplyr::select(Repeat,Fold,Trait,modelType,contains("snpeff")) %>%
     nest(EffectList=c(Trait,contains("snpeff"))) %>%
@@ -352,7 +352,7 @@ predictCrossVars<-function(modelType,snpeffs,parentfolds,
 predictCrossMeans<-function(modelType,snpeffs,parentfolds,
                             doseMat,ncores){
   predmeans<-snpeffs %>%
-    unnest(effects) %>%
+    unnest(effects,keep_empty = FALSE) %>%
     filter(Dataset=="trainset") %>%
     dplyr::select(Repeat,Fold,Trait,modelType,contains("snpeff")) %>%
     nest(EffectList=c(Trait,contains("snpeff"))) %>%
@@ -412,7 +412,7 @@ varPredAccuracy<-function(crossValOut,snpeffs,ped,modelType,
 
   # Extract and format the GBLUPs from the marker effects object
   gblups<-snpeffs %>%
-    unnest(effects) %>%
+    unnest(effects,keep_empty = FALSE) %>%
     filter(Dataset=="testset") %>%
     select(Repeat,Fold,modelType,Trait,gblups) %>%
     unnest(gblups) %>%
@@ -574,7 +574,7 @@ meanPredAccuracy<-function(crossValOut,snpeffs,ped,modelType,
                            selInd=FALSE,SIwts=NULL){
   # Extract and format the GBLUPs from the marker effects object
   gblups<-snpeffs %>%
-    unnest(effects) %>%
+    unnest(effects,keep_empty = FALSE) %>%
     filter(Dataset=="testset") %>%
     select(Repeat,Fold,modelType,Trait,gblups) %>%
     unnest(gblups) %>%
