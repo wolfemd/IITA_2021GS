@@ -159,30 +159,10 @@ cvDirDom_5rep5fold<-runParentWiseCrossVal(nrepeats=5,nfolds=5,seed=84,
                                           selInd = TRUE, SIwts = SIwts)
 saveRDS(cvDirDom_5rep5fold,here::here("output","cvDirDom_5rep5fold_predAccuracy.rds"))
 # [1] "Marker-effects Computed. Took  2.71571 hrs"
-# [1] "Predicting cross variances and covariances"
-# Joining, by = c("Repeat", "Fold")
 # [1] "Done predicting fam vars. Took 75.06 mins for 198 crosses"
 # [1] "Done predicting fam vars. Took 20.29 mins for 198 crosses"
-# [1] "Done predicting fam vars. Took 79.19 mins for 216 crosses"
-# [1] "Done predicting fam vars. Took 22.29 mins for 216 crosses"
-# [1] "Done predicting fam vars. Took 58.34 mins for 156 crosses"
-# [1] "Done predicting fam vars. Took 16.5 mins for 156 crosses"
-# [1] "Done predicting fam vars. Took 79.49 mins for 210 crosses"
-# [1] "Done predicting fam vars. Took 22.2 mins for 210 crosses"
-# [1] "Done predicting fam vars. Took 66.44 mins for 171 crosses"
-# [1] "Done predicting fam vars. Took 18.24 mins for 171 crosses"
-# [1] "Done predicting fam vars. Took 61.67 mins for 163 crosses"
-# [1] "Done predicting fam vars. Took 17.76 mins for 163 crosses"
-# [1] "Done predicting fam vars. Took 95.71 mins for 253 crosses"
-# [1] "Done predicting fam vars. Took 25.39 mins for 253 crosses"
-# [1] "Done predicting fam vars. Took 72.98 mins for 190 crosses"
-# [1] "Done predicting fam vars. Took 20.73 mins for 190 crosses"
-# [1] "Done predicting fam vars. Took 59.18 mins for 161 crosses"
-# [1] "Done predicting fam vars. Took 17.71 mins for 161 crosses"
-# [1] "Done predicting fam vars. Took 72.42 mins for 189 crosses"
-# [1] "Done predicting fam vars. Took 19.7 mins for 189 crosses"
 
-# ~ 100 minutes per rep-fold, and perhaps 16 more sets to go = 26 more hours? 
+# ~ 100 minutes per rep-fold: expect about 42 hrs to complete vs. 20 for modelAD
 ### done Sat July 10, in early AM?
 ```
 
@@ -208,183 +188,11 @@ cvAD_5rep5fold<-runParentWiseCrossVal(nrepeats=5,nfolds=5,seed=84,
                                       selInd = TRUE, SIwts = SIwts)
 saveRDS(cvAD_5rep5fold,here::here("output","cvAD_5rep5fold_predAccuracy.rds"))
 # [1] "Marker-effects Computed. Took  1.81086 hrs"
-# [1] "Predicting cross variances and covariances"
-# Joining, by = c("Repeat", "Fold")
 # [1] "Done predicting fam vars. Took 43.11 mins for 198 crosses"
 # [1] "Done predicting fam vars. Took 47.04 mins for 216 crosses"
-# [1] "Done predicting fam vars. Took 33.82 mins for 156 crosses"
-# [1] "Done predicting fam vars. Took 46.33 mins for 210 crosses"
-# [1] "Done predicting fam vars. Took 37.9 mins for 171 crosses"
-# [1] "Done predicting fam vars. Took 36.72 mins for 163 crosses"
-# [1] "Done predicting fam vars. Took 54.57 mins for 253 crosses"
-# [1] "Done predicting fam vars. Took 42.08 mins for 190 crosses"
-# [1] "Done predicting fam vars. Took 35.8 mins for 161 crosses"
-# [1] "Done predicting fam vars. Took 42.23 mins for 189 crosses"
-# [1] "Done predicting fam vars. Took 47.4 mins for 205 crosses"
-# [1] "Done predicting fam vars. Took 46.31 mins for 213 crosses"
-# [1] "Done predicting fam vars. Took 39.56 mins for 180 crosses"
-# [1] "Done predicting fam vars. Took 42.23 mins for 199 crosses"
-# [1] "Done predicting fam vars. Took 42.68 mins for 183 crosses"
-# [1] "Done predicting fam vars. Took 46.01 mins for 205 crosses"
-# [1] "Done predicting fam vars. Took 41.98 mins for 185 crosses"
-# [1] "Done predicting fam vars. Took 45.33 mins for 203 crosses"
-# [1] "Done predicting fam vars. Took 42.25 mins for 186 crosses"
-# [1] "Done predicting fam vars. Took 40.96 mins for 184 crosses"
-# [1] "Done predicting fam vars. Took 46.43 mins for 207 crosses"
-# [1] "Done predicting fam vars. Took 44.97 mins for 201 crosses"
-# [1] "Done predicting fam vars. Took 42.35 mins for 199 crosses"
-# [1] "Done predicting fam vars. Took 37.91 mins for 170 crosses"
 # .....
-# [1] "Saving outputs to disk."
 # [1] "Accuracies predicted. Took  19.68694 hrs total.\n Goodbye!"
-
-#  cvAD_5rep5fold
-# $meanPredAccuracy
-# # A tibble: 41,682 x 10
-#    Repeat  Fold  modelType predOf Trait    BCHROMO BRLVLS BRNHT1 predVSobs      
-#    <chr>   <chr> <chr>     <chr>  <chr>      <dbl>  <dbl>  <dbl> <list>         
-#  1 Repeat1 Fold1 AD        MeanBV SELIND     -4.97 -0.459 -0.661 <tibble [1 × 5…
-#  2 Repeat1 Fold1 AD        MeanBV BCHROMO    NA    NA     NA     <tibble [198 ×…
-#  3 Repeat1 Fold1 AD        MeanBV BRLVLS     NA    NA     NA     <tibble [198 ×…
-#  4 Repeat1 Fold1 AD        MeanBV BRNHT1     NA    NA     NA     <tibble [198 ×…
-#  5 Repeat1 Fold1 AD        MeanBV DM         -4.97 -0.459 -0.661 <tibble [1 × 5…
-#  6 Repeat1 Fold1 AD        MeanBV HI         -4.97 -0.459 -0.661 <tibble [1 × 5…
-#  7 Repeat1 Fold1 AD        MeanBV logDYLD    -4.97 -0.459 -0.661 <tibble [1 × 5…
-#  8 Repeat1 Fold1 AD        MeanBV logFYLD    -4.97 -0.459 -0.661 <tibble [1 × 5…
-#  9 Repeat1 Fold1 AD        MeanBV logRTNO    -4.97 -0.459 -0.661 <tibble [1 × 5…
-# 10 Repeat1 Fold1 AD        MeanBV logTOPY…   -4.97 -0.459 -0.661 <tibble [1 × 5…
-# # … with 41,672 more rows, and 1 more variable: AccuracyEst <dbl>
-
 ```
-
-## fix bug in meanPredAccuracy
-Ooops... meanPredAccuracy screwed up because of the 3 traits NOT on the sel. index...
-
-```{r}
-outName<-"output/cvAD_5rep5fold"
-crossValOut<-readRDS(file=paste0(outName,"_predMeans.rds"))
-snpeffs<-readRDS(file=paste0(outName,"_markerEffects.rds"))
-modelType="AD"
-selInd=TRUE
-#crossValOut<-readRDS(file=paste0(outName,"_predVars.rds"))
-
-```
-
-```{r bug fixed func to add to parentWiseCrossVal.R}
-meanPredAccuracy<-function(crossValOut,snpeffs,ped,modelType,
-                           selInd=FALSE,SIwts=NULL){
-  # Extract and format the GBLUPs from the marker effects object
-  gblups<-snpeffs %>%
-    unnest(effects) %>%
-    filter(Dataset=="testset") %>%
-    select(Repeat,Fold,modelType,Trait,gblups) %>%
-    unnest(gblups) %>%
-    nest(testset_gblups=c(-Repeat,-Fold,-modelType))
-
-  # Use the crossValPred object and the pedigree
-  # Create a list of the actual members of each family that were predicted
-  # in each repeat-fold
-  # Join the GBLUPs for each family member for computing
-  # cross sample means
-  out<-crossValOut %>%
-    unnest(predMeans) %>%
-    distinct(Repeat,Fold,modelType,sireID,damID) %>%
-    left_join(ped) %>%
-    nest(CrossesToPredict=c(sireID,damID,GID)) %>%
-    left_join(gblups)
-
-  out %<>%
-    # remove any gebv/getgv NOT in the crosses-to-be-predicted to save mem
-    mutate(testset_gblups=map2(testset_gblups,CrossesToPredict,
-                               ~semi_join(.x,.y)))
-
-  # for modelType=="A" and "AD", MeanBV only (remove GETGV)
-  if(modelType %in% c("A","AD")){
-    out %<>%
-      mutate(testset_gblups=map(testset_gblups,
-                                ~select(.,Trait,GID,GEBV) %>%
-                                  pivot_longer(.,cols = c(GEBV),
-                                               names_to = "predOf",
-                                               values_to = "GBLUP") %>%
-                                  nest(gblups=-predOf))) }
-
-  if(modelType=="DirDom"){
-    out %<>%
-      mutate(testset_gblups=map(testset_gblups,
-                                ~select(.,Trait,GID,GEBV,GETGV) %>%
-                                  pivot_longer(cols = c(GEBV,GETGV),
-                                               names_to = "predOf",
-                                               values_to = "GBLUP") %>%
-                                  nest(gblups=-predOf)))
-  }
-  out %<>% unnest(testset_gblups)
-
-  # make a matrix of GBLUPs for all traits
-  # for each family-to-be-predicted
-  # in each rep-fold-predOf combination
-  out %<>%
-    mutate(famgblups=map2(gblups,CrossesToPredict,
-                          ~left_join(.x,.y) %>%
-                            pivot_wider(names_from = "Trait",
-                                        values_from = "GBLUP") %>%
-                            nest(gblupmat=c(-sireID,-damID)) %>%
-                            mutate(gblupmat=map(gblupmat,~column_to_rownames(.,var="GID"))))) %>%
-    select(-CrossesToPredict,-gblups) %>%
-    unnest(famgblups)
-
-  out %<>%
-    # outer loop over rep-fold-predtype
-    mutate(obsMeans=map(gblupmat,function(gblupmat){
-#      gblupmeans<-colMeans(gblupmat) %>% as.list
-      gblupmeans<-colMeans(gblupmat) %>% as.data.frame %>% as.matrix
-      
-      if(selInd==TRUE){
-        selIndMean<-gblupmeans[names(SIwts),]%*%SIwts %>% 
-          `row.names<-`(.,"SELIND")
-        gblupmeans<-rbind(selIndMean,gblupmeans)
-      }
-      obsmeans<-tibble(Trait=rownames(gblupmeans),
-                       obsMean=as.numeric(gblupmeans))
-      return(obsmeans) }),
-      famSize=map_dbl(gblupmat,nrow)) %>%
-    select(-gblupmat) %>%
-    unnest(obsMeans)
-
-
-  cvout<-crossValOut %>%
-    unnest(predMeans) %>%
-    select(Repeat,Fold,modelType,predOf,sireID,damID,Trait,predMean)
-
-  if(selInd==TRUE){
-    # compute predicted selection index variances
-    cvout %<>%
-      pivot_wider(names_from = "Trait",
-                  values_from = "predMean") %>%
-      mutate(SELIND=as.numeric(cvout %>%
-                                 pivot_wider(names_from = "Trait",
-                                             values_from = "predMean") %>%
-                                 select(any_of(names(SIwts))) %>%
-                                 as.matrix(.)%*%SIwts)) %>%
-      pivot_longer(cols = c("SELIND",unique(cvout$Trait)),
-                   names_to = "Trait",
-                   values_to = "predMean")
-  }
-
-  out %<>%
-    mutate(predOf=ifelse(predOf=="GEBV","MeanBV","MeanTGV")) %>%
-    left_join(cvout) %>%
-    nest(predVSobs=c(sireID,damID,predMean,obsMean,famSize)) %>%
-    mutate(AccuracyEst=map_dbl(predVSobs,function(predVSobs){
-      out<-psych::cor.wt(predVSobs[,c("predMean","obsMean")],
-                         w = predVSobs$famSize) %$% r[1,2] %>%
-        round(.,3)
-      return(out) }))
-  return(out)
-}
-saveRDS(out,file=paste0(outName,"_meanPredAccuracy.rds"))
-
-```
-
 
 # Standard clone-wise cross-validation
 
