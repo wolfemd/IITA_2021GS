@@ -142,6 +142,7 @@ SIwts<-c(logFYLD=20,
          PLTHT=10) 
 ```
 
+## model=DirDom
 Server 1: modelType="DirDom"
 
 cbsulm17 - 112 cores, 512 GB RAM
@@ -164,8 +165,281 @@ saveRDS(cvDirDom_5rep5fold,here::here("output","cvDirDom_5rep5fold_predAccuracy.
 
 # ~ 100 minutes per rep-fold: expect about 42 hrs to complete vs. 20 for modelAD
 ### done Sat July 10, in early AM?
+
+# [1] "Set-up parent-wise cross-validation folds"
+# [1] "Fitting models to get marker effects"
+# Joining, by = "Trait"
+# Loading required package: furrr
+# Loading required package: future
+# Error: Problem with `mutate()` column `modelOut`.
+# ℹ `modelOut = future_pmap(...)`.
+# ✖ Failed to retrieve the result of MulticoreFuture (<none>) from the forked worker (on localhost; PID 31153). Post-mortem diagnostic: No process exists with this PID, i.e. the forked localhost worker is no longer alive.
+# Run `rlang::last_error()` to see where the error occurred.
+# In addition: Warning message:
+# Problem with `mutate()` column `modelOut`.
+# ℹ `modelOut = future_pmap(...)`.
+# ℹ 1 parallel job did not deliver a result
+
+# Backtrace:
+#      █
+#   1. ├─global::runParentWiseCrossVal(...)
+#   2. │ └─global::getMarkEffs(...) code/parentWiseCrossVal.R:37:2
+#   3. │   └─`%>%`(...) code/parentWiseCrossVal.R:229:2
+#   4. ├─dplyr::mutate(...)
+#   5. ├─dplyr:::mutate.data.frame(...)
+#   6. │ └─dplyr:::mutate_cols(.data, ..., caller_env = caller_env())
+#   7. │   ├─base::withCallingHandlers(...)
+#   8. │   └─mask$eval_all_mutate(quo)
+#   9. ├─furrr::future_pmap(...)
+#  10. │ └─furrr:::furrr_pmap_template(...)
+#  11. │   └─furrr:::furrr_template(...)
+#  12. │     ├─future::value(futures)
+#  13. │     └─future:::value.list(futures)
+#  14. │       ├─future::resolve(...)
+#  15. │       └─future:::resolve.list(...)
+#  16. │         ├─future::value(obj, stdout = FALSE, signal = FALSE)
+#  17. │         └─future:::value.Future(obj, stdout = FALSE, signal = FALSE)
+#  18. │           ├─future::result(future)
+#  19. │           └─future:::result.MulticoreFuture(future)
+#  20. │             └─base::stop(ex)
+#  21. └─(function (e) ...
+
 ```
 
+One model at least is failing in fitModel()
+
+```{r debug}
+nrepeats=5
+nfolds=5
+seed=84
+modelType="DirDom"
+ncores=20
+gid="GID"
+parentfolds<-makeParentFolds(ped=ped,gid="GID",
+                               nrepeats=nrepeats,
+                               nfolds=nfolds,
+                               seed=seed)
+# try with plan(multisession)
+# only google result suggestions... 
+### https://www.gitmemory.com/issue/HenrikBengtsson/future/474/803165713
+# suggests it might not happen if I stop using forking....
+# could be a problem since openblas wants to fork too...?
+
+# markEffs<-getMarkEffs(parentfolds,blups=blups,gid="GID",modelType=modelType,
+#                       grms=grms,dosages=dosages,ncores=ncores)
+```
+
+Switched to `plan(multisession)`. Added `RhpcBLASctl::blas_set_num_threads(5)` inside `fitModel()` because the spawned worker sessions were not using multithreaded blas otherwise. Might add an `blasCores=` argument or something like that...
+
+```{r tweak getMarkEffs?}
+getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
+
+  traintestdata<-parentfolds %>%
+    dplyr::select(Repeat,Fold,trainset,testset) %>%
+    pivot_longer(c(trainset,testset),
+                 names_to = "Dataset",
+                 values_to = "sampleIDs") %>%
+    crossing(Trait=blups$Trait) %>%
+    left_join(blups) %>%
+    rename(blupsMat=blups)
+
+  fitModel<-function(sampleIDs,blupsMat,modelType,gid,grms,dosages,...){
+    # debug
+    # sampleIDs<-traintestdata$sampleIDs[[2]]; blupsMat<-traintestdata$blupsMat[[2]]
+    
+    
+    RhpcBLASctl::blas_set_num_threads(5) # workers in plan(multisession) need this call internal to the function, it seems.
+
+    A<-grms[["A"]]
+    if(modelType %in% c("AD","DirDom")){ D<-grms[["D"]] }
+
+    trainingdata<-blupsMat %>%
+      dplyr::rename(gid=!!sym(gid)) %>%
+      filter(gid %in% sampleIDs)
+
+    trainingdata[[paste0(gid,"a")]]<-factor(trainingdata[["gid"]],
+                                            levels=rownames(A))
+    if(modelType %in% c("AD")){
+      trainingdata[[paste0(gid,"d")]]<-trainingdata[[paste0(gid,"a")]] }
+    if(modelType %in% c("DirDom")){
+      trainingdata[[paste0(gid,"d_star")]]<-trainingdata[[paste0(gid,"a")]] }
+
+    # Set-up random model statements
+    randFormula<-paste0("~vs(",gid,"a,Gu=A)")
+    if(modelType %in% c("AD")){
+      randFormula<-paste0(randFormula,"+vs(",gid,"d,Gu=D)") }
+    if(modelType=="DirDom"){
+      randFormula<-paste0(randFormula,"+vs(",gid,"d_star,Gu=D)")
+      f<-getPropHom(dosages)
+      trainingdata %<>% mutate(f=f[trainingdata$gid]) }
+
+    # Fixed model statements
+    fixedFomula<-ifelse(modelType=="DirDom",
+                        "drgBLUP ~1+f","drgBLUP ~1")
+    # Fit genomic prediction model
+    require(sommer)
+    fit <- sommer::mmer(fixed = as.formula(fixedFomula),
+                        random = as.formula(randFormula),
+                        weights = WT,
+                        data=trainingdata,
+                        date.warning = F)
+
+    # Backsolve SNP effects
+    # Compute allele sub effects
+    ## Every model has an additive random term
+    ga<-as.matrix(fit$U[[paste0("u:",gid,"a")]]$drgBLUP,ncol=1)
+    M<-centerDosage(dosages)
+
+    if(modelType %in% c("A","AD")){
+      # models A and AD give add effects corresponding to allele sub effects
+      allelesubsnpeff<-backsolveSNPeff(Z=M,g=ga) }
+
+    if(modelType %in% c("AD")){
+      # model AD the dom effects are dominance deviation effects
+      gd<-as.matrix(fit$U[[paste0("u:",gid,"d")]]$drgBLUP,ncol=1)
+      domdevsnpeff<-backsolveSNPeff(Z=dose2domDev(dosages),g=gd) }
+
+    if(modelType %in% c("DirDom")){
+      # model DirDom is a different add-dom partition,
+      ### add effects are not allele sub effects and gblups are not GEBV
+      addsnpeff<-backsolveSNPeff(Z=M,g=ga)
+      ### dom effects are called d*, gd_star or domstar
+      ### because of the genome-wide homoz. term included in model
+      gd_star<-as.matrix(fit$U[[paste0("u:",gid,"d_star")]]$drgBLUP,ncol=1)
+      domdevMat_genotypic<-dose2domDevGenotypic(dosages)
+      domstar_snpeff<-backsolveSNPeff(Z=domdevMat_genotypic,g=gd_star)
+      ### b = the estimate (BLUE) for the genome-wide homoz. effect
+      b<-fit$Beta[fit$Beta$Effect=="f","Estimate"]
+      ### calc. domsnpeff including the genome-wide homoz. effect
+      ### divide the b effect up by number of SNPs and _subtract_ from domstar
+      domsnpeff<-domstar_snpeff-(b/length(domstar_snpeff))
+
+      ### allele substitution effects using a+d(q-p) where d=d*-b/p
+      p<-getAF(dosages)
+      q<-1-p
+      allelesubsnpeff<-addsnpeff+(domsnpeff*(q-p))
+    }
+
+    # Gather the GBLUPs
+    if(modelType %in% c("A","AD")){
+      gblups<-tibble(GID=as.character(names(fit$U[[paste0("u:",gid,"a")]]$drgBLUP)),
+                     GEBV=as.numeric(fit$U[[paste0("u:",gid,"a")]]$drgBLUP)) }
+    if(modelType=="AD"){
+      gblups %<>% # compute GEDD (genomic-estimated dominance deviation)
+        mutate(GEDD=as.numeric(fit$U[[paste0("u:",gid,"d")]]$drgBLUP),
+               # compute GETGV
+               GETGV=rowSums(.[,grepl("GE",colnames(.))])) }
+    if(modelType=="DirDom"){
+      # re-calc the GBLUP, GEdomval using dom. effects where d=d*-b/p
+      ge_domval<-domdevMat_genotypic%*%domsnpeff
+      # calc. the GEBV using allele sub. effects where alpha=a+d(p-q), and d=d*-b/p
+      gebv<-M%*%allelesubsnpeff
+      # Tidy tibble of GBLUPs
+      gblups<-tibble(GID=as.character(names(fit$U[[paste0("u:",gid,"a")]]$drgBLUP)),
+                     GEadd=as.numeric(fit$U[[paste0("u:",gid,"a")]]$drgBLUP),
+                     GEdom_star=as.numeric(fit$U[[paste0("u:",gid,"d_star")]]$drgBLUP)) %>%
+        left_join(tibble(GID=rownames(ge_domval),GEdomval=as.numeric(ge_domval))) %>%
+        left_join(tibble(GID=rownames(gebv),GEBV=as.numeric(gebv))) %>%
+        # GETGV from GEadd + GEdomval
+        mutate(GETGV=GEadd+GEdomval)
+    }
+
+    # Extract variance components
+    varcomps<-summary(fit)$varcomp
+
+    # Exract fixed effects
+    # for modelType="DirDom", contains estimate of genome-wide homoz. effect
+    fixeffs<-summary(fit)$betas
+
+    results<-tibble(gblups=list(gblups),
+                    varcomps=list(varcomps),
+                    fixeffs=list(fixeffs))
+    # Add snpeffects to output
+    results %<>% mutate(allelesubsnpeff=list(allelesubsnpeff))
+    if(modelType=="AD"){ results %<>% mutate(domdevsnpeff=list(domdevsnpeff)) }
+    if(modelType=="DirDom"){
+      results %<>% mutate(addsnpeff=list(addsnpeff),
+                          domstar_snpeff=list(domstar_snpeff),
+                          domsnpeff=list(domsnpeff)) }
+    # this is to remove conflicts with dplyr function select() downstream
+    detach("package:sommer",unload = T); detach("package:MASS",unload = T)
+
+    # return results
+    return(results)
+  }
+
+  require(furrr); plan(multisession, workers = ncores)
+  options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+  traintestdata<-traintestdata %>%
+    mutate(modelOut=future_pmap(.,fitModel,
+                                modelType=modelType,
+                                gid=gid,
+                                grms=grms,
+                                dosages=dosages),
+           modelType=modelType)
+
+  traintestdata %<>%
+    select(-blupsMat,-sampleIDs) %>%
+    unnest(modelOut,keep_empty = FALSE) %>% # dropped failed models on unnest
+    nest(effects=c(-Repeat,-Fold,-Dataset,-modelType))
+
+ return(traintestdata)
+}
+```
+
+Try again 
+
+cbsulm17 - 112 cores, 512 GB RAM
+```{r try again -  model DirDom - 5 full reps - parent-wise CV}
+cvDirDom_5rep5fold<-runParentWiseCrossVal(nrepeats=5,nfolds=5,seed=84,
+                                          modelType="DirDom",
+                                          ncores=20,nBLASthreads=5,
+                                          outName="output/cvDirDom_5rep5fold",
+                                          ped=ped,
+                                          blups=blups,
+                                          dosages=dosages,
+                                          haploMat=haploMat,
+                                          grms=grms,
+                                          recombFreqMat = recombFreqMat,
+                                          selInd = TRUE, SIwts = SIwts)
+saveRDS(cvDirDom_5rep5fold,here::here("output","cvDirDom_5rep5fold_predAccuracy.rds"))
+# [1] "Marker-effects Computed. Took  2.3851 hrs"
+# [1] "Predicting cross variances and covariances"
+# Joining, by = c("Repeat", "Fold")
+# [1] "Done predicting fam vars. Took 59.08 mins for 198 crosses"
+# [1] "Done predicting fam vars. Took 18.63 mins for 198 crosses"
+# [1] "Done predicting fam vars. Took 64.82 mins for 216 crosses"
+# [1] "Done predicting fam vars. Took 20.41 mins for 216 crosses"
+# [1] "Done predicting fam vars. Took 46.42 mins for 156 crosses"
+# [1] "Done predicting fam vars. Took 14.94 mins for 156 crosses"
+# [1] "Done predicting fam vars. Took 63.45 mins for 210 crosses"
+# [1] "Done predicting fam vars. Took 19.8 mins for 210 crosses"
+# [1] "Done predicting fam vars. Took 50.62 mins for 171 crosses"
+# [1] "Done predicting fam vars. Took 16.26 mins for 171 crosses"
+# [1] "Done predicting fam vars. Took 49.87 mins for 163 crosses"
+# [1] "Done predicting fam vars. Took 16.2 mins for 163 crosses"
+# [1] "Done predicting fam vars. Took 73.37 mins for 253 crosses"
+# [1] "Done predicting fam vars. Took 23.59 mins for 253 crosses"
+# [1] "Done predicting fam vars. Took 56.32 mins for 190 crosses"
+# [1] "Done predicting fam vars. Took 18.44 mins for 190 crosses"
+# [1] "Done predicting fam vars. Took 47.33 mins for 161 crosses"
+# [1] "Done predicting fam vars. Took 15.79 mins for 161 crosses"
+# [1] "Done predicting fam vars. Took 59.18 mins for 189 crosses"
+# [1] "Done predicting fam vars. Took 18.67 mins for 189 crosses"
+# [1] "Done predicting fam vars. Took 64.72 mins for 205 crosses"
+# [1] "Done predicting fam vars. Took 21.17 mins for 205 crosses"
+# [1] "Done predicting fam vars. Took 63.97 mins for 213 crosses"
+# [1] "Done predicting fam vars. Took 20.04 mins for 213 crosses"
+# [1] "Done predicting fam vars. Took 53.03 mins for 180 crosses"
+# [1] "Done predicting fam vars. Took 17.28 mins for 180 crosses"
+# [1] "Done predicting fam vars. Took 58.67 mins for 199 crosses"
+# [1] "Done predicting fam vars. Took 19.03 mins for 199 crosses"
+
+# estimate 20 more hours, complete on July 12 very early AM?
+```
+
+
+## model=AD
 Server 2: modelType="AD"
 
 cbsulm29 - 104 cores, 512 GB RAM
@@ -192,6 +466,8 @@ saveRDS(cvAD_5rep5fold,here::here("output","cvAD_5rep5fold_predAccuracy.rds"))
 # [1] "Done predicting fam vars. Took 47.04 mins for 216 crosses"
 # .....
 # [1] "Accuracies predicted. Took  19.68694 hrs total.\n Goodbye!"
+# [1] "Accuracies predicted. Took  19.73242 hrs total.Goodbye!"
+# > saveRDS(cvAD_5rep5fold,here::here("output","cvAD_5rep5fold_predAccuracy.rds"))
 ```
 
 # Standard clone-wise cross-validation
