@@ -1,0 +1,445 @@
+---
+title: "Genomic predictions"
+author: "Marnin Wolfe"
+date: "2021-July-08"
+output: 
+  workflowr::wflow_html:
+    toc: true
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F, 
+                      tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
+```
+
+# Previous step
+
+5.  [Parent-wise cross-validation](05-CrossValidation.html): Compute parent-wise cross-validation folds using the validated pedigree. Fit models to get marker effects and make subsequent predictions of cross means and (co)variances.
+
+# Current steps
+
+1.  **Genomic prediction of clone GEBV/GETGV.** Fit GBLUP model, using genotypic add-dom partition. NEW: modelType="DirDom", include genome-wide inbreeding effect in GEBV/GETGV predictions *after* backsolving SNP effects. For all models, extract GBLUPs and backsolve SNP effects for use in cross usefulness predictions (mean+variance predictions). **ALSO NEW**: selection index predictions.
+
+2.  **Genomic prediction of cross** $UC_{parent}$ and $UC_{variety}$. Rank potential parents on SI. Predict all possible crosses of some portion of best parents.
+
+# Genomic prediction of clone GEBV/GETGV
+
+Operate R within a singularity Linux shell within a screen shell.
+
+```{bash set-up R environment, eval=F}
+# 1) start a screen shell 
+screen; # or screen -r if re-attaching...
+# 2) start the singularity Linux shell inside that
+singularity shell /workdir/$USER/rocker.sif; 
+# Project directory, so R will use as working dir.
+cd /home/mw489/implementGMSinCassava/;
+# 3) Start R
+R
+```
+
+```{r load input data, eval=F}
+require(tidyverse); require(magrittr); 
+# 5 threads per Rsession for matrix math (openblas)
+RhpcBLASctl::blas_set_num_threads(5)
+# GENOMIC MATE SELECTION FUNCTIONS
+# source(here::here("code","gmsFunctions.R")) 
+source(here::here("code","predCrossVar.R")) 
+
+# GENOMIC RELATIONSHIP MATRICES (GRMS)
+grms<-list(A=readRDS(file=here::here("output","kinship_A_IITA_2021May13.rds")),
+           D=readRDS(file=here::here("output","kinship_domGenotypic_IITA_2021July5.rds")))
+
+# DOSAGE MATRIX
+dosages<-readRDS(file=here::here("data",
+                                 "dosages_IITA_filtered_2021May13.rds"))
+
+# BLUPs
+blups<-readRDS(file=here::here("data","blups_forCrossVal.rds")) %>% 
+  dplyr::select(-varcomp) %>% 
+  rename(TrainingData=blups) # for compatibility with downstream functions
+
+# SELECTION INDEX WEIGHTS
+## from IYR+IK
+## note that not ALL predicted traits are on index
+SIwts<-c(logFYLD=20,
+         HI=10,
+         DM=15,
+         MCMDS=-10,
+         logRTNO=12,
+         logDYLD=20,
+         logTOPYLD=15,
+         PLTHT=10) 
+```
+
+```{r inputs for testing}
+# modelType="DirDom"
+# selInd=TRUE
+# getMarkEffs=TRUE
+# returnPEV=TRUE
+# blups<-blups %>% slice(1:2)
+# SIwts<-SIwts[blups$Trait]
+# gid="GID"
+# ncores=2
+# nBLASthreads=5
+```
+
+```{r option A - alter getMarkEffs}
+#' @param blups nested data.frame with list-column "TrainingData" containing BLUPs
+#' @param modelType string, values = "A", "AD", "DirDom". "A" = additive-only. "AD" = the classical additive - dominane partition leading to GETGV=GEBV+GEDD. NEW: modelType="DirDom", to fit a genome-wide homozyg. effect and then to subsequently do the work to incorporate a mean dominance effect into the predicted GEBV and GETGV; involves backsolve SNP effects and adding homz. effects. 
+#' @param grms list of GRMs. Any genotypes in the GRMs get predicted with, or without phenotypes. Each element is named either A or D. Matrices supplied must match required by A, AD and DirDom models. e.g. grms=list(A=A,D=D).
+runGenomicPredictions<-function(modelType,
+                                selInd,SIwts = NULL,
+                                getMarkEffs=FALSE,
+                                returnPEV=FALSE,
+                                blups,grms,dosages=NULL,gid="GID",
+                                ncores=1,
+                                nBLASthreads=NULL){
+  
+  fitModel<-function(trainingdata,modelType,getMarkEffs,returnPEV,
+                     gid="GID",grms,dosages,
+                     nBLASthreads,...){
+    if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+    # workers in plan(multisession) need this call internal to the function, it seems.
+    
+    A<-grms[["A"]]
+    if(modelType %in% c("AD","DirDom")){ D<-grms[["D"]] }
+    
+    trainingdata %<>%
+      dplyr::rename(gid=!!sym(gid)) %>%
+      filter(gid %in% rownames(A))
+    
+    trainingdata[[paste0(gid,"a")]]<-factor(trainingdata[["gid"]],
+                                            levels=rownames(A))
+    if(modelType %in% c("AD")){
+      trainingdata[[paste0(gid,"d")]]<-trainingdata[[paste0(gid,"a")]] }
+    if(modelType %in% c("DirDom")){
+      trainingdata[[paste0(gid,"d_star")]]<-trainingdata[[paste0(gid,"a")]] }
+    
+    # Set-up random model statements
+    randFormula<-paste0("~vs(",gid,"a,Gu=A)")
+    if(modelType %in% c("AD")){
+      randFormula<-paste0(randFormula,"+vs(",gid,"d,Gu=D)") }
+    if(modelType=="DirDom"){
+      randFormula<-paste0(randFormula,"+vs(",gid,"d_star,Gu=D)")
+      f<-getPropHom(dosages)
+      trainingdata %<>% mutate(f=f[trainingdata$gid]) }
+    
+    # Fixed model statements
+    fixedFomula<-ifelse(modelType=="DirDom",
+                        "drgBLUP ~1+f","drgBLUP ~1")
+    # Fit genomic prediction model
+    require(sommer)
+    fit <- sommer::mmer(fixed = as.formula(fixedFomula),
+                        random = as.formula(randFormula),
+                        weights = WT,
+                        data=trainingdata,
+                        date.warning = F,
+                        getPEV = returnPEV)
+    
+    if(getMarkEffs==TRUE | modelType=="DirDom"){ 
+      
+      # Backsolve SNP effects
+      # Compute allele sub effects
+      ## Every model has an additive random term
+      ga<-as.matrix(fit$U[[paste0("u:",gid,"a")]]$drgBLUP,ncol=1)
+      M<-centerDosage(dosages)
+      
+      if(modelType %in% c("A","AD")){
+        # models A and AD give add effects corresponding to allele sub effects
+        allelesubsnpeff<-backsolveSNPeff(Z=M,g=ga) }
+      
+      if(modelType %in% c("AD")){
+        # model AD the dom effects are dominance deviation effects
+        gd<-as.matrix(fit$U[[paste0("u:",gid,"d")]]$drgBLUP,ncol=1)
+        domdevsnpeff<-backsolveSNPeff(Z=dose2domDev(dosages),g=gd) }
+      
+      if(modelType %in% c("DirDom")){
+        # model DirDom is a different add-dom partition,
+        ### add effects are not allele sub effects and gblups are not GEBV
+        addsnpeff<-backsolveSNPeff(Z=M,g=ga)
+        ### dom effects are called d*, gd_star or domstar
+        ### because of the genome-wide homoz. term included in model
+        gd_star<-as.matrix(fit$U[[paste0("u:",gid,"d_star")]]$drgBLUP,ncol=1)
+        domdevMat_genotypic<-dose2domDevGenotypic(dosages)
+        domstar_snpeff<-backsolveSNPeff(Z=domdevMat_genotypic,g=gd_star)
+        ### b = the estimate (BLUE) for the genome-wide homoz. effect
+        b<-fit$Beta[fit$Beta$Effect=="f","Estimate"]
+        ### calc. domsnpeff including the genome-wide homoz. effect
+        ### divide the b effect up by number of SNPs and _subtract_ from domstar
+        domsnpeff<-domstar_snpeff-(b/length(domstar_snpeff))
+        
+        ### allele substitution effects using a+d(q-p) where d=d*-b/p
+        p<-getAF(dosages)
+        q<-1-p
+        allelesubsnpeff<-addsnpeff+(domsnpeff*(q-p))
+      } }
+    
+    # Gather the GBLUPs
+    if(modelType %in% c("A","AD")){
+      gblups<-tibble(GID=as.character(names(fit$U[[paste0("u:",gid,"a")]]$drgBLUP)),
+                     GEBV=as.numeric(fit$U[[paste0("u:",gid,"a")]]$drgBLUP)) 
+      if(returnPEV){ 
+        pev_bv<-diag((fit$PevU[[paste0("u:",gid,"a")]]$drgBLUP))
+        gblups %<>% left_join(tibble(GID=names(pev_bv),PEVbv=pev_bv)) 
+      } 
+    }
+    
+    if(modelType=="AD"){
+      gblups %<>% # compute GEDD (genomic-estimated dominance deviation)
+        mutate(GEDD=as.numeric(fit$U[[paste0("u:",gid,"d")]]$drgBLUP),
+               # compute GETGV
+               GETGV=rowSums(.[,grepl("GE",colnames(.))])) 
+      if(returnPEV){ 
+        pev_dd<-diag((fit$PevU[[paste0("u:",gid,"d")]]$drgBLUP))
+        gblups %<>% left_join(tibble(GID=names(pev_dd),PEVdd=pev_dd)) 
+      } 
+    }
+    if(modelType=="DirDom"){
+      # re-calc the GBLUP, GEdomval using dom. effects where d=d*-b/p
+      ge_domval<-domdevMat_genotypic%*%domsnpeff
+      # calc. the GEBV using allele sub. effects where alpha=a+d(p-q), and d=d*-b/p
+      gebv<-M%*%allelesubsnpeff
+      # Tidy tibble of GBLUPs
+      gblups<-tibble(GID=as.character(names(fit$U[[paste0("u:",gid,"a")]]$drgBLUP)),
+                     GEadd=as.numeric(fit$U[[paste0("u:",gid,"a")]]$drgBLUP),
+                     GEdom_star=as.numeric(fit$U[[paste0("u:",gid,"d_star")]]$drgBLUP)) %>%
+        left_join(tibble(GID=rownames(ge_domval),GEdomval=as.numeric(ge_domval))) %>%
+        left_join(tibble(GID=rownames(gebv),GEBV=as.numeric(gebv))) %>%
+        # GETGV from GEadd + GEdomval
+        mutate(GETGV=GEadd+GEdomval)
+      if(returnPEV){ 
+        pev_a<-diag((fit$PevU[[paste0("u:",gid,"a")]]$drgBLUP))
+        pev_dstar<-diag((fit$PevU[[paste0("u:",gid,"d_star")]]$drgBLUP))
+        gblups %<>% 
+          left_join(tibble(GID=names(pev_a),PEVd_star=pev_a)) %>% 
+          left_join(tibble(GID=names(pev_dstar),PEVd_star=pev_dstar)) 
+      } 
+    }
+    
+    # Extract variance components
+    varcomps<-summary(fit)$varcomp
+    
+    # Exract fixed effects
+    # for modelType="DirDom", contains estimate of genome-wide homoz. effect
+    fixeffs<-summary(fit)$betas
+    
+    results<-tibble(gblups=list(gblups),
+                    varcomps=list(varcomps),
+                    fixeffs=list(fixeffs))
+    
+    if(getMarkEffs==TRUE){ 
+      # Add snpeffects to output
+      results %<>% mutate(allelesubsnpeff=list(allelesubsnpeff))
+      if(modelType=="AD"){ results %<>% mutate(domdevsnpeff=list(domdevsnpeff)) }
+      if(modelType=="DirDom"){
+        results %<>% mutate(addsnpeff=list(addsnpeff),
+                            domstar_snpeff=list(domstar_snpeff),
+                            domsnpeff=list(domsnpeff)) } }
+    # this is to remove conflicts with dplyr function select() downstream
+    detach("package:sommer",unload = T); detach("package:MASS",unload = T)
+    # return results
+    return(results)
+  }
+  
+  require(furrr); plan(multisession, workers = ncores)
+  options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+  predictions<-blups %>%
+    mutate(genomicPredOut=future_map(TrainingData,
+                                     ~fitModel(trainingdata=.,
+                                               modelType=modelType,
+                                               getMarkEffs=getMarkEffs,
+                                               returnPEV=returnPEV,
+                                               gid=gid,
+                                               grms=grms,
+                                               dosages=dosages,
+                                               nBLASthreads=nBLASthreads)))
+  
+  predictions %<>%
+    select(-TrainingData) %>%
+    unnest(genomicPredOut) 
+  # tidy GBLUP output for e.g. breeders / selections
+  gblups<-predictions %>% 
+    select(Trait,gblups) %>% 
+    unnest(gblups) %>% 
+    select(!!sym(gid),Trait,any_of(c("GEBV","GETGV"))) %>% 
+    pivot_longer(any_of(c("GEBV","GETGV")),
+                 values_to = "GBLUP", 
+                 names_to = "predOf") %>% 
+    pivot_wider(names_from = "Trait",
+                values_from = "GBLUP")
+  if(selInd){
+    # calc. SELIND and add to tidy output
+    gblups %<>% 
+      mutate(SELIND=as.numeric((gblups %>% 
+                                  select(names(SIwts)) %>% 
+                                  as.matrix(.))%*%SIwts)) %>% 
+      relocate(SELIND, .after = predOf)
+  }
+  predictions<-tibble(gblups=list(gblups),
+                      genomicPredOut=list(predictions))
+  return(predictions)
+}
+```
+
+```{r try new runGenomicPredictions functionality}
+blups<-blups %>% slice(1:2)
+SIwts<-SIwts[blups$Trait]
+test_ad<-runGenomicPredictions(modelType="AD",selInd=TRUE, SIwts=SIwts,
+                               getMarkEffs=TRUE,
+                               returnPEV=FALSE,
+                               blups=blups,grms=grms,dosages=dosages,
+                               ncores=2,nBLASthreads=5)
+
+start<-proc.time()[3]
+test_dirdom<-runGenomicPredictions(modelType="DirDom",selInd=TRUE, SIwts=SIwts,
+                               getMarkEffs=TRUE,
+                               returnPEV=FALSE,
+                               blups=blups,grms=grms,dosages=dosages,
+                               ncores=2,nBLASthreads=5)
+runtime<-proc.time()[3]-start; runtime/60
+
+start<-proc.time()[3]
+test_ad_noMarkEffsOrSI<-runGenomicPredictions(modelType="AD",selInd=FALSE,
+                                              getMarkEffs=FALSE,
+                                              returnPEV=FALSE,
+                                              blups=blups,grms=grms,
+                                              dosages=NULL,
+                                              ncores=2,nBLASthreads=5)
+runtime<-proc.time()[3]-start; runtime/60
+
+```
+
+## Run predictions
+```{r full runGenomicPredictions}
+start<-proc.time()[3]
+gpreds_ad<-runGenomicPredictions(modelType="AD",selInd=TRUE, SIwts=SIwts,
+                                 getMarkEffs=TRUE,
+                                 returnPEV=FALSE,
+                                 blups=blups,grms=grms,dosages=dosages,
+                                 ncores=20,nBLASthreads=5)
+runtime<-proc.time()[3]-start; runtime/60
+saveRDS(gpreds_ad,file = here::here("output","genomicPredictions_ModelAD.rds"))
+
+gpreds_dirdom<-runGenomicPredictions(modelType="DirDom",selInd=TRUE, SIwts=SIwts,
+                                     getMarkEffs=TRUE,
+                                     returnPEV=FALSE,
+                                     blups=blups,grms=grms,dosages=dosages,
+                                     ncores=20,nBLASthreads=5)
+runtime<-proc.time()[3]-start; runtime/60
+saveRDS(gpreds_dirdom,file = here::here("output","genomicPredictions_ModelDirDom.rds"))
+
+```
+
+# Genomic mate predictions: cross usefulness
+
+
+
+# [TO DO] Write predictions to disk
+
+Add genetic groups and tidy format
+
+```{r}
+# unique_gids<-predModelA %>%
+#   dplyr::select(genomicPredOut) %>%
+#   unnest(genomicPredOut) %>%
+#   select(-varcomps) %>%
+#   unnest(gblups) %$%
+#   GID %>%
+#   unique
+# 
+# c1a<-unique_gids %>%
+#   grep("c1a",.,value = T,ignore.case = T) %>%
+#   union(.,unique_gids %>%
+#           grep("^F",.,value = T,ignore.case = T) %>%
+#           grep("c1b",.,value = T,ignore.case = T,invert = T))
+# c1b<-unique_gids%>% grep("c1b",.,value = T,ignore.case = T)
+# c2a<-unique_gids %>%
+#   grep("C2a",.,value = T,ignore.case = T) %>%
+#   grep("NR17",.,value = T,ignore.case = T)
+# c2b<-unique_gids %>%
+#   grep("C2b",.,value = T,ignore.case = T) %>%
+#   .[!. %in% c(c1a,c1b,c2a)]
+# c3a<-unique_gids %>%
+#   grep("C3a",.,value = T,ignore.case = T) %>%
+#   .[!. %in% c(c1a,c1b,c2a,c2b)]
+# c3b<-unique_gids %>%
+#   grep("NR20C3",.,value = T,ignore.case = T) %>%
+#   .[!. %in% c(c1a,c1b,c2a,c2b,c3a)]
+# nrTP<-setdiff(unique_gids,unique(c(c1a,c1b,c2a,c2b,c3a,c3b)))
+```
+
+Write CSV's
+
+```{r}
+# ## Format and write GEBV
+# predModelA %>% 
+#   select(Trait,genomicPredOut) %>% 
+#   unnest(genomicPredOut) %>% 
+#   select(-varcomps) %>% 
+#   unnest(gblups) %>% 
+#   select(-GETGV,-contains("PEV")) %>%
+#   spread(Trait,GEBV) %>% 
+#   mutate(Group=case_when(GID %in% nrTP ~ "nrTP",
+#                          GID %in% c1a ~ "C1a",
+#                          GID %in% c1b ~ "C1b",
+#                          GID %in% c2a ~ "C2a",
+#                          GID %in% c2b ~ "C2b",
+#                          GID %in% c3a ~ "C3a",
+#                          GID %in% c3b ~ "C3b")) %>% 
+#   select(Group,GID,any_of(traits)) %>% 
+#   arrange(desc(Group)) %>% 
+#   write.csv(., file = here::here("output","GEBV_NRCRI_ModelA_2021May03.csv"), row.names = F)
+# 
+# ## Format and write GETGV
+# predModelADE %>% 
+#   select(Trait,genomicPredOut) %>% 
+#   unnest(genomicPredOut) %>% 
+#   select(-varcomps) %>% 
+#   unnest(gblups) %>% 
+#   select(GID,Trait,GETGV) %>% 
+#   spread(Trait,GETGV) %>% 
+#   mutate(Group=case_when(GID %in% nrTP ~ "nrTP",
+#                          GID %in% c1a ~ "C1a",
+#                          GID %in% c1b ~ "C1b",
+#                          GID %in% c2a ~ "C2a",
+#                          GID %in% c2b ~ "C2b",
+#                          GID %in% c3a ~ "C3a",
+#                          GID %in% c3b ~ "C3b")) %>% 
+#   select(Group,GID,any_of(traits)) %>% 
+#   arrange(desc(Group)) %>% 
+#   write.csv(., file = here::here("output","GETGV_NRCRI_ModelADE_2021May03.csv"), row.names = F)
+# 
+# ### Make a unified "tidy" long-form: 
+# predModelA %>% 
+#   select(Trait,genomicPredOut) %>% 
+#   unnest(genomicPredOut) %>% 
+#   select(-varcomps) %>% 
+#   unnest(gblups) %>% 
+#   select(-GETGV) %>% 
+#   full_join(predModelADE %>% 
+#               select(Trait,genomicPredOut) %>% 
+#               unnest(genomicPredOut) %>% 
+#               select(-varcomps) %>% 
+#               unnest(gblups) %>% 
+#               rename(GEBV_modelADE=GEBV,
+#                      PEV_modelADE=PEVa) %>% 
+#               select(-genomicPredOut)) %>% 
+#   mutate(Group=case_when(GID %in% nrTP ~ "nrTP",
+#                          GID %in% c1a ~ "C1a",
+#                          GID %in% c1b ~ "C1b",
+#                          GID %in% c2a ~ "C2a",
+#                          GID %in% c2b ~ "C2b",
+#                          GID %in% c3a ~ "C3a",
+#                          GID %in% c3b ~ "C3b")) %>% 
+#   relocate(Group,.before = GID) %>% 
+#   write.csv(., file = here::here("output","genomicPredictions_NRCRI_2021May03.csv"), row.names = F)
+```
+
+
+
+
+# Results
+
+See [Results](07-Results.html): Home for plots and summary tables.
