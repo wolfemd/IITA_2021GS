@@ -17,7 +17,8 @@
 #### the vector of dominance effects ($d*$), to get $d=d*-\frac{b}{p}$
 
 runParentWiseCrossVal<-function(nrepeats,nfolds,seed=NULL,modelType,
-                                ncores=1,outName=NULL,
+                                ncores=1,nBLASthreads=NULL,
+                                outName=NULL,
                                 ped=ped,gid="GID",blups,
                                 dosages,grms,haploMat,recombFreqMat,
                                 selInd,SIwts = NULL,...){
@@ -35,7 +36,8 @@ runParentWiseCrossVal<-function(nrepeats,nfolds,seed=NULL,modelType,
   print("Fitting models to get marker effects")
   starttime<-proc.time()[3]
   markEffs<-getMarkEffs(parentfolds,blups=blups,gid=gid,modelType=modelType,
-                        grms=grms,dosages=dosages,ncores=ncores)
+                        grms=grms,dosages=dosages,
+                        ncores=ncores,nBLASthreads=nBLASthreads)
   print(paste0("Marker-effects Computed. Took  ",
                round((proc.time()[3] - starttime)/60/60,5)," hrs"))
 
@@ -91,7 +93,7 @@ runParentWiseCrossVal<-function(nrepeats,nfolds,seed=NULL,modelType,
   return(accuracy_out)
 }
 
-getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
+getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores,nBLASthreads=NULL){
 
   traintestdata<-parentfolds %>%
     dplyr::select(Repeat,Fold,trainset,testset) %>%
@@ -102,9 +104,12 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
     left_join(blups) %>%
     rename(blupsMat=blups)
 
-  fitModel<-possibly(function(sampleIDs,blupsMat,modelType,gid,grms,dosages,...){
+  fitModel<-function(sampleIDs,blupsMat,modelType,gid,grms,dosages,nBLASthreads,...){
     # debug
     # sampleIDs<-traintestdata$sampleIDs[[2]]; blupsMat<-traintestdata$blupsMat[[2]]
+
+    if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+    # workers in plan(multisession) need this call internal to the function, it seems.
 
     A<-grms[["A"]]
     if(modelType %in% c("AD","DirDom")){ D<-grms[["D"]] }
@@ -222,19 +227,18 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores){
 
     # return results
     return(results)
-  },otherwise = NA)
+  }
 
-  require(furrr); plan(multicore, workers = ncores)
+  require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
   traintestdata<-traintestdata %>%
     mutate(modelOut=future_pmap(.,fitModel,
                                 modelType=modelType,
                                 gid=gid,
                                 grms=grms,
-                                dosages=dosages),
+                                dosages=dosages,
+                                nBLASthreads=nBLASthreads),
            modelType=modelType)
-  # this is to remove conflicts with dplyr function select() downstream
-  # detach("package:sommer",unload = T); detach("package:MASS",unload = T)
 
   traintestdata %<>%
     select(-blupsMat,-sampleIDs) %>%
