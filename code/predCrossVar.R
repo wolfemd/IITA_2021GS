@@ -30,17 +30,17 @@ predCrossVars<-function(CrossesToPredict,modelType,
     AddEffectList<-NULL;
     if(predType=="VPM" & modelType=="AD"){ DomEffectList<-NULL; } }
 
-
   # Set-up a loop over the crosses
-  require(furrr); plan(multisession, workers = ncores)
+  require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
+  # require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
   crossespredicted<-CrossesToPredict %>%
     mutate(predVars=future_pmap(.,
                                 predOneCross,
                                 modelType=modelType,
-                                haploMat=haploMat,
-                                recombFreqMat=recombFreqMat,
+                                # haploMat=haploMat,
+                                # recombFreqMat=recombFreqMat,
                                 predType=predType,
                                 postMeanAddEffects=postMeanAddEffects,
                                 postMeanDomEffects=postMeanDomEffects,
@@ -83,6 +83,7 @@ predOneCross<-function(sireID,damID,modelType,
 
     # calc cross LD matrix
     progenyLD<-calcCrossLD(sireID,damID,recombFreqMat,haploMat)
+    rm(recombFreqMat,haploMat); gc()
 
     # Set-up loop over variance and covarance parameters
     ## Trait variances to-be-predicted
@@ -102,8 +103,8 @@ predOneCross<-function(sireID,damID,modelType,
                                          predOneCrossVar,
                                          modelType=modelType,
                                          progenyLD=progenyLD,
-                                         haploMat=haploMat,
-                                         recombFreqMat=recombFreqMat,
+                                         # haploMat=haploMat,
+                                         # recombFreqMat=recombFreqMat,
                                          predType=predType,
                                          postMeanAddEffects=postMeanAddEffects,
                                          postMeanDomEffects=postMeanDomEffects,
@@ -123,7 +124,7 @@ predOneCross<-function(sireID,damID,modelType,
 }
 # INTERNAL FUNCTION - predict one variance-covariance component for one cross
 predOneCrossVar<-function(Trait1,Trait2,progenyLD,modelType,
-                          haploMat,recombFreqMat,
+                          #haploMat,recombFreqMat,
                           predType,
                           postMeanAddEffects,
                           postMeanDomEffects=NULL,
@@ -168,6 +169,8 @@ predOneCrossVar<-function(Trait1,Trait2,progenyLD,modelType,
     #### PMV
     if(predType=="PMV"){ predVarD_pmv<-predVarD_vpm+sum(diag(progenyLDsq%*%postVarCovarOfDomEffects)) }
   }
+
+  rm(progenyLD,progenyLDsq); gc()
 
   # Tidy the results
   out<-tibble(predOf="VarA",predVar=predVarA_vpm)
@@ -219,12 +222,15 @@ predCrossMeans<-function(CrossesToPredict,predType,
   parents<-CrossesToPredict %$% union(sireID,damID)
   doseMat<-doseMat[parents,colnames(AddEffectList[[1]])]
 
-  require(furrr); plan(multisession, workers = ncores)
+  require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
+  #require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
   if(predType=="BV"){
     means<-means %>%
-      mutate(predictedMeans=future_map(Trait,function(Trait,nBLASthreads=nBLASthreads,...){
+      mutate(predictedMeans=future_map(Trait,function(Trait,
+                                                      nBLASthreads=nBLASthreads,
+                                                      ...){
 
         if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
 
@@ -242,7 +248,9 @@ predCrossMeans<-function(CrossesToPredict,predType,
 
   if(predType=="TGV"){
     means<-means %>%
-      mutate(predictedMeans=future_map(Trait,function(Trait,nBLASthreads=nBLASthreads,...){
+      mutate(predictedMeans=future_map(Trait,function(Trait,
+                                                      nBLASthreads=nBLASthreads,
+                                                      ...){
 
         if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
 

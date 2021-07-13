@@ -510,6 +510,9 @@ runGenomicPredictions<-function(modelType,
                         date.warning = F,
                         getPEV = returnPEV)
 
+    # Shrink the memory footprint
+    rm(grms,A); if(model %in% c("DirDom","AD")){ rm(D) };
+
     if(getMarkEffs==TRUE | modelType=="DirDom"){
 
       # Backsolve SNP effects
@@ -597,6 +600,10 @@ runGenomicPredictions<-function(modelType,
     # for modelType="DirDom", contains estimate of genome-wide homoz. effect
     fixeffs<-summary(fit)$betas
 
+    # Shrink the memory footprint again
+    rm(fit); gc()
+
+    # Collect results
     results<-tibble(gblups=list(gblups),
                     varcomps=list(varcomps),
                     fixeffs=list(fixeffs))
@@ -615,7 +622,8 @@ runGenomicPredictions<-function(modelType,
     return(results)
   }
 
-  require(furrr); plan(multisession, workers = ncores)
+  require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
+  #require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
   predictions<-blups %>%
     mutate(genomicPredOut=future_map(TrainingData,
@@ -817,15 +825,14 @@ predictCrosses<-function(modelType,
       mutate(Trait2=Trait1) %>%
       select(sireID,damID,predOf,Trait1,Trait2,predMean)
     ## Compute Var SELIND
-    require(furrr); plan(multisession, workers = ncores)
+    require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
+    # require(furrr); plan(multisession, workers = ncores)
     options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
     predvars %<>%
       nest(predVars=c(Trait1,Trait2,predVar)) %>%
       ## loop over each rep-fold-predOf-sireIDxdamID
       mutate(predVars=future_map(predVars,function(predVars,...){
-
-        if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
 
         gmat<-predVars %>%
           pivot_wider(names_from = "Trait2",
