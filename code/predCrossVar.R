@@ -6,7 +6,7 @@ predCrossVars<-function(CrossesToPredict,modelType,
                        AddEffectList,DomEffectList=NULL,
                        predType="VPM",
                        haploMat,recombFreqMat,
-                       ncores=1,...){
+                       ncores=1,nBLASthreads=NULL,...){
   starttime<-proc.time()[3]
   # Center posterior distribution of effects
   ## on posterior mean across MCMC samples
@@ -45,7 +45,8 @@ predCrossVars<-function(CrossesToPredict,modelType,
                                 postMeanAddEffects=postMeanAddEffects,
                                 postMeanDomEffects=postMeanDomEffects,
                                 AddEffectList=AddEffectList,
-                                DomEffectList=DomEffectList)) %>%
+                                DomEffectList=DomEffectList,
+                                nBLASthreads=nBLASthreads)) %>%
     unnest(predVars)
   totcomputetime<-proc.time()[3]-starttime
   print(paste0("Done predicting fam vars. ",
@@ -59,8 +60,12 @@ predOneCross<-function(sireID,damID,modelType,
                        predType,
                        postMeanAddEffects,
                        postMeanDomEffects=NULL,
-                       AddEffectList=NULL,DomEffectList=NULL,...){
+                       AddEffectList=NULL,DomEffectList=NULL,
+                       nBLASthreads,...){
   starttime<-proc.time()[3]
+
+  if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+
   # Before predicting variances
   # check for and remove SNPs that
   # won't segregate, i.e. are fixed in parents
@@ -208,7 +213,7 @@ quadform<-function(D,x,y){ return(as.numeric(colSums(x*(D%*%y)))) }
 predCrossMeans<-function(CrossesToPredict,predType,
                          AddEffectList,DomEffectList=NULL,
                          doseMat,
-                         ncores=1,...){
+                         ncores=1,nBLASthreads=NULL,...){
 
   means<-tibble(Trait=names(AddEffectList))
   parents<-CrossesToPredict %$% union(sireID,damID)
@@ -219,7 +224,10 @@ predCrossMeans<-function(CrossesToPredict,predType,
 
   if(predType=="BV"){
     means<-means %>%
-      mutate(predictedMeans=future_map(Trait,function(Trait,...){
+      mutate(predictedMeans=future_map(Trait,function(Trait,nBLASthreads=nBLASthreads,...){
+
+        if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+
         parentGEBVs<-tcrossprod(doseMat,AddEffectList[[Trait]])
 
         predmeans<-CrossesToPredict %>%
@@ -234,7 +242,10 @@ predCrossMeans<-function(CrossesToPredict,predType,
 
   if(predType=="TGV"){
     means<-means %>%
-      mutate(predictedMeans=future_map(Trait,function(Trait,...){
+      mutate(predictedMeans=future_map(Trait,function(Trait,nBLASthreads=nBLASthreads,...){
+
+        if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+
         predmeans<-CrossesToPredict %>%
           mutate(predOf="MeanTGV",
                  predMean=map2_dbl(sireID,damID,function(sireID,damID,...){

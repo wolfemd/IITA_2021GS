@@ -659,7 +659,8 @@ predictCrosses<-function(modelType,
                          selInd,SIwts = NULL,
                          CrossesToPredict,
                          snpeffs,dosages,
-                         haploMat,recombFreqMat,ncores){
+                         haploMat,recombFreqMat,
+                         ncores=1,nBLASthreads=NULL){
   ## Format SNP effect matrices ~~~~~~~~~~~~~~~~~~~~~~~~
 
   AlleleSubEffectList<-snpeffs$allelesubsnpeff %>%
@@ -689,7 +690,7 @@ predictCrosses<-function(modelType,
                             modelType="A",
                             haploMat=haploMat,
                             recombFreqMat=recombFreqMat,
-                            ncores=ncores) %>%
+                            ncores=ncores,nBLASthreads=nBLASthreads) %>%
       unnest(predVars) %>%
       mutate(predOf="VarBV") }
   if(modelType=="AD"){
@@ -699,7 +700,7 @@ predictCrosses<-function(modelType,
                             modelType="AD",
                             haploMat=haploMat,
                             recombFreqMat=recombFreqMat,
-                            ncores=ncores) %>%
+                            ncores=ncores,nBLASthreads=nBLASthreads) %>%
       unnest(predVars) %>%
       mutate(predOf=ifelse(predOf=="VarA","VarBV","VarDD"))
   }
@@ -710,14 +711,14 @@ predictCrosses<-function(modelType,
                               modelType="AD", # no "DirDom" model in predCrossVars() nor is it needed
                               haploMat=haploMat,
                               recombFreqMat=recombFreqMat,
-                              ncores=ncores)
+                              ncores=ncores,nBLASthreads=nBLASthreads)
     predVarBV<-predCrossVars(CrossesToPredict=CrossesToPredict,
                              AddEffectList=AlleleSubEffectList,
                              DomEffectList=NULL,
                              modelType="A", # no "DirDom" model in predCrossVars() nor is it needed
                              haploMat=haploMat,
                              recombFreqMat=recombFreqMat,
-                             ncores=ncores)
+                             ncores=ncores,nBLASthreads=nBLASthreads)
     predvars<-predVarBV %>%
       unnest(predVars) %>%
       mutate(predOf="VarBV") %>%
@@ -729,7 +730,10 @@ predictCrosses<-function(modelType,
   ### predict MeanBVs
   predmeans<-predCrossMeans(AddEffectList=AlleleSubEffectList,
                             CrossesToPredict=CrossesToPredict,
-                            doseMat=dosages,ncores=ncores,predType="BV")
+                            doseMat=dosages,
+                            ncores=ncores,
+                            nBLASthreads=nBLASthreads,
+                            predType="BV")
   if(modelType=="AD"){
     ### DO NOT predict MeanTGV ~but~ duplicate MeanBV as MeanTGV prediction
     ### there IS predVarTGV for this model, output predUC-TGV (i.e. UC_variety)
@@ -746,7 +750,9 @@ predictCrosses<-function(modelType,
       bind_rows(predCrossMeans(AddEffectList=AddEffectList,
                                DomEffectList=DomEffectList,
                                CrossesToPredict=CrossesToPredict,
-                               doseMat=dosages,ncores=ncores,
+                               doseMat=dosages,
+                               ncores=ncores,
+                               nBLASthreads=nBLASthreads,
                                predType="TGV"))
   }
 
@@ -818,7 +824,10 @@ predictCrosses<-function(modelType,
     predvars %<>%
       nest(predVars=c(Trait1,Trait2,predVar)) %>%
       ## loop over each rep-fold-predOf-sireIDxdamID
-      mutate(predVars=future_map(predVars,function(predVars){
+      mutate(predVars=future_map(predVars,function(predVars,...){
+
+        if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+
         gmat<-predVars %>%
           pivot_wider(names_from = "Trait2",
                       values_from = "predVar") %>%
