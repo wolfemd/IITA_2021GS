@@ -740,7 +740,6 @@ predictCrosses<-function(modelType,
     predmeans %<>%
       bind_rows(predmeans %>% mutate(predOf="TGV")) }
 
-  predmeans
   if(modelType=="DirDom"){
     ### predict MeanTGVs
     ####  Prediction of MeanTGV is only available for the DirDom model
@@ -805,7 +804,7 @@ predictCrosses<-function(modelType,
     predmeans %<>%
       select(-Trait2) %>%
       spread(Trait1,predMean) %>%
-      select(sireID,damID,predOf,all_of(names(SIwts))) %>%
+      select(sireID,damID,predOf,all_of(traits)) %>%
       mutate(SELIND=as.numeric((predmeans %>%
                                   select(-Trait2) %>%
                                   spread(Trait1,predMean) %>%
