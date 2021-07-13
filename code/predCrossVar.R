@@ -32,7 +32,7 @@ predCrossVars<-function(CrossesToPredict,modelType,
 
 
   # Set-up a loop over the crosses
-  require(furrr); plan(multicore, workers = ncores)
+  require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
   crossespredicted<-CrossesToPredict %>%
@@ -214,7 +214,7 @@ predCrossMeans<-function(CrossesToPredict,predType,
   parents<-CrossesToPredict %$% union(sireID,damID)
   doseMat<-doseMat[parents,colnames(AddEffectList[[1]])]
 
-  require(furrr); plan(multicore, workers = ncores)
+  require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
   if(predType=="BV"){

@@ -446,7 +446,7 @@ runCrossVal<-function(TrainTestData,modelType,grms,nrepeats,nfolds,ncores=1,
   },otherwise = NA)
   ## Run models across all train-test splits
   ## Parallelize
-  require(furrr); plan(multicore, workers = ncores)
+  require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
   cvsamples<-cvsamples %>%
@@ -812,7 +812,7 @@ predictCrosses<-function(modelType,
       mutate(Trait2=Trait1) %>%
       select(sireID,damID,predOf,Trait1,Trait2,predMean)
     ## Compute Var SELIND
-    require(furrr); plan(multicore, workers = ncores)
+    require(furrr); plan(multisession, workers = ncores)
     options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
     predvars %<>%
