@@ -12,36 +12,85 @@ Available data and software make it hypothetically possible to predict cross var
 
 New information also adds new sources of uncertainty:
 
-- Phasing error
-- Use of a (or various) genetic map(s) to predict recombination frequencies
-- Inherent uncertainty in marker effects and their effect on variance prediction
+-   Phasing error
+-   Use of a (or various) genetic map(s) to predict recombination frequencies
+-   Inherent uncertainty in marker effects and their effect on variance prediction
 
 We used cross-validation to estimate the accuracy of predicting means, variances and the usefulness of crosses on selection indices. That analysis leveraged a high-quality validated pedigree-based phasing pipeline. That pipeline is considerably more involved and may not be implementable on the entire breeding germplasm.
 
 Here I test cross-variance prediction in our current breeding pipeline's available data. We will assess the whether and how to start using cross variance predictions in practice.
 
-# Cross-validation study
+[**See the Results here!**](07-Results.html)
 
-1. [Prepare training dataset](01-cleanTPdata.html): Download data from DB, "Clean" and format DB data. Use the standard pipeline to obtain complete breeding trial data for IITA, generate de-regressed BLUPs for downstream analysis.
-  * Copy `gsFunctions.R` from `code/` of most recent NextGen prediction, [NRCRI C3b predicted April 2021](https://wolfemd.github.io/NRCRI_2021GS/). 
-  * Reference [previous analysis for IITA (2020)](https://wolfemd.github.io/IITA_2020GS/) in case there are variations.
+# Analysis steps
+
+1.  [Prepare training dataset](01-cleanTPdata.html): Download data from DB, "Clean" and format DB data. Use the standard pipeline to obtain complete breeding trial data for IITA, generate de-regressed BLUPs for downstream analysis.
+
+    -   Copy `gsFunctions.R` from `code/` of most recent NextGen prediction, [NRCRI C3b predicted April 2021](https://wolfemd.github.io/NRCRI_2021GS/).
+
+    -   Reference [previous analysis for IITA (2020)](https://wolfemd.github.io/IITA_2020GS/) in case there are variations.
+
 2.  [Get BLUPs combining all trial data](02-GetBLUPs.html): Combine data from all trait-trials to get BLUPs for downstream genomic prediction. Fit mixed-model to multi-trial dataset and extract BLUPs, de-regressed BLUPs and weights. Include two rounds of outlier removal.
-3. [Validate the pedigree obtained from cassavabase](03-validatePedigree.html): Before setting up a cross-validation scheme for  predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown relationships or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.
 
-4. [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map _and_ recombination frequency matrix, for use in predictions. 
+3.  [Validate the pedigree obtained from cassavabase](03-validatePedigree.html): Before setting up a cross-validation scheme for predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown relationships or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.
 
-5. [Parent-wise cross-validation](05-CrossValidation.html): Compute parent-wise cross-validation folds using the validated pedigree. Fit models to get marker effects and make subsequent predictions of cross means and (co)variances.
+4.  [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map *and* recombination frequency matrix, for use in predictions.
 
-6. [Results](06-Results.html): Home for plots and summary tables.
+5.  [Parent-wise and standard cross-validation](05-CrossValidation.html):
+
+    -   Compute parent-wise cross-validation folds using the validated pedigree. Fit models to get marker effects and make subsequent predictions of cross means and (co)variances.
+    -   **Models "AD"** (classic BV+DD partition of additive+dominance) and **"DirDom"** (genotypic add+dom partition with genome-wide homozygosity effect).
+    -   Include use of selection index weights to compute index accuracy.
+    -   Include new models and index predictions in standard fold cross-validation in addition to the parent-wise scheme / function.
+
+6.  [Genomic predictions](06-GenomicPredictions.html):
+
+    -   (A) Standard genomic prediction of individual GEBV and GETGV for all selection candidates using all available data. (B) Predict cross means and variances for genomic mate selection.
+
+    -   Include models "AD" *and* "DirDom"
+
+    -   Include prediction of selection index GEBV/GETGV and $UC^{SI}_{parent}$/$UC^{SI}_{variety}$.
+
+    -   New functions at `gmsFunctions.R` in `code/`
+
+7.  [Results](07-Results.html): Home for plots and summary tables.
+
+# Data and code repository access
+
+[**FULL REPOSITORY DOWNLOAD FROM CASSAVABASE FTP SERVER**](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/output/)
+
+or
+
+[**DOWNLOAD FROM GitHub**](https://github.com/wolfemd/implementGMSinCassava/tree/master/output)**\***
+
+\*GitHub only hosts files max 50 Mb.
+
+# Guide to key directories and file names
+
+1.  `data/`: raw data (e.g. unimputed SNP data)
+2.  `output/`: outputs (e.g. imputed SNP data)
+3.  `analysis/`: most code and workflow documented in **.Rmd** files
+4.  `docs/`: compiled **.html**, "knitted" from **.Rmd**
+5.  `code/`: supporting functions sourced in `analysis/*.Rmd`'s.
+
+**FILES OF INTEREST**: everything is in the `output/` sub-directory.
+
+-   **GEBVs for parent selection:** \`\`
+-   **GETGVs for variety advancement:** \`\`
+-   Kinship matrices, dosages, haplotype matrix, recombination frequency matrix, genetic map files
+
+# Analyses To Do
 
 **Additional future analyses to do:**
 
-1. PHG imputed and phased marker data
-2. AWC's genetic map
-3. Multi-trait and/or Bayesian models
-4. Other efforts to improve variance prediction accuracy?
-5. Simulation to explore factors impacting estimate of accuracy
-  - Impact of phasing switch errors
-	- Quality and quantity of data available on parents
-	- Relatedness of parents
-	- What is the relationship between the true accuracy and estimate of accuracy?
+1.  PHG imputed and phased marker data
+2.  AWC's genetic map
+3.  Multi-trait and/or Bayesian models
+4.  Other efforts to improve variance prediction accuracy?
+5.  Simulation to explore factors impacting estimate of accuracy
+
+-   Impact of phasing switch errors
+
+    -   Quality and quantity of data available on parents
+    -   Relatedness of parents
+    -   What is the relationship between the true accuracy and estimate of accuracy?
