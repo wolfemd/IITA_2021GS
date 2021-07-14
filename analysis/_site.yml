@@ -20,7 +20,7 @@ navbar:
   - text: Genomic (mate) predictions
     href: 06-GenomicPredictions.html
   - text: Results
-    href: 06-Results.html
+    href: 07-Results.html
   - text: Other
     menu:
     - text: About

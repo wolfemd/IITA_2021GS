@@ -162,7 +162,7 @@ saveRDS(dbdata,file=here::here("output","IITA_blupsForModelTraining_twostage_asr
 
 # Results
 
-See [Results](05-Results.html): Home for plots and summary tables.
+See [Results](07-Results.html): Home for plots and summary tables.
 
 # Next step
 
