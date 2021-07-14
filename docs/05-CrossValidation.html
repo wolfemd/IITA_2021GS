@@ -14,7 +14,7 @@
 
 <title>Parent-wise cross-validation to check the accuracy of predicting cross (co)-variances</title>
 
-<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -444,6 +444,9 @@ div.tocify {
   <a href="05-CrossValidation.html">Cross-validation</a>
 </li>
 <li>
+  <a href="06-GenomicPredictions.html">Genomic (mate) predictions</a>
+</li>
+<li>
   <a href="06-Results.html">Results</a>
 </li>
 <li class="dropdown">
@@ -465,7 +468,7 @@ div.tocify {
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/wolfemd/implementGMSinCassava">
-    <span class="fas fa-github"></span>
+    <span class="fa fa-github"></span>
      
     Source code
   </a>
@@ -506,7 +509,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-06-18
+<strong>Last updated:</strong> 2021-07-14
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -597,16 +600,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatreefa20501dee30687835944226167a35bb119ab46dtargetblankfa20501a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/implementGMSinCassava/tree/fa20501dee30687835944226167a35bb119ab46d" target="_blank">fa20501</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree772750a8e35e6472113d69e6bc1eff0101aa137ftargetblank772750aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/implementGMSinCassava/tree/772750a8e35e6472113d69e6bc1eff0101aa137f" target="_blank">772750a</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatreefa20501dee30687835944226167a35bb119ab46dtargetblankfa20501a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree772750a8e35e6472113d69e6bc1eff0101aa137ftargetblank772750aa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/implementGMSinCassava/tree/fa20501dee30687835944226167a35bb119ab46d" target="_blank">fa20501</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/implementGMSinCassava/tree/772750a8e35e6472113d69e6bc1eff0101aa137f" target="_blank">772750a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -626,12 +629,12 @@ Ignored files:
 Untracked files:
     Untracked:  accuracies.png
     Untracked:  analysis/docs/
+    Untracked:  analysis/inputsForSimulation.Rmd
     Untracked:  analysis/speedUpPredCrossVar.Rmd
     Untracked:  code/AlphaAssign-Python/
     Untracked:  code/calcGameticLD.cpp
     Untracked:  code/col_sums.cpp
     Untracked:  code/convertDart2vcf.R
-    Untracked:  code/gsFunctions.R
     Untracked:  code/helloworld.cpp
     Untracked:  code/imputationFunctions.R
     Untracked:  code/matmult.cpp
@@ -642,6 +645,7 @@ Untracked files:
     Untracked:  data/GBSdataMasterList_31818.csv
     Untracked:  data/IITA_GBStoPhenoMaster_33018.csv
     Untracked:  data/NRCRI_GBStoPhenoMaster_40318.csv
+    Untracked:  data/PedigreeGeneticGainCycleTime_aafolabi_01122020.xls
     Untracked:  data/blups_forCrossVal.rds
     Untracked:  data/chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam
     Untracked:  data/dosages_IITA_filtered_2021May13.rds
@@ -657,12 +661,27 @@ Untracked files:
     Untracked:  output/IITA_trials_NOT_identifiable.csv
     Untracked:  output/crossValPredsA.rds
     Untracked:  output/crossValPredsAD.rds
+    Untracked:  output/cvAD_5rep5fold_markerEffects.rds
+    Untracked:  output/cvAD_5rep5fold_meanPredAccuracy.rds
+    Untracked:  output/cvAD_5rep5fold_parentfolds.rds
+    Untracked:  output/cvAD_5rep5fold_predMeans.rds
+    Untracked:  output/cvAD_5rep5fold_predVars.rds
+    Untracked:  output/cvAD_5rep5fold_varPredAccuracy.rds
+    Untracked:  output/cvDirDom_5rep5fold_markerEffects.rds
+    Untracked:  output/cvDirDom_5rep5fold_meanPredAccuracy.rds
+    Untracked:  output/cvDirDom_5rep5fold_parentfolds.rds
+    Untracked:  output/cvDirDom_5rep5fold_predMeans.rds
+    Untracked:  output/cvDirDom_5rep5fold_predVars.rds
+    Untracked:  output/cvDirDom_5rep5fold_varPredAccuracy.rds
     Untracked:  output/cvMeanPredAccuracyA.rds
     Untracked:  output/cvMeanPredAccuracyAD.rds
     Untracked:  output/cvPredMeansA.rds
     Untracked:  output/cvPredMeansAD.rds
     Untracked:  output/cvVarPredAccuracyA.rds
     Untracked:  output/cvVarPredAccuracyAD.rds
+    Untracked:  output/estimateSelectionError.rds
+    Untracked:  output/genomicPredictions_ModelAD.rds
+    Untracked:  output/genomicPredictions_ModelDirDom.rds
     Untracked:  output/kinship_A_IITA_2021May13.rds
     Untracked:  output/kinship_D_IITA_2021May13.rds
     Untracked:  output/markEffsTest.rds
@@ -726,6 +745,125 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/772750a8e35e6472113d69e6bc1eff0101aa137f/analysis/05-CrossValidation.Rmd" target="_blank">772750a</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+DirDom model and selection index calc fully integrated functions.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/97db806ef228e361953febf72cde7ac4d93b5c5f/analysis/05-CrossValidation.Rmd" target="_blank">97db806</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-11
+</td>
+<td>
+Work shown finding and fixing a bug where at least one getMarkEffs model failed. Problem was with use of plan(multicore) + OpenBLAS both using forking. Instead use plan(multisession).
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/2bc964461c383f1636749b3b31677818f153b5a8/analysis/05-CrossValidation.Rmd" target="_blank">2bc9644</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-09
+</td>
+<td>
+Re-run cross-val with meanPredAccuracy SELIND handling fixed, but debug work not shown anymore.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/889d98a8877bffbd1f1811c35f1313c757fc0a02/analysis/05-CrossValidation.Rmd" target="_blank">889d98a</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-09
+</td>
+<td>
+test and fix bug in meanPredAccuracy() output when SIwts contain only subset of traits predicted.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/4308b879f5ff64f0ead3a15bef4775c39dc48d46/analysis/05-CrossValidation.Rmd" target="_blank">4308b87</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-08
+</td>
+<td>
+Full run 5-reps x 5-fold parent-wise cross-val both models DirDom and AD.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/7888dee7e023ce6eac09310fdf46d1db27a3539c/analysis/05-CrossValidation.Rmd" target="_blank">7888dee</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-08
+</td>
+<td>
+Work fully shown, testing and integrating DirDom model into crossval funcs. Now using R inside a singularity via rocker. Controlling OpenBLAS inside R session with RhpcBLASctl::blas_set_num_threads() and much more.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/implementGMSinCassava/5e45aac791be42c4e432387023b49a41d58ecfe6/docs/05-CrossValidation.html" target="_blank">5e45aac</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-06-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -885,85 +1023,319 @@ Cross-validation code IN PROGRESS. Currently working on computeVarPredAccuracy.
 <p>For the sake of testing a simple integration into the in-use pipeline, I want to try univariate REML to get the marker effects, which I’ll subsequently use for the cross-validation.</p>
 <p>Revised the functions in <strong><code>package:predCrossVar</code></strong> to increase the computational efficiency. Not yet included into the actual R package but instead sourced from <code>code/predCrossVar.R</code>. Additional speed increases were achieved by extra testing to optimize balance of <code>OMP_NUM_THREADS</code> setting (multi-core BLAS) and parallel processing of the crosses-being-predicted. Improvements will benefit users predicting with REML / Bayesian-VPM, but probably worse for Bayesian-PMV.</p>
 </div>
-<div id="run-parent-wise-cross-validation" class="section level1">
-<h1>Run parent-wise cross-validation</h1>
-<p>Fully-tested <code>runParentWiseCrossVal()</code> and component functions are in the <code>code/parentWiseCrossVal.R</code> script. Below, source it and use it for a full cross-validation run.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /home/jj332_cas/marnin/implementGMSinCassava/<span class="kw">;</span> </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH=</span>/programs/R-4.0.5clean-p/bin:<span class="va">$PATH</span><span class="kw">;</span> </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># for a 112 core machine. Use ncores=20 below</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OMP_NUM_THREADS=</span>5<span class="kw">;</span> </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span><span class="kw">;</span> </span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="co"># initiate R session</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tidyverse); <span class="fu">require</span>(magrittr); </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># SOURCE CORE FUNCTIONS</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;code&quot;</span>,<span class="st">&quot;parentWiseCrossVal.R&quot;</span>))</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;code&quot;</span>,<span class="st">&quot;predCrossVar.R&quot;</span>))</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># PEDIGREE</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>ped<span class="ot">&lt;-</span><span class="fu">read.table</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;verified_ped.txt&quot;</span>),</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">header =</span> T, <span class="at">stringsAsFactors =</span> F) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">GID=</span>FullSampleName,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">damID=</span>DamID,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">sireID=</span>SireID) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(GID,sireID,damID)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only families with _at least_ 2 offspring</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>ped <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">semi_join</span>(ped <span class="sc">%&gt;%</span> <span class="fu">count</span>(sireID,damID) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(n<span class="sc">&gt;</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>())</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># BLUPs</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>blups<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;blups_forCrossVal.rds&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>varcomp)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># GENOMIC RELATIONSHIP MATRICES (GRMS)</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>grms<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">A=</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;kinship_A_IITA_2021May13.rds&quot;</span>)),</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>           <span class="at">D=</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;kinship_D_IITA_2021May13.rds&quot;</span>)))</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># DOSAGE MATRIX</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>dosages<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;dosages_IITA_filtered_2021May13.rds&quot;</span>))</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># RECOMBINATION FREQUENCY MATRIX</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>recombFreqMat<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;recombFreqMat_1minus2c_2021May13.rds&quot;</span>))</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># HAPLOTYPE MATRIX</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="do">## keep only haplos for parents-in-the-pedigree</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="do">## those which will be used in prediction, saves memory</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>haploMat<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;haps_IITA_filtered_2021May13.rds&quot;</span>))</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>parents<span class="ot">&lt;-</span><span class="fu">union</span>(ped<span class="sc">$</span>sireID,ped<span class="sc">$</span>damID) </span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>parenthaps<span class="ot">&lt;-</span><span class="fu">sort</span>(<span class="fu">c</span>(<span class="fu">paste0</span>(parents,<span class="st">&quot;_HapA&quot;</span>),</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">paste0</span>(parents,<span class="st">&quot;_HapB&quot;</span>)))</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>haploMat<span class="ot">&lt;-</span>haploMat[parents,<span class="fu">colnames</span>(recombFreqMat)]</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co"># SELECTION INDEX WEIGHTS</span></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="do">## from IYR+IK</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="do">## note that not ALL predicted traits are on index</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>SIwts<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="at">logFYLD=</span><span class="dv">20</span>,</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>         <span class="at">HI=</span><span class="dv">10</span>,</span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>         <span class="at">DM=</span><span class="dv">15</span>,</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>         <span class="at">MCMDS=</span><span class="sc">-</span><span class="dv">10</span>,</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>         <span class="at">logRTNO=</span><span class="dv">12</span>,</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>         <span class="at">logDYLD=</span><span class="dv">20</span>,</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>         <span class="at">logTOPYLD=</span><span class="dv">15</span>,</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>         <span class="at">PLTHT=</span><span class="dv">10</span>) </span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cvAD_1rep<span class="ot">&lt;-</span><span class="fu">runParentWiseCrossVal</span>(<span class="at">nrepeats=</span><span class="dv">1</span>,<span class="at">nfolds=</span><span class="dv">5</span>,<span class="at">seed=</span><span class="dv">53</span>,<span class="at">modelType=</span><span class="st">&quot;AD&quot;</span>,</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">ncores=</span><span class="dv">20</span>,<span class="at">outName=</span><span class="st">&quot;output/cvAD_1rep&quot;</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">ped=</span>ped,<span class="at">gid=</span><span class="st">&quot;GID&quot;</span>,<span class="at">blups=</span>blups,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">dosages=</span>dosages,<span class="at">haploMat=</span>haploMat,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">grms=</span>grms,<span class="at">recombFreqMat =</span> recombFreqMat,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">selInd =</span> <span class="cn">TRUE</span>, <span class="at">SIwts =</span> SIwts)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cvAD_1rep,here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;cvAD_1rep_predAccuracy.rds&quot;</span>))</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cvAD_5rep<span class="ot">&lt;-</span><span class="fu">runParentWiseCrossVal</span>(<span class="at">nrepeats=</span><span class="dv">5</span>,<span class="at">nfolds=</span><span class="dv">5</span>,<span class="at">seed=</span><span class="dv">0407</span>,<span class="at">modelType=</span><span class="st">&quot;AD&quot;</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">ncores=</span><span class="dv">20</span>,<span class="at">outName=</span><span class="st">&quot;output/cvAD_1rep&quot;</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">ped=</span>ped,<span class="at">gid=</span><span class="st">&quot;GID&quot;</span>,<span class="at">blups=</span>blups,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">dosages=</span>dosages,<span class="at">haploMat=</span>haploMat,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">grms=</span>grms,<span class="at">recombFreqMat =</span> recombFreqMat,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">selInd =</span> <span class="cn">TRUE</span>, <span class="at">SIwts =</span> SIwts)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cvAD_5rep,here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;cvAD_5rep_predAccuracy.rds&quot;</span>))</span></code></pre></div>
+<div id="set-up-server-computing-env." class="section level1">
+<h1>Set-up server computing env.</h1>
+<p>Use a a singularity image from the rocker project, as recommended by Qi Sun to get an OpenBLAS-linked R environment that packages can easily be installed on.</p>
+<p><strong>This first chunk is one-time only and doesn’t take long. Saves a 650Mb <code>*.sif</code> file to server’s /workdir/</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># copy the project data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /home/jj332_cas/marnin/<span class="kw">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-R</span> implementGMSinCassava /home/<span class="va">$USER</span><span class="kw">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the project directory can be in my networked folder for 2 reasons:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) singularity will automatically recognize and be able to access it</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) My analyses not read/write intensive; don&#39;t break server rules/etiquette </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># set up a working directory on the remote machine</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> /workdir/<span class="va">$USER</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /workdir/<span class="va">$USER</span>/<span class="kw">;</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># pull a singularity image and save in the file rocker.sif</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># next time you use the rocker.sif file to start the container</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> pull rocker.sif docker://rocker/tidyverse:latest<span class="kw">;</span></span></code></pre></div>
+<p>For analysis, operate each R session within a singularity Linux shell within a screen shell.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) start a screen shell</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span><span class="kw">;</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) start the singularity Linux shell inside that</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> shell /workdir/<span class="va">$USER</span>/rocker.sif<span class="kw">;</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Project directory, so R will use as working dir.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /home/mw489/implementGMSinCassava/<span class="kw">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Start R</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span></code></pre></div>
+</div>
+<div id="parent-wise-cross-validation" class="section level1">
+<h1>Parent-wise cross-validation</h1>
+<p>Fully-tested <code>runParentWiseCrossVal()</code> and component functions are in the <code>code/parentWiseCrossVal.R</code> script.</p>
+<p>Below, source it and use it for a full cross-validation run.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(c(&quot;RhpcBLASctl&quot;,&quot;here&quot;,&quot;rsample&quot;,&quot;sommer&quot;,&quot;psych&quot;,&quot;future.callr&quot;,&quot;furrr&quot;,&quot;lme4&quot;))</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&#39;future.callr&#39;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tidyverse); <span class="fu">require</span>(magrittr); </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 5 threads per Rsession for matrix math (openblas)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>RhpcBLASctl<span class="sc">::</span><span class="fu">blas_set_num_threads</span>(<span class="dv">5</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># SOURCE CORE FUNCTIONS</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;code&quot;</span>,<span class="st">&quot;parentWiseCrossVal.R&quot;</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;code&quot;</span>,<span class="st">&quot;predCrossVar.R&quot;</span>))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># PEDIGREE</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>ped<span class="ot">&lt;-</span><span class="fu">read.table</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;verified_ped.txt&quot;</span>),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">header =</span> T, <span class="at">stringsAsFactors =</span> F) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">GID=</span>FullSampleName,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">damID=</span>DamID,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">sireID=</span>SireID) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(GID,sireID,damID)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only families with _at least_ 2 offspring</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>ped <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">semi_join</span>(ped <span class="sc">%&gt;%</span> <span class="fu">count</span>(sireID,damID) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(n<span class="sc">&gt;</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>())</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># BLUPs</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>blups<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;blups_forCrossVal.rds&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>varcomp)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co"># GENOMIC RELATIONSHIP MATRICES (GRMS)</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>grms<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">A=</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;kinship_A_IITA_2021May13.rds&quot;</span>)),</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>           <span class="at">D=</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">&quot;kinship_domGenotypic_IITA_2021July5.rds&quot;</span>)))</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="do">## using A+domGenotypic (instead of domClassic used previously)</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="do">## will achieve appropriate dom effects for predicting family mean TGV</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="do">## but resulting add effects WILL NOT represent allele sub. effects and thus</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="do">## predictions won&#39;t equal GEBV, allele sub. effects will be post-computed</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="do">## as alpha = a + d(q-p)</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># DOSAGE MATRIX</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>dosages<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;dosages_IITA_filtered_2021May13.rds&quot;</span>))</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co"># RECOMBINATION FREQUENCY MATRIX</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>recombFreqMat<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;recombFreqMat_1minus2c_2021May13.rds&quot;</span>))</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="co"># HAPLOTYPE MATRIX</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="do">## keep only haplos for parents-in-the-pedigree</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="do">## those which will be used in prediction, saves memory</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>haploMat<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;haps_IITA_filtered_2021May13.rds&quot;</span>))</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>parents<span class="ot">&lt;-</span><span class="fu">union</span>(ped<span class="sc">$</span>sireID,ped<span class="sc">$</span>damID) </span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>parenthaps<span class="ot">&lt;-</span><span class="fu">sort</span>(<span class="fu">c</span>(<span class="fu">paste0</span>(parents,<span class="st">&quot;_HapA&quot;</span>),</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">paste0</span>(parents,<span class="st">&quot;_HapB&quot;</span>)))</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>haploMat<span class="ot">&lt;-</span>haploMat[parenthaps,<span class="fu">colnames</span>(recombFreqMat)]</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="co"># SELECTION INDEX WEIGHTS</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="do">## from IYR+IK</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="do">## note that not ALL predicted traits are on index</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>SIwts<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="at">logFYLD=</span><span class="dv">20</span>,</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>         <span class="at">HI=</span><span class="dv">10</span>,</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>         <span class="at">DM=</span><span class="dv">15</span>,</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>         <span class="at">MCMDS=</span><span class="sc">-</span><span class="dv">10</span>,</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>         <span class="at">logRTNO=</span><span class="dv">12</span>,</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>         <span class="at">logDYLD=</span><span class="dv">20</span>,</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>         <span class="at">logTOPYLD=</span><span class="dv">15</span>,</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>         <span class="at">PLTHT=</span><span class="dv">10</span>) </span></code></pre></div>
+<div id="modeldirdom" class="section level2">
+<h2>model=DirDom</h2>
+<p>Server 1: modelType=“DirDom”</p>
+<p>cbsulm17 - 112 cores, 512 GB RAM</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cvDirDom_5rep5fold<span class="ot">&lt;-</span><span class="fu">runParentWiseCrossVal</span>(<span class="at">nrepeats=</span><span class="dv">5</span>,<span class="at">nfolds=</span><span class="dv">5</span>,<span class="at">seed=</span><span class="dv">84</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">modelType=</span><span class="st">&quot;DirDom&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">ncores=</span><span class="dv">20</span>,<span class="at">nBLASthreads=</span><span class="dv">5</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">outName=</span><span class="st">&quot;output/cvDirDom_5rep5fold&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">ped=</span>ped,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">blups=</span>blups,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">dosages=</span>dosages,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">haploMat=</span>haploMat,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">grms=</span>grms,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">recombFreqMat =</span> recombFreqMat,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">selInd =</span> <span class="cn">TRUE</span>, <span class="at">SIwts =</span> SIwts)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cvDirDom_5rep5fold,here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;cvDirDom_5rep5fold_predAccuracy.rds&quot;</span>))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Marker-effects Computed. Took  2.3851 hrs&quot;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Predicting cross variances and covariances&quot;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Joining, by = c(&quot;Repeat&quot;, &quot;Fold&quot;)</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 59.08 mins for 198 crosses&quot;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 18.63 mins for 198 crosses&quot;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 64.82 mins for 216 crosses&quot;</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 20.41 mins for 216 crosses&quot;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 46.42 mins for 156 crosses&quot;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 14.94 mins for 156 crosses&quot;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 63.45 mins for 210 crosses&quot;</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 19.8 mins for 210 crosses&quot;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 50.62 mins for 171 crosses&quot;</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 16.26 mins for 171 crosses&quot;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 49.87 mins for 163 crosses&quot;</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 16.2 mins for 163 crosses&quot;</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 73.37 mins for 253 crosses&quot;</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 23.59 mins for 253 crosses&quot;</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 56.32 mins for 190 crosses&quot;</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 18.44 mins for 190 crosses&quot;</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 47.33 mins for 161 crosses&quot;</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 15.79 mins for 161 crosses&quot;</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 59.18 mins for 189 crosses&quot;</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 18.67 mins for 189 crosses&quot;</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 64.72 mins for 205 crosses&quot;</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 21.17 mins for 205 crosses&quot;</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 63.97 mins for 213 crosses&quot;</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 20.04 mins for 213 crosses&quot;</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 53.03 mins for 180 crosses&quot;</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 17.28 mins for 180 crosses&quot;</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 58.67 mins for 199 crosses&quot;</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 19.03 mins for 199 crosses&quot;</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co"># ....</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate 20 more hours, complete on July 12 very early AM?</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Accuracies predicted. Took  34.37369 hrs total.Goodbye!&quot;</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Warning message:</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="co"># In for (ii in 1L:length(res)) { : closing unused connection 3 (localhost)</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt; saveRDS(cvDirDom_5rep5fold,here::here(&quot;output&quot;,&quot;cvDirDom_5rep5fold_predAccuracy.rds&quot;))</span></span></code></pre></div>
+</div>
+<div id="modelad" class="section level2">
+<h2>model=AD</h2>
+<p>Server 2: modelType=“AD”</p>
+<p>cbsulm29 - 104 cores, 512 GB RAM</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>grmsAD<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">A=</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;kinship_A_IITA_2021May13.rds&quot;</span>)),</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">D=</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;kinship_D_IITA_2021May13.rds&quot;</span>)))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(grms)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>cvAD_5rep5fold<span class="ot">&lt;-</span><span class="fu">runParentWiseCrossVal</span>(<span class="at">nrepeats=</span><span class="dv">5</span>,<span class="at">nfolds=</span><span class="dv">5</span>,<span class="at">seed=</span><span class="dv">84</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">modelType=</span><span class="st">&quot;AD&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">ncores=</span><span class="dv">20</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">outName=</span><span class="st">&quot;output/cvAD_5rep5fold&quot;</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">ped=</span>ped,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">blups=</span>blups,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">dosages=</span>dosages,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">haploMat=</span>haploMat,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">grms=</span>grmsAD,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">recombFreqMat =</span> recombFreqMat,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">selInd =</span> <span class="cn">TRUE</span>, <span class="at">SIwts =</span> SIwts)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cvAD_5rep5fold,here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;cvAD_5rep5fold_predAccuracy.rds&quot;</span>))</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Marker-effects Computed. Took  1.81086 hrs&quot;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 43.11 mins for 198 crosses&quot;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Done predicting fam vars. Took 47.04 mins for 216 crosses&quot;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co"># .....</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Accuracies predicted. Took  19.68694 hrs total.\n Goodbye!&quot;</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;Accuracies predicted. Took  19.73242 hrs total.Goodbye!&quot;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt; saveRDS(cvAD_5rep5fold,here::here(&quot;output&quot;,&quot;cvAD_5rep5fold_predAccuracy.rds&quot;))</span></span></code></pre></div>
+</div>
+</div>
+<div id="to-do-standard-clone-wise-cross-validation" class="section level1">
+<h1>[TO DO] Standard clone-wise cross-validation</h1>
+<div id="add-dirdom-to-runcrossval-func" class="section level2">
+<h2>Add DirDom to runCrossVal func</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param byGroup logical, if TRUE, assumes a column named &quot;Group&quot; is present which unique classifies each GID into some genetic grouping.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param modelType string, A, AD or ADE representing model with Additive-only, Add. plus Dominance, and Add. plus Dom. plus. AxD Epistasis (AD), respectively.</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param grms list of GRMs where each element is named either A, D, or, AD. Matrices supplied must match required by A, AD and ADE models. For ADE grms=list(A=A,D=D,AD=AD)...</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param augmentTP option to supply an additional set of training data, which will be added to each training model but never included in the test set.</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param TrainTestData data.frame with de-regressed BLUPs, BLUPs and weights (WT) for training and test. If byGroup==TRUE, a column with Group as the header uniquely classifying GIDs into genetic groups, is expected.</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>runCrossVal<span class="ot">&lt;-</span><span class="cf">function</span>(TrainTestData,modelType,grms,nrepeats,nfolds,<span class="at">ncores=</span><span class="dv">1</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">byGroup=</span><span class="cn">FALSE</span>,<span class="at">augmentTP=</span><span class="cn">NULL</span>,<span class="at">gid=</span><span class="st">&quot;GID&quot;</span>,...){</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(sommer); <span class="fu">require</span>(rsample)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Set-up replicated cross-validation folds</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># splitting by clone (if clone in training dataset, it can&#39;t be in testing)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(byGroup){</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    cvsamples<span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">GroupName=</span><span class="fu">unique</span>(TrainTestData<span class="sc">$</span>Group))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> { cvsamples<span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">GroupName=</span><span class="st">&quot;None&quot;</span>) }</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  cvsamples<span class="ot">&lt;-</span>cvsamples <span class="sc">%&gt;%</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Splits=</span><span class="fu">map</span>(GroupName,<span class="cf">function</span>(GroupName){</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(GroupName<span class="sc">!=</span><span class="st">&quot;None&quot;</span>){</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        thisgroup<span class="ot">&lt;-</span>TrainTestData <span class="sc">%&gt;%</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>          <span class="fu">filter</span>(Group<span class="sc">==</span>GroupName) } <span class="cf">else</span> { thisgroup<span class="ot">&lt;-</span>TrainTestData }</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>      out<span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">repeats=</span><span class="dv">1</span><span class="sc">:</span>nrepeats,</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>                  <span class="at">splits=</span><span class="fu">rerun</span>(nrepeats,<span class="fu">group_vfold_cv</span>(thisgroup, <span class="at">group =</span> gid, <span class="at">v =</span> nfolds))) <span class="sc">%&gt;%</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">unnest</span>(splits)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(out)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    })) <span class="sc">%&gt;%</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(Splits)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Internal function</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="do">## fits prediction model and calcs. accuracy for each train-test split</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  fitModel<span class="ot">&lt;-</span><span class="fu">possibly</span>(<span class="cf">function</span>(splits,modelType,augmentTP,TrainTestData,GroupName,grms){</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    starttime<span class="ot">&lt;-</span><span class="fu">proc.time</span>()[<span class="dv">3</span>]</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set-up training set</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    trainingdata<span class="ot">&lt;-</span><span class="fu">training</span>(splits)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="do">## Make sure, if there is an augmentTP, no GIDs in test-sets</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(augmentTP)){</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>      <span class="do">## remove any test-set members from augment TP before adding to training data</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>      training_augment<span class="ot">&lt;-</span>augmentTP <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>(<span class="sc">!!</span><span class="fu">sym</span>(gid) <span class="sc">%in%</span> <span class="fu">testing</span>(splits)[[gid]]))</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>      trainingdata<span class="ot">&lt;-</span><span class="fu">bind_rows</span>(trainingdata,training_augment) }</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(GroupName<span class="sc">!=</span><span class="st">&quot;None&quot;</span>){ trainingdata<span class="ot">&lt;-</span><span class="fu">bind_rows</span>(trainingdata,</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>                                                   TrainTestData <span class="sc">%&gt;%</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>                                                     <span class="fu">filter</span>(Group<span class="sc">!=</span>GroupName,</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>                                                            <span class="sc">!</span>(<span class="sc">!!</span><span class="fu">sym</span>(gid) <span class="sc">%in%</span> <span class="fu">testing</span>(splits)[[gid]]))) }</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Subset kinship matrices</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    traintestgids<span class="ot">&lt;-</span><span class="fu">union</span>(trainingdata[[gid]],<span class="fu">testing</span>(splits)[[gid]])</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    A1<span class="ot">&lt;-</span>grms[[<span class="st">&quot;A&quot;</span>]][traintestgids,traintestgids]</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    trainingdata[[<span class="fu">paste0</span>(gid,<span class="st">&quot;a&quot;</span>)]]<span class="ot">&lt;-</span><span class="fu">factor</span>(trainingdata[[gid]],<span class="at">levels=</span><span class="fu">rownames</span>(A1))</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(modelType <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;AD&quot;</span>,<span class="st">&quot;ADE&quot;</span>)){</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>      D1<span class="ot">&lt;-</span>grms[[<span class="st">&quot;D&quot;</span>]][traintestgids,traintestgids]</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>      trainingdata[[<span class="fu">paste0</span>(gid,<span class="st">&quot;d&quot;</span>)]]<span class="ot">&lt;-</span><span class="fu">factor</span>(trainingdata[[gid]],<span class="at">levels=</span><span class="fu">rownames</span>(D1))</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(modelType<span class="sc">==</span><span class="st">&quot;ADE&quot;</span>){</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>        <span class="co">#AA1&lt;-grms[[&quot;AA&quot;]][traintestgids,traintestgids]</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>        AD1<span class="ot">&lt;-</span>grms[[<span class="st">&quot;AD&quot;</span>]][traintestgids,traintestgids]</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>        <span class="fu">diag</span>(AD1)<span class="ot">&lt;-</span><span class="fu">diag</span>(AD1)<span class="sc">+</span><span class="fl">1e-06</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">#DD1&lt;-grms[[&quot;DD&quot;]][traintestgids,traintestgids]</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>        <span class="co">#trainingdata[[paste0(gid,&quot;aa&quot;)]]&lt;-factor(trainingdata[[gid]],levels=rownames(AA1))</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>        trainingdata[[<span class="fu">paste0</span>(gid,<span class="st">&quot;ad&quot;</span>)]]<span class="ot">&lt;-</span><span class="fu">factor</span>(trainingdata[[gid]],<span class="at">levels=</span><span class="fu">rownames</span>(AD1))</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        <span class="co">#trainingdata[[paste0(gid,&quot;dd&quot;)]]&lt;-factor(trainingdata[[gid]],levels=rownames(DD1))</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set-up random model statements</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    randFormula<span class="ot">&lt;-</span><span class="fu">paste0</span>(<span class="st">&quot;~vs(&quot;</span>,gid,<span class="st">&quot;a,Gu=A1)&quot;</span>)</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(modelType <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;AD&quot;</span>,<span class="st">&quot;ADE&quot;</span>)){</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>      randFormula<span class="ot">&lt;-</span><span class="fu">paste0</span>(randFormula,<span class="st">&quot;+vs(&quot;</span>,gid,<span class="st">&quot;d,Gu=D1)&quot;</span>)</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(modelType<span class="sc">==</span><span class="st">&quot;ADE&quot;</span>){</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>        randFormula<span class="ot">&lt;-</span><span class="fu">paste0</span>(randFormula,<span class="st">&quot;+vs(&quot;</span>,gid,<span class="st">&quot;ad,Gu=AD1)&quot;</span>)</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>        <span class="co">#&quot;+vs(&quot;,gid,&quot;aa,Gu=AA1)&quot;,</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>        <span class="co">#&quot;+vs(&quot;,gid,&quot;ad,Gu=AD1)&quot;)</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>        <span class="co">#&quot;+vs(&quot;,gid,&quot;dd,Gu=DD1)&quot;)</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit genomic prediction model</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">mmer</span>(<span class="at">fixed =</span> drgBLUP <span class="sc">~</span><span class="dv">1</span>,</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="fu">as.formula</span>(randFormula),</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>                <span class="at">weights =</span> WT,</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>                <span class="at">data=</span>trainingdata)</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gather the BLUPs</span></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>    gblups<span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">GID=</span><span class="fu">as.character</span>(<span class="fu">names</span>(fit<span class="sc">$</span>U[[<span class="fu">paste0</span>(<span class="st">&quot;u:&quot;</span>,gid,<span class="st">&quot;a&quot;</span>)]]<span class="sc">$</span>drgBLUP)),</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>                   <span class="at">GEBV=</span><span class="fu">as.numeric</span>(fit<span class="sc">$</span>U[[<span class="fu">paste0</span>(<span class="st">&quot;u:&quot;</span>,gid,<span class="st">&quot;a&quot;</span>)]]<span class="sc">$</span>drgBLUP))</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(modelType <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;AD&quot;</span>,<span class="st">&quot;ADE&quot;</span>)){</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>      gblups <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">GEDD=</span><span class="fu">as.numeric</span>(fit<span class="sc">$</span>U[[<span class="fu">paste0</span>(<span class="st">&quot;u:&quot;</span>,gid,<span class="st">&quot;d&quot;</span>)]]<span class="sc">$</span>drgBLUP))</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(modelType<span class="sc">==</span><span class="st">&quot;ADE&quot;</span>){</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>        gblups <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="co">#GEEDaa=as.numeric(fit$U[[paste0(&quot;u:&quot;,gid,&quot;aa&quot;)]]$drgBLUP),</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>          <span class="at">GEEDad=</span><span class="fu">as.numeric</span>(fit<span class="sc">$</span>U[[<span class="fu">paste0</span>(<span class="st">&quot;u:&quot;</span>,gid,<span class="st">&quot;ad&quot;</span>)]]<span class="sc">$</span>drgBLUP))</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>        <span class="co">#GEEDdd=as.numeric(fit$U[[paste0(&quot;u:&quot;,gid,&quot;dd&quot;)]]$drgBLUP))</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calc GETGVs</span></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>    <span class="do">## Note that for modelType==&quot;A&quot;, GEBV==GETGV</span></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>    gblups <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">GETGV=</span><span class="fu">rowSums</span>(.[,<span class="fu">grepl</span>(<span class="st">&quot;GE&quot;</span>,<span class="fu">colnames</span>(.))]))</span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test set validation data</span></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>    validationData<span class="ot">&lt;-</span>TrainTestData <span class="sc">%&gt;%</span></span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(gid,BLUP) <span class="sc">%&gt;%</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(GID <span class="sc">%in%</span> <span class="fu">testing</span>(splits)[[gid]])</span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Measure accuracy in test set</span></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>    <span class="do">## cor(GEBV,BLUP)</span></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>    <span class="do">## cor(GETGV,BLUP)</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>    accuracy<span class="ot">&lt;-</span>gblups <span class="sc">%&gt;%</span></span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">GETGV=</span><span class="fu">rowSums</span>(.[,<span class="fu">grepl</span>(<span class="st">&quot;GE&quot;</span>,<span class="fu">colnames</span>(.))])) <span class="sc">%&gt;%</span></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(GID <span class="sc">%in%</span> <span class="fu">testing</span>(splits)[[gid]]) <span class="sc">%&gt;%</span></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(validationData) <span class="sc">%&gt;%</span></span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarize</span>(<span class="at">accGEBV=</span><span class="fu">cor</span>(GEBV,BLUP, <span class="at">use =</span> <span class="st">&#39;complete.obs&#39;</span>),</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>                <span class="at">accGETGV=</span><span class="fu">cor</span>(GETGV,BLUP, <span class="at">use =</span> <span class="st">&#39;complete.obs&#39;</span>))</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>    computeTime<span class="ot">&lt;-</span><span class="fu">proc.time</span>()[<span class="dv">3</span>]<span class="sc">-</span>starttime</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>    accuracy <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">computeTime=</span>computeTime)</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(accuracy)</span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>  },<span class="at">otherwise =</span> <span class="cn">NA</span>)</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Run models across all train-test splits</span></span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Parallelize</span></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(furrr); <span class="fu">plan</span>(multicore, <span class="at">workers =</span> ncores)</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">options</span>(<span class="at">future.globals.maxSize=</span><span class="sc">+</span><span class="cn">Inf</span>); <span class="fu">options</span>(<span class="at">future.rng.onMisuse=</span><span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>  cvsamples<span class="ot">&lt;-</span>cvsamples <span class="sc">%&gt;%</span></span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">accuracy=</span><span class="fu">future_map2</span>(splits,GroupName,</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>                                <span class="sc">~</span><span class="fu">fitModel</span>(<span class="at">splits=</span>.x,<span class="at">GroupName=</span>.y,</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">modelType=</span>modelType,<span class="at">augmentTP=</span><span class="cn">NULL</span>,<span class="at">TrainTestData=</span>TrainTestData,<span class="at">grms=</span>grms),</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.progress =</span> <span class="cn">FALSE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(accuracy)</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(cvsamples)</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
 </div>
 <div id="next-step-results" class="section level1">
 <h1>Next step / Results</h1>
-<p>See <a href="06-Results.html">Results</a>: Home for plots and summary tables.</p>
+<ol start="6" style="list-style-type: decimal">
+<li><a href="06-GenomicPredictions.html">Genomic predictions</a>:</li>
+</ol>
+<ul>
+<li>A. Standard genomic prediction of individual GEBV and GETGV for all selection candidates using all available data.</li>
+<li>B. Predict cross means and variances for genomic mate selection</li>
+</ul>
+<p>See <a href="07-Results.html">Results</a>: Home for plots and summary tables.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -971,7 +1343,7 @@ Cross-validation code IN PROGRESS. Currently working on computeVarPredAccuracy.
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
 </div>
 </div>
 
@@ -1027,6 +1399,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')
