@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Empirical inputs for simulations - IITA</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #232629;
+    color: #7a7c7d;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d;  padding-left: 4px; }
+div.sourceCode
+  { color: #cfcfc2; background-color: #232629; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { color: #cfcfc2; } /* Normal */
+code span.al { color: #95da4c; background-color: #4d1f24; font-weight: bold; } /* Alert */
+code span.an { color: #3f8058; } /* Annotation */
+code span.at { color: #2980b9; } /* Attribute */
+code span.bn { color: #f67400; } /* BaseN */
+code span.bu { color: #7f8c8d; } /* BuiltIn */
+code span.cf { color: #fdbc4b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #3daee9; } /* Char */
+code span.cn { color: #27aeae; font-weight: bold; } /* Constant */
+code span.co { color: #7a7c7d; } /* Comment */
+code span.cv { color: #7f8c8d; } /* CommentVar */
+code span.do { color: #a43340; } /* Documentation */
+code span.dt { color: #2980b9; } /* DataType */
+code span.dv { color: #f67400; } /* DecVal */
+code span.er { color: #da4453; text-decoration: underline; } /* Error */
+code span.ex { color: #0099ff; font-weight: bold; } /* Extension */
+code span.fl { color: #f67400; } /* Float */
+code span.fu { color: #8e44ad; } /* Function */
+code span.im { color: #27ae60; } /* Import */
+code span.in { color: #c45b00; } /* Information */
+code span.kw { color: #cfcfc2; font-weight: bold; } /* Keyword */
+code span.op { color: #cfcfc2; } /* Operator */
+code span.ot { color: #27ae60; } /* Other */
+code span.pp { color: #27ae60; } /* Preprocessor */
+code span.re { color: #2980b9; background-color: #153042; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #da4453; } /* SpecialString */
+code span.st { color: #f44f4f; } /* String */
+code span.va { color: #27aeae; } /* Variable */
+code span.vs { color: #da4453; } /* VerbatimString */
+code span.wa { color: #da4453; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">implementGMSinCassava</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Preliminary Steps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-cleanTPdata.html">Data Cleaning</a>
+    </li>
+    <li>
+      <a href="02-GetBLUPs.html">Get BLUPs</a>
+    </li>
+    <li>
+      <a href="03-validatePedigree.html">Verify pedigree records</a>
+    </li>
+    <li>
+      <a href="04-PreprocessDataFiles.html">Preprocessing input data</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="05-CrossValidation.html">Cross-validation</a>
+</li>
+<li>
+  <a href="06-GenomicPredictions.html">Genomic (mate) predictions</a>
+</li>
+<li>
+  <a href="06-Results.html">Results</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Other
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="about.html">About</a>
+    </li>
+    <li>
+      <a href="license.html">License</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/wolfemd/implementGMSinCassava">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Empirical inputs for simulations - IITA</h1>
+<h4 class="date">2021-July-01</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-07-14
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>implementGMSinCassava/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210504code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210504)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210504code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210504)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree134c8d3d46cfa7ff413c00379cffb8b8e561469atargetblank134c8d3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/implementGMSinCassava/tree/134c8d3d46cfa7ff413c00379cffb8b8e561469a" target="_blank">134c8d3</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree134c8d3d46cfa7ff413c00379cffb8b8e561469atargetblank134c8d3a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/implementGMSinCassava/tree/134c8d3d46cfa7ff413c00379cffb8b8e561469a" target="_blank">134c8d3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/accuracies.png
+    Ignored:    analysis/fig2.png
+    Ignored:    analysis/fig3.png
+    Ignored:    analysis/fig4.png
+    Ignored:    analysis/figure/
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+
+Untracked files:
+    Untracked:  accuracies.png
+    Untracked:  analysis/docs/
+    Untracked:  analysis/speedUpPredCrossVar.Rmd
+    Untracked:  code/AlphaAssign-Python/
+    Untracked:  code/calcGameticLD.cpp
+    Untracked:  code/col_sums.cpp
+    Untracked:  code/convertDart2vcf.R
+    Untracked:  code/helloworld.cpp
+    Untracked:  code/imputationFunctions.R
+    Untracked:  code/matmult.cpp
+    Untracked:  code/misc.cpp
+    Untracked:  code/test.cpp
+    Untracked:  data/CassavaGeneticMap/
+    Untracked:  data/DatabaseDownload_2021May04/
+    Untracked:  data/GBSdataMasterList_31818.csv
+    Untracked:  data/IITA_GBStoPhenoMaster_33018.csv
+    Untracked:  data/NRCRI_GBStoPhenoMaster_40318.csv
+    Untracked:  data/PedigreeGeneticGainCycleTime_aafolabi_01122020.xls
+    Untracked:  data/blups_forCrossVal.rds
+    Untracked:  data/chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam
+    Untracked:  data/dosages_IITA_filtered_2021May13.rds
+    Untracked:  data/genmap_2021May13.rds
+    Untracked:  data/haps_IITA_filtered_2021May13.rds
+    Untracked:  data/recombFreqMat_1minus2c_2021May13.rds
+    Untracked:  fig2.png
+    Untracked:  fig3.png
+    Untracked:  figure/
+    Untracked:  output/IITA_CleanedTrialData_2021May10.rds
+    Untracked:  output/IITA_ExptDesignsDetected_2021May10.rds
+    Untracked:  output/IITA_blupsForModelTraining_twostage_asreml_2021May10.rds
+    Untracked:  output/IITA_trials_NOT_identifiable.csv
+    Untracked:  output/crossValPredsA.rds
+    Untracked:  output/crossValPredsAD.rds
+    Untracked:  output/cvAD_5rep5fold_markerEffects.rds
+    Untracked:  output/cvAD_5rep5fold_meanPredAccuracy.rds
+    Untracked:  output/cvAD_5rep5fold_parentfolds.rds
+    Untracked:  output/cvAD_5rep5fold_predMeans.rds
+    Untracked:  output/cvAD_5rep5fold_predVars.rds
+    Untracked:  output/cvAD_5rep5fold_varPredAccuracy.rds
+    Untracked:  output/cvDirDom_5rep5fold_markerEffects.rds
+    Untracked:  output/cvDirDom_5rep5fold_meanPredAccuracy.rds
+    Untracked:  output/cvDirDom_5rep5fold_parentfolds.rds
+    Untracked:  output/cvDirDom_5rep5fold_predMeans.rds
+    Untracked:  output/cvDirDom_5rep5fold_predVars.rds
+    Untracked:  output/cvDirDom_5rep5fold_varPredAccuracy.rds
+    Untracked:  output/cvMeanPredAccuracyA.rds
+    Untracked:  output/cvMeanPredAccuracyAD.rds
+    Untracked:  output/cvPredMeansA.rds
+    Untracked:  output/cvPredMeansAD.rds
+    Untracked:  output/cvVarPredAccuracyA.rds
+    Untracked:  output/cvVarPredAccuracyAD.rds
+    Untracked:  output/estimateSelectionError.rds
+    Untracked:  output/genomicPredictions_ModelAD.rds
+    Untracked:  output/genomicPredictions_ModelDirDom.rds
+    Untracked:  output/kinship_A_IITA_2021May13.rds
+    Untracked:  output/kinship_D_IITA_2021May13.rds
+    Untracked:  output/markEffsTest.rds
+    Untracked:  output/markerEffects.rds
+    Untracked:  output/markerEffectsA.rds
+    Untracked:  output/markerEffectsAD.rds
+    Untracked:  output/maxNOHAV_byStudy.csv
+    Untracked:  output/obsCrossMeansAndVars.rds
+    Untracked:  output/parentfolds.rds
+    Untracked:  output/ped2check_genome.rds
+    Untracked:  output/ped2genos.txt
+    Untracked:  output/pednames2keep.txt
+    Untracked:  output/pednames_Prune100_25_pt25.log
+    Untracked:  output/pednames_Prune100_25_pt25.nosex
+    Untracked:  output/pednames_Prune100_25_pt25.prune.in
+    Untracked:  output/pednames_Prune100_25_pt25.prune.out
+    Untracked:  output/potential_dams.txt
+    Untracked:  output/potential_sires.txt
+    Untracked:  output/predVarTest.rds
+    Untracked:  output/samples2keep_IITA_2021May13.txt
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.log
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.nosex
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.in
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.out
+    Untracked:  output/verified_ped.txt
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/inputsForSimulation.Rmd</code>) and HTML (<code>docs/inputsForSimulation.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/134c8d3d46cfa7ff413c00379cffb8b8e561469a/analysis/inputsForSimulation.Rmd" target="_blank">134c8d3</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Publish first pass at GS pipeline-integrated estimation of selection error for input into simulations downstream.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pull a singularity image and save in the file rocker.sif</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># singularity pull ~/rocker2.sif docker://rocker/tidyverse;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) start a screen shell </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span><span class="kw">;</span> <span class="co"># or screen -r if re-attaching...</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) start the singularity Linux shell inside that</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> shell ~/rocker2.sif<span class="kw">;</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#singularity shell /workdir/$USER/rocker.sif; </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Project directory, so R will use as working dir.</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /home/mw489/implementGMSinCassava/<span class="kw">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Start R</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span></code></pre></div>
+<div id="concept" class="section level1">
+<h1>Concept</h1>
+<p>We want to simulate the advantages of different breeding pipelines (variety development pipelines; VDPs) based on proposed differences in plot-size (number of plants), number of reps, locations and overall trial-stage size.</p>
+<p><strong>Question:</strong> How do we empirically know what difference varying these parameters is associated with?</p>
+<p>We can’t compute the selection index <em>per se</em> for each trial because of variation in the traits scored. Then again, neither can breeders.</p>
+<p>We want:</p>
+<ul>
+<li>an objective approach to estimate the selection error for an SI on a trial-by-trail basis,</li>
+<li>ideally using existing GS pipeline / data,</li>
+<li>dealing with heterogeneity in traits-observed in given trial.</li>
+</ul>
+<p>Proposed approach:</p>
+<ul>
+<li><p>Generate a best estimate of “true” net merit using the <em>SELECTION INDEX</em> GEBV/GETGV from full genomic prediction, <em>i.e.</em> the entire available training population and all of the latest available data. The predictions made <a href="https://wolfemd.github.io/implementGMSinCassava/06-GenomicPredictions.html">here</a> are the most up-to-date.</p>
+<ul>
+<li>Alternative best estimate of “true” net merit: actual national performance trial data (e.g. from NCRPs in Nigeria?)</li>
+</ul></li>
+<li><p>For each trial, and each trait scored:</p>
+<ul>
+<li><p>Fit mixed-model</p></li>
+<li><p>Extract trial-specific BLUPs</p></li>
+<li><p>Compute the SELIND for the current trial using BLUPs for whatever component traits were scored (<span class="math inline">\(SI_{TrialBLUP}\)</span>).</p></li>
+<li><p>Regress <span class="math inline">\(SI_{GETGV}\)</span> on the <span class="math inline">\(SI_{TrialBLUP}\)</span></p>
+<ul>
+<li>Extract the <span class="math inline">\(\sigma^2_e\)</span> of the regression as the trial-specific estimate of the selection error</li>
+</ul></li>
+</ul></li>
+<li><p>Finally, the relationship between SI error and plot-size can be plotted and a function for SI error given plot-size can be developed that can be plugged into simulations of any VDP of interest.</p></li>
+</ul>
+</div>
+<div id="selection-index-getgv-proxy-for-true-net-merit" class="section level1">
+<h1>Selection Index GETGV: proxy for true net merit</h1>
+<ul>
+<li>Generate a best estimate of “true” net merit using the <em>SELECTION INDEX</em> GETGV from full genomic prediction, <em>i.e.</em> the entire available training population and all of the latest available data. The predictions made <a href="https://wolfemd.github.io/implementGMSinCassava/06-GenomicPredictions.html">here</a> are the most up-to-date.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(magrittr); </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># GBLUPs</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="do">### Two models AD and DirDom</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#gpreds_ad&lt;-readRDS(file = here::here(&quot;output&quot;,&quot;genomicPredictions_ModelAD.rds&quot;))</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>gpreds_dirdom<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;genomicPredictions_ModelDirDom.rds&quot;</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>si_getgvs<span class="ot">&lt;-</span>gpreds_dirdom<span class="sc">$</span>gblups[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#si_getgvs&lt;-gpreds_ad$gblups[[1]] %&gt;% </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(predOf<span class="sc">==</span><span class="st">&quot;GETGV&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GID,SELIND)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="do">## IITA Germplasm Ages</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ggcycletime<span class="ot">&lt;-</span>readxl<span class="sc">::</span><span class="fu">read_xls</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;PedigreeGeneticGainCycleTime_aafolabi_01122020.xls&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year_Accession=</span><span class="fu">as.numeric</span>(Year_Accession))</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Need germplasmName field from raw trial data to match GEBV and cycle time</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;IITA_ExptDesignsDetected_2021May10.rds&quot;</span>))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>si_getgvs <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>              <span class="fu">distinct</span>(germplasmName,GID)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(GID) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># table(ggcycletime$Accession %in% si_getgvs$germplasmName)</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># FALSE  TRUE </span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   193   614 </span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>si_getgvs <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(.,ggcycletime <span class="sc">%&gt;%</span> </span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>              <span class="fu">rename</span>(<span class="at">germplasmName=</span>Accession) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">Year_Accession=</span><span class="fu">as.numeric</span>(Year_Accession))) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year_Accession=</span><span class="fu">case_when</span>(<span class="fu">grepl</span>(<span class="st">&quot;2013_|TMS13&quot;</span>,germplasmName)<span class="sc">~</span><span class="dv">2013</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">&quot;TMS14&quot;</span>,germplasmName)<span class="sc">~</span><span class="dv">2014</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">&quot;TMS15&quot;</span>,germplasmName)<span class="sc">~</span><span class="dv">2015</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">&quot;TMS18&quot;</span>,germplasmName)<span class="sc">~</span><span class="dv">2018</span>,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                                  <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;2013_|TMS13|TMS14|TMS15|TMS18&quot;</span>,germplasmName)<span class="sc">~</span>Year_Accession))</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare the &quot;eras&quot; as PreGS\&lt;2012 and GS\&gt;=2013.</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>si_getgvs <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year_Accession<span class="sc">&gt;</span><span class="dv">2012</span> <span class="sc">|</span> Year_Accession<span class="sc">&lt;</span><span class="dv">2005</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>si_getgvs <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">GeneticGroup=</span><span class="fu">ifelse</span>(Year_Accession<span class="sc">&gt;=</span><span class="dv">2013</span>,<span class="st">&quot;GS&quot;</span>,<span class="st">&quot;PreGS&quot;</span>))</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="co"># SELECTION INDEX WEIGHTS</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="do">## from IYR+IK</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="do">## note that not ALL predicted traits are on index</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>SIwts<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="at">logFYLD=</span><span class="dv">20</span>,</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>         <span class="at">HI=</span><span class="dv">10</span>,</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>         <span class="at">DM=</span><span class="dv">15</span>,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>         <span class="at">MCMDS=</span><span class="sc">-</span><span class="dv">10</span>,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>         <span class="at">logRTNO=</span><span class="dv">12</span>,</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>         <span class="at">logDYLD=</span><span class="dv">20</span>,</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>         <span class="at">logTOPYLD=</span><span class="dv">15</span>,</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>         <span class="at">PLTHT=</span><span class="dv">10</span>) </span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="co"># SELIND GETGVS (for input to estimateSelectionError func below)</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>getgvs<span class="ot">&lt;-</span>si_getgvs <span class="sc">%&gt;%</span> </span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GID,SELIND); </span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># , fig.height=10, fig.width=12</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>si_getgvs <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GeneticGroup,GID,Year_Accession,SELIND) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>Year_Accession,<span class="at">y=</span>SELIND,<span class="at">color=</span>GeneticGroup)) <span class="sc">+</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="fl">1.25</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">se=</span><span class="cn">TRUE</span>, <span class="at">size=</span><span class="fl">1.5</span>) <span class="sc">+</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># facet_wrap(~Trait,scales=&#39;free_y&#39;, ncol=2) + </span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;bold&#39;</span>,<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">size=</span><span class="dv">14</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;bold&#39;</span>,<span class="at">size=</span><span class="dv">16</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&#39;bold&#39;</span>,<span class="at">size=</span><span class="dv">18</span>)) <span class="sc">+</span> </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>() <span class="sc">+</span> </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Selection Index GETGV vs. Accession Age by &#39;era&#39; [GS vs. PreGS]&quot;</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;SI GETGV from modelType=&#39;DirDom&#39;&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/show%20rate%20of%20genetic%20gain%20-%20getgv%20vs.%20accession%20age-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>si_gebvs<span class="ot">&lt;-</span>gpreds_dirdom<span class="sc">$</span>gblups[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(predOf<span class="sc">==</span><span class="st">&quot;GEBV&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GID,SELIND) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">GeneticGroup=</span><span class="fu">case_when</span>(<span class="fu">grepl</span>(<span class="st">&quot;2013_|TMS13&quot;</span>,GID)<span class="sc">~</span><span class="st">&quot;C1&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">&quot;TMS14&quot;</span>,GID)<span class="sc">~</span><span class="st">&quot;C2&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">&quot;TMS15&quot;</span>,GID)<span class="sc">~</span><span class="st">&quot;C3&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">grepl</span>(<span class="st">&quot;TMS18&quot;</span>,GID)<span class="sc">~</span><span class="st">&quot;C4&quot;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                                  <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;2013_|TMS13|TMS14|TMS15|TMS18&quot;</span>,GID)<span class="sc">~</span><span class="st">&quot;PreGS&quot;</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">GeneticGroup=</span><span class="fu">factor</span>(GeneticGroup,<span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;PreGS&quot;</span>,<span class="st">&quot;C1&quot;</span>,<span class="st">&quot;C2&quot;</span>,<span class="st">&quot;C3&quot;</span>,<span class="st">&quot;C4&quot;</span>)))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>si_gebvs <span class="sc">%&gt;%</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(GeneticGroup) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">meanGEBV=</span><span class="fu">mean</span>(SELIND),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">stdErr=</span><span class="fu">sd</span>(SELIND)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>()),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">upperSE=</span>meanGEBV<span class="sc">+</span>stdErr,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">lowerSE=</span>meanGEBV<span class="sc">-</span>stdErr) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>GeneticGroup,<span class="at">y=</span>meanGEBV,<span class="at">fill=</span>GeneticGroup)) <span class="sc">+</span> </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="at">color=</span><span class="st">&#39;gray60&#39;</span>, <span class="at">size=</span><span class="fl">1.25</span>) <span class="sc">+</span> </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymax=</span>upperSE,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">ymin=</span>lowerSE), <span class="at">color=</span><span class="st">&#39;gray60&#39;</span>, <span class="at">size=</span><span class="fl">1.25</span>) <span class="sc">+</span> </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#facet_wrap(~Trait,scales=&#39;free_y&#39;, ncol=1) + </span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">size=</span><span class="fl">1.15</span>, <span class="at">color=</span><span class="st">&#39;black&#39;</span>) <span class="sc">+</span> </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;bold&#39;</span>,<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">size=</span><span class="dv">12</span>),</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&#39;bold&#39;</span>,<span class="at">size=</span><span class="dv">14</span>),</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&#39;bold&#39;</span>,<span class="at">size=</span><span class="dv">14</span>)) <span class="sc">+</span> </span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>() <span class="sc">+</span> </span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="cn">NULL</span>,<span class="at">y=</span><span class="st">&quot;Mean GEBVs&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/barplot%20of%20mean%20GEBV%20vs.%20Cycle-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="estimate-selection-error-for-each-trial" class="section level1">
+<h1>Estimate selection error for each trial</h1>
+<ul>
+<li><p>For each trial, and each trait scored:</p>
+<ul>
+<li><p>Fit mixed-model</p></li>
+<li><p>Extract trial-specific BLUPs</p></li>
+<li><p>Compute the SELIND for the current trial using BLUPs for whatever component traits were scored (<span class="math inline">\(SI_{TrialBLUP}\)</span>).</p></li>
+<li><p>Regress <span class="math inline">\(SI_{GETGV}\)</span> on the <span class="math inline">\(SI_{TrialBLUP}\)</span></p>
+<ul>
+<li>Extract the <span class="math inline">\(\sigma^2_e\)</span> of the regression as the trial-specific estimate of the selection error</li>
+</ul></li>
+</ul></li>
+</ul>
+<div id="available-plot-level-data" class="section level2">
+<h2>Available plot-level data</h2>
+<p>See <a href="01-cleanTPdata.html">here</a> for details about the cleaned trial data most recently downloaded from IITA/Cassavabase and used below.</p>
+<p>Quick summary of the number of unique plots, locations, years, etc. in the cleaned plot-basis data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Nplots=</span><span class="fu">nrow</span>(.),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">across</span>(<span class="fu">c</span>(locationName,studyYear,studyName,TrialType,GID), <span class="sc">~</span><span class="fu">length</span>(<span class="fu">unique</span>(.)),<span class="at">.names =</span> <span class="st">&quot;N_{.col}&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Nplots"],"name":[1],"type":["int"],"align":["right"]},{"label":["N_locationName"],"name":[2],"type":["int"],"align":["right"]},{"label":["N_studyYear"],"name":[3],"type":["int"],"align":["right"]},{"label":["N_studyName"],"name":[4],"type":["int"],"align":["right"]},{"label":["N_TrialType"],"name":[5],"type":["int"],"align":["right"]},{"label":["N_GID"],"name":[6],"type":["int"],"align":["right"]}],"data":[{"1":"479588","2":"13","3":"32","4":"1864","5":"10","6":"254339"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(TrialType,CompleteBlocks,IncompleteBlocks) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(TrialType,n) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["CompleteBlocks"],"name":[1],"type":["lgl"],"align":["right"]},{"label":["IncompleteBlocks"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["AYT"],"name":[3],"type":["int"],"align":["right"]},{"label":["CET"],"name":[4],"type":["int"],"align":["right"]},{"label":["Conservation"],"name":[5],"type":["int"],"align":["right"]},{"label":["CrossingBlock"],"name":[6],"type":["int"],"align":["right"]},{"label":["ExpCET"],"name":[7],"type":["int"],"align":["right"]},{"label":["GeneticGain"],"name":[8],"type":["int"],"align":["right"]},{"label":["NCRP"],"name":[9],"type":["int"],"align":["right"]},{"label":["PYT"],"name":[10],"type":["int"],"align":["right"]},{"label":["SN"],"name":[11],"type":["int"],"align":["right"]},{"label":["UYT"],"name":[12],"type":["int"],"align":["right"]}],"data":[{"1":"FALSE","2":"FALSE","3":"NA","4":"27913","5":"997","6":"557","7":"NA","8":"6729","9":"NA","10":"1361","11":"126688","12":"960"},{"1":"FALSE","2":"TRUE","3":"40","4":"31587","5":"NA","6":"989","7":"1865","8":"5823","9":"NA","10":"801","11":"74019","12":"NA"},{"1":"TRUE","2":"FALSE","3":"41750","4":"460","5":"NA","6":"NA","7":"NA","8":"18310","9":"2630","10":"34685","11":"NA","12":"54082"},{"1":"TRUE","2":"TRUE","3":"6950","4":"320","5":"NA","6":"NA","7":"NA","8":"17755","9":"1152","10":"17053","11":"NA","12":"4112"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Not much NCRP data, but there is some.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyYear<span class="sc">&gt;=</span><span class="dv">2013</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(MaxNOHAV)) <span class="sc">%&gt;%</span> <span class="co">#count(TrialType)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TrialType=</span><span class="fu">factor</span>(TrialType,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;CrossingBlock&quot;</span>,<span class="st">&quot;GeneticGain&quot;</span>,<span class="st">&quot;CET&quot;</span>,<span class="st">&quot;ExpCET&quot;</span>,<span class="st">&quot;PYT&quot;</span>,<span class="st">&quot;AYT&quot;</span>,<span class="st">&quot;UYT&quot;</span>,<span class="st">&quot;NCRP&quot;</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>TrialType,<span class="at">y=</span>MaxNOHAV,<span class="at">fill=</span>TrialType)) <span class="sc">+</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">notch =</span> T) <span class="sc">+</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">45</span>,<span class="at">vjust=</span>.<span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Max number harvested as a proxy for planned plot size&quot;</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">&quot;MaxNOHAV = The maximum number stands harvested per trial&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/plot%20MaxNOHAV%20vs.%20TrialType-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="trial-by-trial-mixed-models" class="section level2">
+<h2>Trial-by-trial mixed-models</h2>
+<p>Decided it makes sense to restrict consideration to &gt;2012 to measure the selection error during the current “era” at IITA.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>trials2keep<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyYear<span class="sc">&gt;=</span><span class="dv">2013</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(MaxNOHAV)) <span class="sc">%$%</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(studyName)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 633 trials, 94830 plots</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>trialdata<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyYear<span class="sc">&gt;=</span><span class="dv">2013</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>         studyName <span class="sc">%in%</span> trials2keep) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">TrialData=</span><span class="sc">-</span><span class="fu">c</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV))</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">propGenotyped=</span><span class="fu">map_dbl</span>(TrialData,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                              <span class="sc">~</span><span class="fu">length</span>(<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">unique</span>(.<span class="sc">$</span>FullSampleName))))<span class="sc">/</span><span class="fu">length</span>(<span class="fu">unique</span>(.<span class="sc">$</span>GID))))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> head</span></code></pre></div>
+<pre><code># A tibble: 6 x 9
+  studyYear locationName studyName        TrialType MaxNOHAV CompleteBlocks
+      &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;        &lt;dbl&gt; &lt;lgl&gt;         
+1      2013 Ikenne       13Ayt15HtcIK     AYT             10 TRUE          
+2      2013 Ibadan       13Ayt16ICTIB     AYT             10 TRUE          
+3      2013 Ikenne       13Ayt17HtcIK     AYT             10 TRUE          
+4      2013 Ibadan       13ayt20pdIB      AYT             10 TRUE          
+5      2013 Ibadan       13ayt20pdwhtrtIB AYT             10 TRUE          
+6      2013 Ibadan       13ayt20pdyrtIB   AYT             10 TRUE          
+# … with 3 more variables: IncompleteBlocks &lt;lgl&gt;, TrialData &lt;list&gt;,
+#   propGenotyped &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TrialData&lt;-trialdata$TrialData[[1]]</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># CompleteBlocks&lt;-trialdata$CompleteBlocks[[1]]</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IncompleteBlocks&lt;-trialdata$IncompleteBlocks[[1]]</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># TrialData&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% TrialData[[1]]</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># CompleteBlocks&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% CompleteBlocks[[1]]</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># IncompleteBlocks&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% IncompleteBlocks[[1]]</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ncores=4</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># rm(TrialData,CompleteBlocks,IncompleteBlocks)</span></span></code></pre></div>
+<p>Function to estimation selection error for each trial: <code>estimateSelectionError()</code>.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>estimateSelectionError<span class="ot">&lt;-</span><span class="fu">possibly</span>(<span class="cf">function</span>(TrialData,CompleteBlocks,IncompleteBlocks,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                                 SIwts,getgvs,...){</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># SET-UP THE DATA TRAIT-BY-TRIAL~~~~~~~~~~~~~~~~~~~~~</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  blups<span class="ot">&lt;-</span>TrialData <span class="sc">%&gt;%</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(observationUnitDbId,GID,plotNumber,repInTrial,blockInRep,PropNOHAV,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>           <span class="fu">all_of</span>(<span class="fu">names</span>(SIwts))) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="fu">all_of</span>(<span class="fu">names</span>(SIwts))),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">names_to =</span> <span class="st">&quot;Trait&quot;</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values_to =</span> <span class="st">&quot;TraitValue&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nest</span>(<span class="at">TraitByTrialData=</span><span class="fu">c</span>(<span class="sc">-</span>Trait))</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># FIT MIXED-MODELS TRAIT-BY-TRIAL~~~~~~~~~~~~~~~~~~~~~~</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="do">## if model fails, by design, returns NULL for a given trait or trait-trial</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Output will simply be absent. </span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  fit_model<span class="ot">&lt;-</span><span class="fu">possibly</span>(<span class="cf">function</span>(Trait,TraitByTrialData,CompleteBlocks,IncompleteBlocks){</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># debug settings ~~~~~~~~~~</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># TraitByTrialData&lt;-blups$TraitByTrialData[[1]]</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trait&lt;-blups$Trait[[1]]</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># TraitByTrialData&lt;-blups$TraitByTrialData[[8]]</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trait&lt;-blups$Trait[[8]]</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># rm(TraitByTrialData,Trait)</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Model formula based on trial design</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    modelFormula<span class="ot">&lt;-</span><span class="fu">paste0</span>(<span class="st">&quot;TraitValue ~ (1|GID)&quot;</span>)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    modelFormula<span class="ot">&lt;-</span><span class="fu">ifelse</span>(CompleteBlocks,</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">paste0</span>(modelFormula,<span class="st">&quot;+(1|repInTrial)&quot;</span>),modelFormula)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    modelFormula<span class="ot">&lt;-</span><span class="fu">ifelse</span>(IncompleteBlocks,</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">paste0</span>(modelFormula,<span class="st">&quot;+(1|blockInRep)&quot;</span>),modelFormula)</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    modelFormula<span class="ot">&lt;-</span><span class="fu">ifelse</span>(Trait <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;logRTNO&quot;</span>,<span class="st">&quot;logFYLD&quot;</span>,<span class="st">&quot;logTOPYLD&quot;</span>,<span class="st">&quot;logDYLD&quot;</span>),</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">paste0</span>(modelFormula,<span class="st">&quot;+PropNOHAV&quot;</span>),modelFormula)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">require</span>(lme4); <span class="fu">require</span>(lme4)</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    model_out<span class="ot">&lt;-</span><span class="fu">lmer</span>(<span class="fu">as.formula</span>(modelFormula),<span class="at">data=</span>TraitByTrialData)</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    propMiss<span class="ot">&lt;-</span><span class="fu">length</span>(<span class="fu">which</span>(<span class="fu">is.na</span>(TraitByTrialData<span class="sc">$</span>TraitValue))) <span class="sc">/</span> <span class="fu">length</span>(TraitByTrialData<span class="sc">$</span>TraitValue)</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.na</span>(model_out) <span class="sc">|</span> <span class="sc">!</span><span class="fu">exists</span>(<span class="st">&quot;model_out&quot;</span>)){</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>      out <span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">H2=</span><span class="cn">NA</span>,<span class="at">VarComps=</span><span class="fu">list</span>(<span class="cn">NULL</span>),<span class="at">BLUPs=</span><span class="fu">list</span>(<span class="cn">NULL</span>),<span class="at">Model=</span>modelFormula,<span class="at">propMiss=</span>propMiss)</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>      varcomps<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(model_out))[,<span class="fu">c</span>(<span class="st">&quot;grp&quot;</span>,<span class="st">&quot;vcov&quot;</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>        <span class="fu">spread</span>(grp,vcov)</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>      Vg<span class="ot">&lt;-</span>varcomps<span class="sc">$</span>GID</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>      H2<span class="ot">&lt;-</span>Vg<span class="sc">/</span>(Vg<span class="sc">+</span>varcomps<span class="sc">$</span>Residual)</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>      BLUP<span class="ot">&lt;-</span><span class="fu">ranef</span>(model_out, <span class="at">condVar=</span><span class="cn">TRUE</span>)[[<span class="st">&quot;GID&quot;</span>]]</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>      PEV <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">attr</span>(BLUP, <span class="st">&quot;postVar&quot;</span>))</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>      blup<span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">GID=</span><span class="fu">rownames</span>(BLUP),<span class="at">BLUP=</span>BLUP<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>,<span class="at">PEV=</span>PEV) <span class="sc">%&gt;%</span></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">REL=</span><span class="dv">1</span><span class="sc">-</span>(PEV<span class="sc">/</span>Vg),</span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>               <span class="at">drgBLUP=</span>BLUP<span class="sc">/</span>REL,</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>               <span class="at">WT=</span>(<span class="dv">1</span><span class="sc">-</span>H2)<span class="sc">/</span>((<span class="fl">0.1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">-</span>REL)<span class="sc">/</span>REL)<span class="sc">*</span>H2))</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>      out <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">H2=</span>H2,</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>                    <span class="at">VarComps=</span><span class="fu">list</span>(varcomps),</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>                    <span class="at">BLUPs=</span><span class="fu">list</span>(blup),</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>                    <span class="at">Model=</span>modelFormula,</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>                    <span class="at">propMiss=</span>propMiss) }</span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(out) },</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">otherwise =</span> <span class="cn">NULL</span>)</span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>  blups <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">modelOut=</span><span class="fu">pmap</span>(.,fit_model,</span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>                         <span class="at">CompleteBlocks=</span>CompleteBlocks,</span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>                         <span class="at">IncompleteBlocks=</span>IncompleteBlocks)) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>TraitByTrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(modelOut) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(VarComps)</span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>  <span class="co"># COMPUTE SELIND FROM BLUPs~~~~~~~~~~~~~~~~~~~~~~</span></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>  si_blups<span class="ot">&lt;-</span>blups <span class="sc">%&gt;%</span> </span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(Trait,BLUPs) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(BLUPs) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(GID,Trait,BLUP) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">spread</span>(Trait,BLUP) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(GID,<span class="fu">any_of</span>(<span class="fu">names</span>(SIwts))) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;GID&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>    as.matrix</span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>  si_blups<span class="ot">&lt;-</span>si_blups<span class="sc">%*%</span>SIwts[<span class="fu">colnames</span>(si_blups)] <span class="sc">%&gt;%</span> </span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>    as.data.frame <span class="sc">%&gt;%</span> </span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;GID&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">SI_BLUP=</span>V1) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(getgvs)</span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Correlation between SELIND (SI GETGV) and the SI of BLUPs for current trial</span></span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a>  cor2si<span class="ot">&lt;-</span>si_blups <span class="sc">%$%</span> <span class="fu">cor</span>(SI_BLUP,SELIND,<span class="at">use =</span> <span class="st">&#39;complete.obs&#39;</span>)</span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Regress SELIND on SI_BLUPs</span></span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>  regSIonTrialBLUP<span class="ot">&lt;-</span><span class="fu">lm</span>(SELIND<span class="sc">~</span>SI_BLUP,<span class="at">data =</span> si_blups)</span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a>  <span class="co"># TWO MEASURES OF SELECTION ERROR</span></span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a>  <span class="do">## 1) regression r-squared [or 1 - r2_si actually]</span></span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a>  <span class="do">## 2) mean squared error, </span></span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a>  <span class="do">##### not sure if the scaling will make sense across trials </span></span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a>  <span class="do">##### because of differences in traits included</span></span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a>  r2_si<span class="ot">&lt;-</span>regSIonTrialBLUP <span class="sc">%&gt;%</span> summary <span class="sc">%$%</span> r.squared</span>
+<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a>  mse<span class="ot">&lt;-</span>regSIonTrialBLUP <span class="sc">%&gt;%</span> anova <span class="sc">%&gt;%</span> as.data.frame <span class="sc">%&gt;%</span> .[<span class="st">&quot;Residuals&quot;</span>,<span class="st">&quot;Mean Sq&quot;</span>]</span>
+<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a>  NcloneForReg<span class="ot">&lt;-</span>si_blups <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(SI_BLUP),</span>
+<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a>                                    <span class="sc">!</span><span class="fu">is.na</span>(SELIND)) <span class="sc">%&gt;%</span> <span class="fu">nrow</span>()</span>
+<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Collect and return outputs for current trial</span></span>
+<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>  trial_out<span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">cor2si=</span>cor2si,</span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>                    <span class="at">r2_si=</span>r2_si,</span>
+<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a>                    <span class="at">TrialMSE=</span>mse,</span>
+<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a>                    <span class="at">NcloneForReg=</span>NcloneForReg,</span>
+<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a>                    <span class="at">SI_BLUPs=</span><span class="fu">list</span>(si_blups),</span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a>                    <span class="at">BLUPs=</span><span class="fu">list</span>(blups))</span>
+<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(trial_out) </span>
+<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a>},<span class="at">otherwise =</span> <span class="cn">NA</span>)</span></code></pre></div>
+<p>Run <code>estimateSelectionError()</code> across 633 trials.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#require(furrr); require(future.callr); plan(callr, workers = 10)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(furrr); <span class="fu">plan</span>(multicore, <span class="at">workers =</span> <span class="dv">20</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">future.globals.onReference =</span> <span class="st">&quot;error&quot;</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">future.globals.maxSize=</span><span class="sc">+</span><span class="cn">Inf</span>); <span class="fu">options</span>(<span class="at">future.rng.onMisuse=</span><span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SelectionError=</span><span class="fu">future_pmap</span>(.,estimateSelectionError,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">SIwts=</span>SIwts,<span class="at">getgvs=</span>getgvs))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(trialdata,here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError.rds&quot;</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="results" class="section level1">
+<h1>RESULTS</h1>
+<div id="plot-selection-error-vs.-maxnohav" class="section level2">
+<h2>Plot selection error vs. MaxNOHAV</h2>
+<p>Out of 633 trials, 472 produced successful model fits and subsequent estimates of TrialMSE (selection index error).</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>estSelError<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError.rds&quot;</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>SI_BLUPs,<span class="sc">-</span>BLUPs,<span class="sc">-</span>SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(TrialMSE))</span></code></pre></div>
+<p>Here’s the <code>str()</code> of the estimates I made.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> str</span></code></pre></div>
+<pre><code>tibble [472 × 12] (S3: tbl_df/tbl/data.frame)
+ $ studyYear       : int [1:472] 2013 2013 2013 2013 2013 2013 2013 2013 2013 2013 ...
+ $ locationName    : chr [1:472] &quot;Ibadan&quot; &quot;Ibadan&quot; &quot;Ibadan&quot; &quot;Ibadan&quot; ...
+ $ studyName       : chr [1:472] &quot;13Ayt16ICTIB&quot; &quot;13ayt20pdIB&quot; &quot;13ayt20pdwhtrtIB&quot; &quot;13ayt20pdyrtIB&quot; ...
+ $ TrialType       : chr [1:472] &quot;AYT&quot; &quot;AYT&quot; &quot;AYT&quot; &quot;AYT&quot; ...
+ $ MaxNOHAV        : num [1:472] 10 10 10 10 11 20 10 10 10 10 ...
+ $ CompleteBlocks  : logi [1:472] TRUE TRUE TRUE TRUE TRUE TRUE ...
+ $ IncompleteBlocks: logi [1:472] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ propGenotyped   : num [1:472] 0.938 0.25 0.15 0.25 0.458 ...
+ $ cor2si          : num [1:472] -0.22649 -0.00136 0.88436 -0.14383 0.49998 ...
+ $ r2_si           : num [1:472] 5.13e-02 1.86e-06 7.82e-01 2.07e-02 2.50e-01 ...
+ $ TrialMSE        : num [1:472] 10196 15692 2641 19547 11414 ...
+ $ NcloneForReg    : int [1:472] 15 5 3 5 11 6 11 11 9 28 ...</code></pre>
+<ul>
+<li>cor2si = correlation between SI computed from each trial’s BLUPs and the SI computed from GETGV (all training data and traits used)</li>
+<li>r2_si = r-squared, regression of SI_GETGV on SI_TrialBLUP</li>
+<li>TrialMSE = mean squared error from that regression</li>
+<li>NcloneForReg = the number of clones with estimates of both SI_TrialBLUP and SI_GETGV for a given trial. Avoid considering trials with too few data points.</li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["studyYear"],"name":[1],"type":["int"],"align":["right"]},{"label":["locationName"],"name":[2],"type":["chr"],"align":["left"]},{"label":["studyName"],"name":[3],"type":["chr"],"align":["left"]},{"label":["TrialType"],"name":[4],"type":["chr"],"align":["left"]},{"label":["MaxNOHAV"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["CompleteBlocks"],"name":[6],"type":["lgl"],"align":["right"]},{"label":["IncompleteBlocks"],"name":[7],"type":["lgl"],"align":["right"]},{"label":["propGenotyped"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["cor2si"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["r2_si"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["TrialMSE"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["NcloneForReg"],"name":[12],"type":["int"],"align":["right"]}],"data":[{"1":"2013","2":"Ibadan","3":"13Ayt16ICTIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.937500000","9":"-0.2264859546","10":"5.129589e-02","11":"10195.689630","12":"15"},{"1":"2013","2":"Ibadan","3":"13ayt20pdIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"-0.0013634791","10":"1.859075e-06","11":"15692.465532","12":"5"},{"1":"2013","2":"Ibadan","3":"13ayt20pdwhtrtIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.150000000","9":"0.8843617528","10":"7.820957e-01","11":"2641.411110","12":"3"},{"1":"2013","2":"Ibadan","3":"13ayt20pdyrtIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"-0.1438340990","10":"2.068825e-02","11":"19546.723480","12":"5"},{"1":"2013","2":"Mokwa","3":"13ayt24MK","4":"AYT","5":"11","6":"TRUE","7":"FALSE","8":"0.458333333","9":"0.4999839092","10":"2.499839e-01","11":"11413.844152","12":"11"},{"1":"2013","2":"Ibadan","3":"13ayt24ppdIB","4":"AYT","5":"20","6":"TRUE","7":"FALSE","8":"0.291666667","9":"0.7270333437","10":"5.285775e-01","11":"7398.367220","12":"6"},{"1":"2013","2":"Ibadan","3":"13ayt24yrtIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.458333333","9":"-0.1219702745","10":"1.487675e-02","11":"14991.736060","12":"11"},{"1":"2013","2":"Ikenne","3":"13Ayt24YrtIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.458333333","9":"0.5671687969","10":"3.216804e-01","11":"10322.756795","12":"11"},{"1":"2013","2":"Zaria","3":"13ayt24yrtZA","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.458333333","9":"0.0265355028","10":"7.041329e-04","11":"16740.855143","12":"9"},{"1":"2013","2":"Ubiaja","3":"13ayt32mixedUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.878787879","9":"0.1820139560","10":"3.312908e-02","11":"5244.186729","12":"28"},{"1":"2013","2":"Ibadan","3":"13ayt45yrtIB","4":"AYT","5":"20","6":"TRUE","7":"FALSE","8":"0.066666667","9":"0.2052736390","10":"4.213727e-02","11":"16100.503282","12":"3"},{"1":"2013","2":"Ibadan","3":"13clonalevalhighTCIB","4":"CET","5":"5","6":"FALSE","7":"FALSE","8":"0.003690037","9":"-0.1448297858","10":"2.097567e-02","11":"15502.584620","12":"3"},{"1":"2013","2":"Ibadan","3":"13clonalevalLeafRetentionIB","4":"CET","5":"33","6":"FALSE","7":"FALSE","8":"0.753846154","9":"0.9000445935","10":"8.100803e-01","11":"8663.400033","12":"3"},{"1":"2013","2":"Ibadan","3":"13geneticgainIB","4":"GeneticGain","5":"10","6":"FALSE","7":"FALSE","8":"0.979768786","9":"0.3870904643","10":"1.498390e-01","11":"7844.939438","12":"651"},{"1":"2013","2":"Ubiaja","3":"13geneticgainUB","4":"GeneticGain","5":"10","6":"FALSE","7":"FALSE","8":"0.946354883","9":"0.3573573884","10":"1.277043e-01","11":"7743.286076","12":"627"},{"1":"2013","2":"Ubiaja","3":"13.GS.C0.C1.CB.244.UB","4":"CrossingBlock","5":"10","6":"FALSE","7":"FALSE","8":"0.991228070","9":"0.3423409335","10":"1.171973e-01","11":"11167.557617","12":"169"},{"1":"2013","2":"Ibadan","3":"13.GS.C0.PYT121.IB","4":"PYT","5":"20","6":"TRUE","7":"FALSE","8":"0.925619835","9":"0.4126095532","10":"1.702466e-01","11":"8258.562714","12":"110"},{"1":"2013","2":"Ikenne","3":"13.GS.C0.PYT129.Ik","4":"PYT","5":"20","6":"TRUE","7":"FALSE","8":"0.922480620","9":"0.4394391892","10":"1.931068e-01","11":"8791.202976","12":"116"},{"1":"2013","2":"Mokwa","3":"13.GS.C0.PYT.88.MK","4":"PYT","5":"16","6":"TRUE","7":"FALSE","8":"0.920792079","9":"0.4822468509","10":"2.325620e-01","11":"8158.662097","12":"91"},{"1":"2013","2":"Mokwa","3":"13.GS.C0.PYT94.MK","4":"PYT","5":"16","6":"TRUE","7":"TRUE","8":"0.978723404","9":"0.5032166373","10":"2.532270e-01","11":"7896.879112","12":"90"},{"1":"2013","2":"Ikenne","3":"13.GS.C1.CE.855.IK","4":"CET","5":"5","6":"FALSE","7":"FALSE","8":"0.987893462","9":"0.4783137722","10":"2.287841e-01","11":"15529.401599","12":"619"},{"1":"2013","2":"Mokwa","3":"13.GS.C1.CE.858.MK","4":"CET","5":"5","6":"FALSE","7":"FALSE","8":"0.988792030","9":"0.3327039004","10":"1.106919e-01","11":"17101.902746","12":"545"},{"1":"2013","2":"Ibadan","3":"13.GS.C1.CE.864.IB","4":"CET","5":"13","6":"FALSE","7":"FALSE","8":"0.979468599","9":"0.3984529987","10":"1.587648e-01","11":"15700.038582","12":"580"},{"1":"2013","2":"Ibadan","3":"13NEXTgenC0IB","4":"PYT","5":"20","6":"TRUE","7":"FALSE","8":"0.909836066","9":"0.3796234461","10":"1.441140e-01","11":"8652.193415","12":"110"},{"1":"2013","2":"Ikenne","3":"13NEXTgenC0IK","4":"PYT","5":"20","6":"TRUE","7":"FALSE","8":"0.907692308","9":"0.4398050355","10":"1.934285e-01","11":"8816.807829","12":"115"},{"1":"2013","2":"Mokwa","3":"13NEXTGenC0MK","4":"PYT","5":"16","6":"TRUE","7":"FALSE","8":"0.978494624","9":"0.4920528592","10":"2.421160e-01","11":"8062.917910","12":"89"},{"1":"2013","2":"Ibadan","3":"13NextTGenungenoclonalevalIB","4":"CET","5":"10","6":"FALSE","7":"FALSE","8":"0.414847162","9":"-0.0240905301","10":"5.803536e-04","11":"9461.175044","12":"90"},{"1":"2013","2":"Ibadan","3":"13pyt20yrtIB","4":"PYT","5":"19","6":"TRUE","7":"FALSE","8":"0.200000000","9":"-0.7324833000","10":"5.365318e-01","11":"5613.251041","12":"4"},{"1":"2013","2":"Ubiaja","3":"13pyt25mixedUB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.160000000","9":"0.2548091326","10":"6.492769e-02","11":"21016.132965","12":"4"},{"1":"2013","2":"Ikenne","3":"13Pyt65Ik","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.061538462","9":"-0.6406222867","10":"4.103969e-01","11":"4737.163186","12":"4"},{"1":"2013","2":"Ibadan","3":"13pyt78highDMIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.038461538","9":"-0.4619934279","10":"2.134379e-01","11":"12454.996955","12":"3"},{"1":"2013","2":"Ibadan","3":"13pytdiallelIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.033670034","9":"-0.1865198445","10":"3.478965e-02","11":"7554.639944","12":"10"},{"1":"2013","2":"Ibadan","3":"13uyt15yrt8AIB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.1084730714","10":"1.176641e-02","11":"8952.932235","12":"15"},{"1":"2013","2":"Ikenne","3":"13Uyt15yrt8AIK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.1879729269","10":"3.533382e-02","11":"8739.422533","12":"15"},{"1":"2013","2":"Ilorin","3":"13uyt15yrt8AIL","4":"UYT","5":"19","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.0403946703","10":"1.631729e-03","11":"9044.747657","12":"15"},{"1":"2013","2":"Mokwa","3":"13uyt15yrt8AMK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"-0.0934219611","10":"8.727663e-03","11":"8980.461833","12":"15"},{"1":"2013","2":"Ubiaja","3":"13uyt15yrt8AUB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"-0.0849120045","10":"7.210049e-03","11":"8994.210705","12":"15"},{"1":"2013","2":"Zaria","3":"13uyt15Yrt8AZA","4":"UYT","5":"18","6":"TRUE","7":"FALSE","8":"1.000000000","9":"-0.3256305907","10":"1.060353e-01","11":"8098.900506","12":"15"},{"1":"2013","2":"Ibadan","3":"13uyt20mixedIB","4":"UYT","5":"16","6":"TRUE","7":"FALSE","8":"0.150000000","9":"-0.3509812501","10":"1.231878e-01","11":"13884.082630","12":"3"},{"1":"2013","2":"Ubiaja","3":"13uyt24yrtUB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.458333333","9":"0.0749111096","10":"5.611674e-03","11":"15132.733175","12":"11"},{"1":"2013","2":"Mokwa","3":"13uyt25sgMK","4":"UYT","5":"19","6":"TRUE","7":"FALSE","8":"0.960000000","9":"0.0191717666","10":"3.675566e-04","11":"9422.844524","12":"24"},{"1":"2013","2":"Zaria","3":"13uyt25sgZA","4":"UYT","5":"19","6":"TRUE","7":"FALSE","8":"0.960000000","9":"0.1211779969","10":"1.468411e-02","11":"9287.892294","12":"24"},{"1":"2013","2":"Ikenne","3":"13uyt30whrtIK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.933333333","9":"0.3318213235","10":"1.101054e-01","11":"5718.878163","12":"27"},{"1":"2013","2":"Ibadan","3":"13uyt30whtrtIB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.933333333","9":"-0.3577888647","10":"1.280129e-01","11":"6157.034141","12":"27"},{"1":"2013","2":"Mokwa","3":"13uyt30whtrtMK","4":"UYT","5":"24","6":"TRUE","7":"FALSE","8":"0.900000000","9":"-0.1193114382","10":"1.423522e-02","11":"7239.637355","12":"26"},{"1":"2013","2":"Ubiaja","3":"13uyt30whtrtUB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.933333333","9":"0.1214512406","10":"1.475040e-02","11":"6956.771727","12":"27"},{"1":"2013","2":"Abuja","3":"13uyt30whtrtZA","4":"UYT","5":"21","6":"TRUE","7":"FALSE","8":"0.965517241","9":"-0.3187641604","10":"1.016106e-01","11":"6343.458624","12":"27"},{"1":"2013","2":"Ibadan","3":"13uyt30yrtIBA","4":"UYT","5":"21","6":"TRUE","7":"FALSE","8":"0.103448276","9":"0.5688245333","10":"3.235613e-01","11":"21487.844221","12":"3"},{"1":"2013","2":"Ikenne","3":"13uyt30yrtIK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.166666667","9":"0.4001719220","10":"1.601376e-01","11":"11070.152734","12":"5"},{"1":"2013","2":"Ubiaja","3":"13uyt30yrtUB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.166666667","9":"-0.5562363083","10":"3.093988e-01","11":"1493.635842","12":"5"},{"1":"2013","2":"Zaria","3":"13uyt30YrtZA","4":"UYT","5":"19","6":"TRUE","7":"FALSE","8":"0.148148148","9":"-0.1551252294","10":"2.406384e-02","11":"3151.515172","12":"4"},{"1":"2014","2":"Ibadan","3":"14ayt12highTCIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"0.9810404370","10":"9.624403e-01","11":"631.332050","12":"3"},{"1":"2014","2":"Ubiaja","3":"14ayt12highTCUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"-0.0231803251","10":"5.373275e-04","11":"27207.703205","12":"3"},{"1":"2014","2":"Zaria","3":"14ayt13mixedZA","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.230769231","9":"0.3869845546","10":"1.497570e-01","11":"24902.189912","12":"3"},{"1":"2014","2":"Ubiaja","3":"14ayt15mixedUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.333333333","9":"-0.3191668180","10":"1.018675e-01","11":"7722.961403","12":"5"},{"1":"2014","2":"Ibadan","3":"14ayt15yrtIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.333333333","9":"-0.0100465802","10":"1.009338e-04","11":"27649.409071","12":"5"},{"1":"2014","2":"Zaria","3":"14ayt17ZA","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.176470588","9":"-0.2499855913","10":"6.249280e-02","11":"69635.969743","12":"3"},{"1":"2014","2":"Ibadan","3":"14ayt21highTCIB","4":"AYT","5":"13","6":"TRUE","7":"FALSE","8":"0.142857143","9":"-0.6096343677","10":"3.716541e-01","11":"9949.687397","12":"3"},{"1":"2014","2":"Zaria","3":"14ayt21pdZA","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.190476190","9":"-0.4513105335","10":"2.036812e-01","11":"16527.290537","12":"4"},{"1":"2014","2":"Ibadan","3":"14clonalevaIB_Diallel","4":"CET","5":"5","6":"FALSE","7":"FALSE","8":"0.014925373","9":"-0.2091524067","10":"4.374473e-02","11":"4509.802283","12":"8"},{"1":"2014","2":"Ibadan","3":"14clonalevaIB_HighDM","4":"CET","5":"5","6":"FALSE","7":"FALSE","8":"0.025641026","9":"0.9652676114","10":"9.317416e-01","11":"1080.853847","12":"3"},{"1":"2014","2":"Ibadan","3":"14clonalevaIB_HighTC","4":"CET","5":"6","6":"FALSE","7":"FALSE","8":"0.007500000","9":"-0.9994970841","10":"9.989944e-01","11":"15.923069","12":"3"},{"1":"2014","2":"Ikenne","3":"14clonalevalIK","4":"CET","5":"5","6":"FALSE","7":"FALSE","8":"0.021428571","9":"-0.1485014712","10":"2.205269e-02","11":"15485.530299","12":"3"},{"1":"2014","2":"Ibadan","3":"14geneticgainIB","4":"GeneticGain","5":"10","6":"FALSE","7":"TRUE","8":"0.976845152","9":"0.2234407418","10":"4.992577e-02","11":"8596.950089","12":"515"},{"1":"2014","2":"Ubiaja","3":"14geneticgainUB","4":"GeneticGain","5":"29","6":"FALSE","7":"FALSE","8":"0.906332454","9":"0.3539111685","10":"1.252531e-01","11":"7418.144539","12":"637"},{"1":"2014","2":"Ubiaja","3":"14.GS.C0.C1.CB.EC.244.UB","4":"ExpCET","5":"30","6":"FALSE","7":"TRUE","8":"0.978070175","9":"0.4517437271","10":"2.040724e-01","11":"11105.244389","12":"211"},{"1":"2014","2":"Ibadan","3":"14.GS.C0.PYT.88.IB","4":"PYT","5":"10","6":"FALSE","7":"FALSE","8":"0.977272727","9":"0.2707068265","10":"7.328219e-02","11":"10872.477128","12":"80"},{"1":"2014","2":"Ikenne","3":"14.GS.C0.PYT.88.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.977272727","9":"0.5193274038","10":"2.697010e-01","11":"8963.473534","12":"77"},{"1":"2014","2":"Mokwa","3":"14.GS.C0.PYT.88.MK","4":"PYT","5":"12","6":"FALSE","7":"FALSE","8":"0.977272727","9":"0.1873936084","10":"3.511636e-02","11":"12577.042451","12":"68"},{"1":"2014","2":"Ubiaja","3":"14.GS.C0.PYT.88.UB","4":"PYT","5":"10","6":"FALSE","7":"FALSE","8":"0.977272727","9":"0.1855370579","10":"3.442400e-02","11":"11444.393195","12":"84"},{"1":"2014","2":"Ikenne","3":"14.GS.C1.CE.246.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.414847162","9":"0.1366082822","10":"1.866182e-02","11":"9810.312723","12":"74"},{"1":"2014","2":"Ibadan","3":"14.GS.C1.EC.293.IB","4":"ExpCET","5":"20","6":"FALSE","7":"TRUE","8":"0.992592593","9":"0.2551069636","10":"6.507956e-02","11":"14151.380546","12":"268"},{"1":"2014","2":"Mokwa","3":"14.GS.C1.EC.329.MK","4":"ExpCET","5":"17","6":"FALSE","7":"TRUE","8":"0.996644295","9":"0.3655477432","10":"1.336252e-01","11":"12817.889694","12":"46"},{"1":"2014","2":"Ikenne","3":"14.GS.C1.EC.331.IK","4":"ExpCET","5":"20","6":"FALSE","7":"TRUE","8":"1.000000000","9":"0.2630544346","10":"6.919764e-02","11":"11092.839213","12":"302"},{"1":"2014","2":"Ibadan","3":"14.GS.C1.PYT.35.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.971428571","9":"-0.0614265941","10":"3.773226e-03","11":"10980.872422","12":"33"},{"1":"2014","2":"Ibadan","3":"14.GS.C1.ungenotyped.AYT.40.IB","4":"AYT","5":"20","6":"TRUE","7":"FALSE","8":"0.675000000","9":"-0.0198635077","10":"3.945589e-04","11":"8946.741492","12":"27"},{"1":"2014","2":"Ikenne","3":"14.GS.C1.ungenotyped.CE.IKN","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.414847162","9":"0.1366082822","10":"1.866182e-02","11":"9810.312723","12":"74"},{"1":"2014","2":"Ibadan","3":"14.GS.C2.CE.381.IB","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"1.000000000","9":"0.0745148439","10":"5.552462e-03","11":"8706.492476","12":"203"},{"1":"2014","2":"Mokwa","3":"14.GS.C2.CE.432.MK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"1.000000000","9":"0.1521163546","10":"2.313939e-02","11":"8649.828204","12":"239"},{"1":"2014","2":"Ikenne","3":"14.GS.C2.CE.447.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"1.000000000","9":"0.3271780495","10":"1.070455e-01","11":"7191.171380","12":"287"},{"1":"2014","2":"Ikenne","3":"14.GS.C2.CET.885.IK","4":"CET","5":"7","6":"FALSE","7":"TRUE","8":"0.992907801","9":"0.1933072452","10":"3.736769e-02","11":"8324.209468","12":"665"},{"1":"2014","2":"Ibadan","3":"14.GS.RESCUED.C2.CE.IB","4":"CET","5":"5","6":"FALSE","7":"FALSE","8":"0.973333333","9":"0.3038666452","10":"9.233494e-02","11":"6908.263532","12":"120"},{"1":"2014","2":"Ikenne","3":"14pyt15highTCIK","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.200000000","9":"-0.5008329578","10":"2.508337e-01","11":"11862.845813","12":"3"},{"1":"2014","2":"Ibadan","3":"14pyt17yrtIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.176470588","9":"0.2990684986","10":"8.944197e-02","11":"67634.244694","12":"3"},{"1":"2014","2":"Ibadan","3":"14pyt21pdyrtIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.200000000","9":"-0.4075143894","10":"1.660680e-01","11":"17307.938456","12":"4"},{"1":"2014","2":"Ibadan","3":"14pyt24highTCIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.125000000","9":"-0.7029806884","10":"4.941818e-01","11":"8009.493159","12":"3"},{"1":"2014","2":"Ubiaja","3":"14pyt25crossingblkUB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.160000000","9":"0.8289117366","10":"6.870947e-01","11":"13848.460530","12":"4"},{"1":"2014","2":"Ibadan","3":"14pyt64HighTCIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.046875000","9":"-0.1705644655","10":"2.909224e-02","11":"15374.060936","12":"3"},{"1":"2014","2":"Ibadan","3":"14pytdiallelIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.013856813","9":"0.7507801529","10":"5.636708e-01","11":"3730.955995","12":"6"},{"1":"2014","2":"Ikenne","3":"14pytdiallelIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.012931034","9":"0.0080017105","10":"6.402737e-05","11":"8550.235550","12":"6"},{"1":"2014","2":"Ibadan","3":"14uyt16ictIB","4":"UYT","5":"19","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.3369111044","10":"1.135091e-01","11":"9351.725987","12":"16"},{"1":"2014","2":"Ikenne","3":"14uyt19yrtIK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.210526316","9":"0.2108795692","10":"4.447019e-02","11":"4202.467077","12":"4"},{"1":"2014","2":"Mokwa","3":"14uyt19yrtMK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.210526316","9":"-0.4623368845","10":"2.137554e-01","11":"3457.942434","12":"4"},{"1":"2014","2":"Ubiaja","3":"14uyt19yrtUB","4":"UYT","5":"22","6":"TRUE","7":"FALSE","8":"0.210526316","9":"-0.2615257914","10":"6.839574e-02","11":"4097.241345","12":"4"},{"1":"2014","2":"Zaria","3":"14uyt20sgZA","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.950000000","9":"0.2303460179","10":"5.305929e-02","11":"8809.627516","12":"19"},{"1":"2014","2":"Ibadan","3":"14uyt21pdIB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.142857143","9":"-0.8405848196","10":"7.065828e-01","11":"9303.410572","12":"3"},{"1":"2014","2":"Ibadan","3":"14uyt30whtrtIB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.933333333","9":"-0.1232370271","10":"1.518736e-02","11":"6953.686379","12":"27"},{"1":"2014","2":"Ikenne","3":"14uyt30whtrtIK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.900000000","9":"0.3366019235","10":"1.133009e-01","11":"5823.843786","12":"26"},{"1":"2014","2":"Mokwa","3":"14uyt30whtrtMK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.900000000","9":"-0.2997570401","10":"8.985428e-02","11":"6684.277080","12":"26"},{"1":"2014","2":"Ubiaja","3":"14uyt30whtrtUB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.933333333","9":"0.1727748181","10":"2.985114e-02","11":"6850.146605","12":"27"},{"1":"2014","2":"Zaria","3":"14uyt30whtrtZA","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.933333333","9":"0.1437212648","10":"2.065580e-02","11":"6915.074165","12":"27"},{"1":"2014","2":"Ibadan","3":"14uyt8pdIB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.375000000","9":"0.5734838934","10":"3.288838e-01","11":"15819.343107","12":"3"},{"1":"2015","2":"Ubiaja","3":"15ayt10highTCUB2","4":"AYT","5":"14","6":"TRUE","7":"FALSE","8":"0.300000000","9":"-0.9456072732","10":"8.941731e-01","11":"1675.740001","12":"3"},{"1":"2015","2":"Ikenne","3":"15ayt10mixedIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.300000000","9":"-0.5182634192","10":"2.685970e-01","11":"11581.568460","12":"3"},{"1":"2015","2":"Ibadan","3":"15ayt11highTCIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.272727273","9":"-0.7691488318","10":"5.915899e-01","11":"3209.571768","12":"3"},{"1":"2015","2":"Ikenne","3":"15ayt11highTCIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.272727273","9":"0.5565101939","10":"3.097036e-01","11":"5424.831531","12":"3"},{"1":"2015","2":"Ibadan","3":"15ayt13yrtIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.230769231","9":"0.3373352705","10":"1.137951e-01","11":"15035.212133","12":"3"},{"1":"2015","2":"Ibadan","3":"15ayt14highDMIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.214285714","9":"-0.2875131891","10":"8.266383e-02","11":"32108.463887","12":"3"},{"1":"2015","2":"Ikenne","3":"15ayt14mixedIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.214285714","9":"-0.1295463929","10":"1.678227e-02","11":"34414.440648","12":"3"},{"1":"2015","2":"Ubiaja","3":"15ayt15mixedUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.266666667","9":"-0.7849556147","10":"6.161553e-01","11":"3739.822139","12":"4"},{"1":"2015","2":"Ibadan","3":"15ayt15regionaltrialIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.600000000","9":"0.0720356504","10":"5.189135e-03","11":"8991.030478","12":"9"},{"1":"2015","2":"Ibadan","3":"15ayt18highTCIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.166666667","9":"0.7361162991","10":"5.418672e-01","11":"8795.160262","12":"3"},{"1":"2015","2":"Ikenne","3":"15ayt18highTCIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.166666667","9":"0.9880822184","10":"9.763065e-01","11":"454.864602","12":"3"},{"1":"2015","2":"Ubiaja","3":"15ayt18highTCUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.166666667","9":"0.9537694914","10":"9.096762e-01","11":"1734.021077","12":"3"},{"1":"2015","2":"Ibadan","3":"15ayt18ppdIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.166666667","9":"0.7090192980","10":"5.027084e-01","11":"10941.102454","12":"3"},{"1":"2015","2":"Ikenne","3":"15ayt42yrtIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.071428571","9":"-0.7653876108","10":"5.858182e-01","11":"4457.404550","12":"3"},{"1":"2015","2":"Ibadan","3":"15ayt61yrtIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.049180328","9":"0.9618966349","10":"9.252451e-01","11":"2616.558610","12":"3"},{"1":"2015","2":"Ibadan","3":"15clonalevalhighTCAIB","4":"CET","5":"7","6":"FALSE","7":"TRUE","8":"0.006472492","9":"-0.1739728527","10":"3.026655e-02","11":"10436.224439","12":"3"},{"1":"2015","2":"Ibadan","3":"15clonalevalhighTCBIB","4":"CET","5":"7","6":"FALSE","7":"TRUE","8":"0.001693958","9":"0.0693144110","10":"4.804488e-03","11":"10710.245960","12":"3"},{"1":"2015","2":"Ibadan","3":"15geneticgainIB","4":"GeneticGain","5":"10","6":"FALSE","7":"TRUE","8":"0.901515152","9":"0.2436226860","10":"5.935201e-02","11":"7744.617693","12":"539"},{"1":"2015","2":"Ubiaja","3":"15geneticgainUB","4":"GeneticGain","5":"10","6":"FALSE","7":"TRUE","8":"0.906332454","9":"0.3538714843","10":"1.252250e-01","11":"8051.555507","12":"655"},{"1":"2015","2":"Ubiaja","3":"15.GS.C0.C1.AYT.58.UB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.982758621","9":"0.4405375221","10":"1.940733e-01","11":"8322.746522","12":"57"},{"1":"2015","2":"Ibadan","3":"15.GS.C0.C1.C2.PYT.571.IB","4":"PYT","5":"28","6":"TRUE","7":"TRUE","8":"0.989130435","9":"-0.0239656518","10":"5.743525e-04","11":"12941.124768","12":"534"},{"1":"2015","2":"Mokwa","3":"15.GS.C0.C1.C2.PYT.571.MK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.980314961","9":"0.2445302372","10":"5.979504e-02","11":"11858.019696","12":"444"},{"1":"2015","2":"Ubiaja","3":"15.GS.C0.C1.CE.244.UB","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.978070175","9":"0.1203486334","10":"1.448379e-02","11":"13700.861746","12":"199"},{"1":"2015","2":"Ibadan","3":"15.GS.C0.PYT.88.IB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.977272727","9":"0.2107620902","10":"4.442066e-02","11":"11657.969911","12":"76"},{"1":"2015","2":"Ikenne","3":"15.GS.C0.PYT.88.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.977272727","9":"0.2592077729","10":"6.718867e-02","11":"11332.430551","12":"78"},{"1":"2015","2":"Mokwa","3":"15.GS.C0.PYT.88.MK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.977272727","9":"0.1448345523","10":"2.097705e-02","11":"12301.017422","12":"70"},{"1":"2015","2":"Ubiaja","3":"15.GS.C0.PYT.88.UB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.977272727","9":"0.2766027439","10":"7.650908e-02","11":"10814.479450","12":"85"},{"1":"2015","2":"Ibadan","3":"15.GS.C1.AYT.28.IB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"-0.1226351225","10":"1.503937e-02","11":"9071.251046","12":"28"},{"1":"2015","2":"Ikenne","3":"15.GS.C1.AYT.28.IK","4":"AYT","5":"25","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.2663181474","10":"7.092536e-02","11":"5362.866951","12":"23"},{"1":"2015","2":"Mokwa","3":"15.GS.C1.AYT.28.MK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"-0.0203967382","10":"4.160269e-04","11":"9205.928557","12":"28"},{"1":"2015","2":"Ikenne","3":"15.GS.C1.AYT.29.IK","4":"AYT","5":"38","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.0362451516","10":"1.313711e-03","11":"5158.645952","12":"28"},{"1":"2015","2":"Mokwa","3":"15.GS.C1.AYT.29.MK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.0578362564","10":"3.345033e-03","11":"6790.938483","12":"29"},{"1":"2015","2":"Ubiaja","3":"15.GS.C1.AYT.42.UB","4":"AYT","5":"20","6":"TRUE","7":"TRUE","8":"0.948717949","9":"0.1737219739","10":"3.017932e-02","11":"10039.321732","12":"36"},{"1":"2015","2":"Ikenne","3":"15.GS.C1.AYT.44.IK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.0853389004","10":"7.282728e-03","11":"7324.348261","12":"44"},{"1":"2015","2":"Mokwa","3":"15.GS.C1.AYT.44.MK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.1128663990","10":"1.273882e-02","11":"7284.092743","12":"44"},{"1":"2015","2":"Ubiaja","3":"15.GS.C1.AYT.44.UB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.2308600951","10":"5.329638e-02","11":"7068.292557","12":"43"},{"1":"2015","2":"Ibadan","3":"15.GS.C1.CE.293.IB","4":"CET","5":"12","6":"FALSE","7":"TRUE","8":"0.992592593","9":"0.2003619773","10":"4.014492e-02","11":"10484.167288","12":"170"},{"1":"2015","2":"Mokwa","3":"15.GS.C1.CE.329.MK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.996644295","9":"0.3423383844","10":"1.171956e-01","11":"10932.229360","12":"218"},{"1":"2015","2":"Ikenne","3":"15.GS.C1.EC.38.IKN","4":"ExpCET","5":"20","6":"FALSE","7":"TRUE","8":"0.083333333","9":"0.8896156842","10":"7.914161e-01","11":"11717.120594","12":"3"},{"1":"2015","2":"Ubiaja","3":"15.GS.C1.PYT.20.UBJ","4":"PYT","5":"7","6":"TRUE","7":"FALSE","8":"0.761904762","9":"0.5436906374","10":"2.955995e-01","11":"12877.515060","12":"16"},{"1":"2015","2":"Ikenne","3":"15.GS.C1.ungenotyped.AYT.15.IKN","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.400000000","9":"-0.3403940672","10":"1.158681e-01","11":"16720.729423","12":"6"},{"1":"2015","2":"Ibadan","3":"15.GS.C1.ungenotyped.AYT.20.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.800000000","9":"-0.1167135363","10":"1.362205e-02","11":"11973.057279","12":"16"},{"1":"2015","2":"Ikenne","3":"15.GS.C1.ungenotyped.AYT.20.IKN","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.800000000","9":"0.0654109778","10":"4.278596e-03","11":"12086.471924","12":"16"},{"1":"2015","2":"Ubiaja","3":"15.GS.C1.ungenotyped.AYT.20.UBJ","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.800000000","9":"0.1690105706","10":"2.856457e-02","11":"11791.678844","12":"16"},{"1":"2015","2":"Ibadan","3":"15.GS.C1.ungenotyped.AYT.22.IB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.954545455","9":"0.2168758378","10":"4.703513e-02","11":"7492.499985","12":"21"},{"1":"2015","2":"Ubiaja","3":"15.GS.C1.ungenotyped.AYT.22.UBJ","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.954545455","9":"0.1773873523","10":"3.146627e-02","11":"7614.907074","12":"21"},{"1":"2015","2":"Ikenne","3":"15.GS.C1.ungenotyped.PYT.15.IKN","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.666666667","9":"-0.1623811939","10":"2.636765e-02","11":"15253.097740","12":"10"},{"1":"2015","2":"Ibadan","3":"15.GS.C2.CE.Res.Cons.IB","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.961832061","9":"0.3297861351","10":"1.087589e-01","11":"6771.316219","12":"97"},{"1":"2015","2":"Ikenne","3":"15.GS.C2.CET.291.IK","4":"CET","5":"10","6":"FALSE","7":"TRUE","8":"0.992882562","9":"0.3861322729","10":"1.490981e-01","11":"6988.297205","12":"259"},{"1":"2015","2":"Ibadan","3":"15.GS.C2.EC.161.UB","4":"ExpCET","5":"10","6":"FALSE","7":"TRUE","8":"0.993464052","9":"0.3293762781","10":"1.084887e-01","11":"6922.482861","12":"124"},{"1":"2015","2":"Mokwa","3":"15.GS.C2.PYT.291.MK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.992907801","9":"0.2681311711","10":"7.189432e-02","11":"7614.406146","12":"260"},{"1":"2015","2":"Ibadan","3":"15.GS.C2.PYT.311.IB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.2801034646","10":"7.845795e-02","11":"7893.201174","12":"268"},{"1":"2015","2":"Ikenne","3":"15.GS.C2.PYT.332.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.3993303055","10":"1.594647e-01","11":"6823.896855","12":"272"},{"1":"2015","2":"Mokwa","3":"15.GS.C2.PYT.338.MK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.2522925044","10":"6.365151e-02","11":"8628.763390","12":"264"},{"1":"2015","2":"Ibadan","3":"15.GS.C2.rescued.PYT.27.IB","4":"PYT","5":"9","6":"TRUE","7":"TRUE","8":"0.962962963","9":"-0.0654680128","10":"4.286061e-03","11":"5475.451362","12":"22"},{"1":"2015","2":"Ibadan","3":"15.GS.C2.ungenotyped.AYT.23.IB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.217391304","9":"0.6302377048","10":"3.971996e-01","11":"1708.855376","12":"5"},{"1":"2015","2":"Ibadan","3":"15.GS.C2.ungenotyped.PYT.14.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.214285714","9":"0.7011243039","10":"4.915753e-01","11":"46240.010384","12":"3"},{"1":"2015","2":"Ubiaja","3":"15pyt15UB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.200000000","9":"-0.8985882144","10":"8.074608e-01","11":"5570.502823","12":"3"},{"1":"2015","2":"Ubiaja","3":"15pyt16pdUB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.187500000","9":"0.4062356828","10":"1.650274e-01","11":"62652.973820","12":"3"},{"1":"2015","2":"Ubiaja","3":"15pyt19UB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.222222222","9":"-0.6978554695","10":"4.870023e-01","11":"4998.168281","12":"4"},{"1":"2015","2":"Ibadan","3":"15pyt23yrtIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.130434783","9":"-0.9364671932","10":"8.769708e-01","11":"3559.453912","12":"3"},{"1":"2015","2":"Ibadan","3":"15pyt35highDMIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.085714286","9":"0.2832337659","10":"8.022137e-02","11":"8484.091543","12":"3"},{"1":"2015","2":"Ikenne","3":"15uyt19highTCIK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.210526316","9":"-0.4215833051","10":"1.777325e-01","11":"3616.372971","12":"4"},{"1":"2015","2":"Ibadan","3":"15uyt19yrtIB","4":"UYT","5":"22","6":"TRUE","7":"FALSE","8":"0.210526316","9":"0.0755524372","10":"5.708171e-03","11":"4372.944355","12":"4"},{"1":"2015","2":"Mokwa","3":"15uyt19yrtMK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.210526316","9":"-0.7570690343","10":"5.731535e-01","11":"1877.291795","12":"4"},{"1":"2015","2":"Ubiaja","3":"15uyt19yrtUB","4":"UYT","5":"29","6":"TRUE","7":"FALSE","8":"0.210526316","9":"-0.4698090382","10":"2.207205e-01","11":"3427.309417","12":"4"},{"1":"2015","2":"Zaria","3":"15uyt19yrtZA","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.210526316","9":"-0.9749121494","10":"9.504537e-01","11":"217.907068","12":"4"},{"1":"2015","2":"Ibadan","3":"15uyt21pdIB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.142857143","9":"0.9984948077","10":"9.969919e-01","11":"95.378764","12":"3"},{"1":"2015","2":"Ikenne","3":"15uyt8pdIK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.375000000","9":"0.7291454196","10":"5.316530e-01","11":"11039.728950","12":"3"},{"1":"2016","2":"Ibadan","3":"16ayt10highTCBIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.300000000","9":"-0.4799638977","10":"2.303653e-01","11":"10279.955304","12":"3"},{"1":"2016","2":"Ibadan","3":"16ayt11highTCBIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.272727273","9":"-0.2483876567","10":"6.169643e-02","11":"14857.782419","12":"3"},{"1":"2016","2":"Ikenne","3":"16ayt11highTCBIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.272727273","9":"-0.8740347219","10":"7.639367e-01","11":"3737.998370","12":"3"},{"1":"2016","2":"Mokwa","3":"16ayt11HighTCMK","4":"AYT","5":"12","6":"TRUE","7":"FALSE","8":"0.272727273","9":"-0.9273617155","10":"8.599998e-01","11":"2216.865944","12":"3"},{"1":"2016","2":"Ibadan","3":"16ayt13yrtIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.230769231","9":"-0.6719398997","10":"4.515032e-01","11":"9305.709286","12":"3"},{"1":"2016","2":"Ibadan","3":"16ayt14highDMIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.214285714","9":"0.0813936727","10":"6.624930e-03","11":"51801.242554","12":"3"},{"1":"2016","2":"Ibadan","3":"16ayt15yrtIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.266666667","9":"-0.4350308074","10":"1.892518e-01","11":"7899.169090","12":"4"},{"1":"2016","2":"Ibadan","3":"16ayt16ppdIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"-0.8156369463","10":"6.652636e-01","11":"10207.701019","12":"4"},{"1":"2016","2":"Ibadan","3":"16ayt17pdIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.176470588","9":"0.6977371927","10":"4.868372e-01","11":"6220.501424","12":"3"},{"1":"2016","2":"Ibadan","3":"16ayt18highTCIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.166666667","9":"0.7105499962","10":"5.048813e-01","11":"6613.265255","12":"3"},{"1":"2016","2":"Ibadan","3":"16ayt23ppdIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.260869565","9":"0.2222558274","10":"4.939765e-02","11":"17633.490698","12":"6"},{"1":"2016","2":"Ikenne","3":"16ayt24yrtIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.125000000","9":"-0.6981988560","10":"4.874816e-01","11":"15002.291180","12":"3"},{"1":"2016","2":"Ibadan","3":"16clonalevalhighDMIB","4":"CET","5":"7","6":"FALSE","7":"TRUE","8":"0.002006689","9":"-0.8789417159","10":"7.725385e-01","11":"4035.350011","12":"3"},{"1":"2016","2":"Ibadan","3":"16crossingblockIB","4":"CrossingBlock","5":"7","6":"FALSE","7":"TRUE","8":"0.005217391","9":"-0.6519090124","10":"4.249854e-01","11":"6188.279734","12":"3"},{"1":"2016","2":"Ibadan","3":"16.GS.C0.C1.AYT.58.IB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.982758621","9":"0.4659975929","10":"2.171538e-01","11":"8084.396407","12":"57"},{"1":"2016","2":"Ikenne","3":"16.GS.C0.C1.AYT.58.IK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.982758621","9":"0.4667010468","10":"2.178099e-01","11":"8077.620801","12":"57"},{"1":"2016","2":"Mokwa","3":"16.GS.C0.C1.AYT.58.MK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.982758621","9":"0.3550934236","10":"1.260913e-01","11":"8886.886147","12":"56"},{"1":"2016","2":"Ubiaja","3":"16.GS.C0.C1.AYT.58.UB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.982758621","9":"0.4614491190","10":"2.129353e-01","11":"8127.960211","12":"57"},{"1":"2016","2":"Ikenne","3":"16.GS.C1.C2.PYT.28.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.964285714","9":"0.4056915525","10":"1.645856e-01","11":"7762.253842","12":"27"},{"1":"2016","2":"Mokwa","3":"16.GS.C1.C2.PYT.28.MK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.964285714","9":"0.1979732459","10":"3.919341e-02","11":"7883.275118","12":"26"},{"1":"2016","2":"Ubiaja","3":"16.GS.C1.C2.PYT.28.UB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.964285714","9":"0.2770830644","10":"7.677502e-02","11":"8578.146270","12":"27"},{"1":"2016","2":"Ubiaja","3":"16.GS.C1.PYT.20.UB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.950000000","9":"-0.0514375315","10":"2.645820e-03","11":"12391.996959","12":"19"},{"1":"2016","2":"Ibadan","3":"16.GS.C1.ungenotyped.AYT.21.IB","4":"AYT","5":"20","6":"TRUE","7":"FALSE","8":"0.952380952","9":"-0.0433796551","10":"1.881794e-03","11":"6415.125105","12":"20"},{"1":"2016","2":"Ikenne","3":"16.GS.C1.ungenotyped.AYT.21.IK","4":"AYT","5":"20","6":"TRUE","7":"FALSE","8":"0.952380952","9":"0.6234046533","10":"3.886334e-01","11":"3929.387769","12":"20"},{"1":"2016","2":"Ubiaja","3":"16.GS.C1.ungenotyped.AYT.21.UB","4":"AYT","5":"20","6":"TRUE","7":"FALSE","8":"0.952380952","9":"-0.0740982695","10":"5.490554e-03","11":"6391.930817","12":"20"},{"1":"2016","2":"Ibadan","3":"16.GS.C1.UYT.34.IB","4":"UYT","5":"38","6":"TRUE","7":"FALSE","8":"1.000000000","9":"-0.1084250390","10":"1.175599e-02","11":"8931.772784","12":"31"},{"1":"2016","2":"Ikenne","3":"16.GS.C1.UYT.34.IK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4762400927","10":"2.268046e-01","11":"6655.311098","12":"34"},{"1":"2016","2":"Mokwa","3":"16.GS.C1.UYT.34.MK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4606815904","10":"2.122275e-01","11":"6780.784073","12":"34"},{"1":"2016","2":"Ubiaja","3":"16.GS.C1.UYT.34.UB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.3526105606","10":"1.243342e-01","11":"7537.329455","12":"34"},{"1":"2016","2":"Umudike","3":"16.GS.C1.UYT.34.UM","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4821229116","10":"2.324425e-01","11":"6606.782849","12":"34"},{"1":"2016","2":"Ibadan","3":"16.GS.C2.AYT.14.res.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.0851861813","10":"7.256685e-03","11":"8269.918498","12":"14"},{"1":"2016","2":"Ikenne","3":"16.GS.C2.AYT.35.IK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.6757407152","10":"4.566255e-01","11":"3844.322406","12":"35"},{"1":"2016","2":"Mokwa","3":"16.GS.C2.AYT.35.MK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.7001601454","10":"4.902242e-01","11":"3606.614717","12":"35"},{"1":"2016","2":"Ikenne","3":"16.GS.C2.AYT.39.IK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.7623404462","10":"5.811630e-01","11":"3787.980173","12":"39"},{"1":"2016","2":"Mokwa","3":"16.GS.C2.AYT.39.MK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.6044093849","10":"3.653107e-01","11":"5740.157183","12":"39"},{"1":"2016","2":"Ibadan","3":"16.GS.C2.AYT.43.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.2293274192","10":"5.259107e-02","11":"9242.406170","12":"43"},{"1":"2016","2":"Ubiaja","3":"16.GS.C2.AYT.43.UB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.5737415325","10":"3.291793e-01","11":"6544.161367","12":"43"},{"1":"2016","2":"Ikenne","3":"16.GS.C2.extrasel.AYT.29.IK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.965517241","9":"0.6402270534","10":"4.098907e-01","11":"4960.395314","12":"28"},{"1":"2016","2":"Mokwa","3":"16.GS.C2.extrasel.AYT.29.MK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.965517241","9":"0.4358343567","10":"1.899516e-01","11":"6809.179618","12":"28"},{"1":"2016","2":"Ubiaja","3":"16.GS.C2.extrasel.AYT.29.UB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.965517241","9":"0.5034153450","10":"2.534270e-01","11":"6275.612056","12":"28"},{"1":"2016","2":"Mokwa","3":"16.GS.C2.res.AYT.14.MK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4082272626","10":"1.666495e-01","11":"6942.117495","12":"14"},{"1":"2016","2":"Ibadan","3":"16.GS.C2.ungenotyped.AYT.19.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.368421053","9":"-0.2674995456","10":"7.155601e-02","11":"11838.926891","12":"7"},{"1":"2016","2":"Ibadan","3":"16.GS.C3B.CET.1143.IB","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.021100917","9":"0.2860469900","10":"8.182288e-02","11":"18599.716274","12":"22"},{"1":"2016","2":"Ibadan","3":"16.GS.C3.CET.259.IB","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.979079498","9":"0.5128357404","10":"2.630005e-01","11":"8230.703720","12":"178"},{"1":"2016","2":"Mokwa","3":"16.GS.C3.CET.283.MK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.939163498","9":"0.5011573876","10":"2.511587e-01","11":"8004.111132","12":"109"},{"1":"2016","2":"Ubiaja","3":"16.GS.C3.CET.312.UB","4":"CET","5":"24","6":"FALSE","7":"TRUE","8":"0.900000000","9":"0.4574559154","10":"2.092659e-01","11":"7702.278189","12":"196"},{"1":"2016","2":"Ibadan","3":"16.GS.C3.ungenotyped.CET.343.IB","4":"CET","5":"6","6":"FALSE","7":"FALSE","8":"0.020958084","9":"0.3138932070","10":"9.852895e-02","11":"28723.864593","12":"7"},{"1":"2016","2":"Ubiaja","3":"16.GS.C4.CB.149.UB","4":"CrossingBlock","5":"10","6":"FALSE","7":"TRUE","8":"1.000000000","9":"0.5703397828","10":"3.252875e-01","11":"7215.286109","12":"111"},{"1":"2016","2":"Ibadan","3":"16.GS.SelGain.PYT.571.IB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.989189189","9":"0.2495497075","10":"6.227506e-02","11":"11789.265570","12":"505"},{"1":"2016","2":"Ubiaja","3":"16pyt13highproteinUB","4":"PYT","5":"8","6":"TRUE","7":"TRUE","8":"1.000000000","9":"-0.2461688202","10":"6.059909e-02","11":"20191.946218","12":"11"},{"1":"2016","2":"Ibadan","3":"16pyt13highTCIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.230769231","9":"-0.2154452169","10":"4.641664e-02","11":"12736.945011","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt13whtrtIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.214285714","9":"-0.9993953475","10":"9.987911e-01","11":"21.447561","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt166highDMIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.024096386","9":"-0.1755181921","10":"3.080664e-02","11":"8888.907462","12":"4"},{"1":"2016","2":"Ikenne","3":"16pyt16highTCIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"0.0230849624","10":"5.329155e-04","11":"9737.868716","12":"4"},{"1":"2016","2":"Ibadan","3":"16pyt18yrtIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.222222222","9":"0.2666425777","10":"7.109826e-02","11":"9050.346223","12":"4"},{"1":"2016","2":"Ibadan","3":"16pyt24highTCIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.125000000","9":"-0.3670889369","10":"1.347543e-01","11":"11557.025362","12":"3"},{"1":"2016","2":"Ikenne","3":"16pyt25highTCIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.120000000","9":"0.4650728917","10":"2.162928e-01","11":"7228.960783","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt25mixedIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.160000000","9":"0.0001787977","10":"3.196862e-08","11":"9171.448656","12":"4"},{"1":"2016","2":"Ibadan","3":"16pyt25whtrtIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.120000000","9":"-0.9559759388","10":"9.138900e-01","11":"1527.661024","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt28whrtIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.111111111","9":"-0.5175627911","10":"2.678712e-01","11":"9778.991672","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt30highTCIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.096774194","9":"-0.9861225474","10":"9.724377e-01","11":"368.147965","12":"3"},{"1":"2016","2":"Ubiaja","3":"16pyt30whtrtUB","4":"PYT","5":"16","6":"TRUE","7":"FALSE","8":"0.133333333","9":"-0.1685855560","10":"2.842109e-02","11":"24555.932989","12":"4"},{"1":"2016","2":"Ibadan","3":"16pyt50highTCIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.060000000","9":"0.1296536746","10":"1.681008e-02","11":"13132.397807","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt56highTCIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.053571429","9":"0.9827834693","10":"9.658633e-01","11":"455.960837","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt65mixedIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.046153846","9":"0.4927355252","10":"2.427883e-01","11":"10114.022783","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt73highTCIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.041095890","9":"-0.2133790878","10":"4.553064e-02","11":"12748.779335","12":"3"},{"1":"2016","2":"Ibadan","3":"16pyt9highTCIB","4":"PYT","5":"4","6":"TRUE","7":"FALSE","8":"0.333333333","9":"0.0536811353","10":"2.881664e-03","11":"13318.438601","12":"3"},{"1":"2016","2":"Ibadan","3":"16uyt11highTCIB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.272727273","9":"-0.4399067899","10":"1.935180e-01","11":"6337.899263","12":"3"},{"1":"2016","2":"Ikenne","3":"16uyt11highTCIK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.250000000","9":"0.9102992695","10":"8.286448e-01","11":"1346.629221","12":"3"},{"1":"2016","2":"Mokwa","3":"16uyt11highTCMK","4":"UYT","5":"14","6":"TRUE","7":"FALSE","8":"0.272727273","9":"0.7477647615","10":"5.591521e-01","11":"3464.490566","12":"3"},{"1":"2016","2":"Ubiaja","3":"16uyt11highTCUB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.272727273","9":"0.1277031352","10":"1.630809e-02","11":"7730.538440","12":"3"},{"1":"2016","2":"Zaria","3":"16uyt11highTCZA","4":"UYT","5":"19","6":"TRUE","7":"FALSE","8":"0.272727273","9":"0.5597918241","10":"3.133669e-01","11":"5396.042835","12":"3"},{"1":"2017","2":"Ibadan","3":"17ayt100HDMIB","4":"AYT","5":"5","6":"TRUE","7":"TRUE","8":"0.040000000","9":"0.1804085677","10":"3.254725e-02","11":"53179.415129","12":"4"},{"1":"2017","2":"Ikenne","3":"17ayt10pdIK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.272727273","9":"0.2929721478","10":"8.583268e-02","11":"11081.432657","12":"3"},{"1":"2017","2":"Ikenne","3":"17ayt12highTCIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"-0.8682466786","10":"7.538523e-01","11":"3287.777369","12":"3"},{"1":"2017","2":"Ubiaja","3":"17ayt12HpUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"-0.1851518132","10":"3.428119e-02","11":"17782.588071","12":"10"},{"1":"2017","2":"Ibadan","3":"17ayt12HTCIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"-0.3710375406","10":"1.376689e-01","11":"11518.095673","12":"3"},{"1":"2017","2":"Ikenne","3":"17ayt13highTCIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.230769231","9":"-0.6883428123","10":"4.738158e-01","11":"7028.204523","12":"3"},{"1":"2017","2":"Ibadan","3":"17ayt15highdyldIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.200000000","9":"-0.8216526349","10":"6.751131e-01","11":"16941.785721","12":"3"},{"1":"2017","2":"Ibadan","3":"17ayt16HTCIB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.250000000","9":"-0.2104571333","10":"4.429220e-02","11":"6392.653226","12":"4"},{"1":"2017","2":"Ibadan","3":"17ayt16pdIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.187500000","9":"-0.4803080630","10":"2.306958e-01","11":"49004.533408","12":"3"},{"1":"2017","2":"Ibadan","3":"17ayt16whtrtIB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.187500000","9":"-0.9264083400","10":"8.582324e-01","11":"7392.713394","12":"3"},{"1":"2017","2":"Ibadan","3":"17ayt17highTCIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.176470588","9":"-0.3405562297","10":"1.159785e-01","11":"11807.811611","12":"3"},{"1":"2017","2":"Ibadan","3":"17AYT18highylddmIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.222222222","9":"0.6136864034","10":"3.766110e-01","11":"21956.281001","12":"4"},{"1":"2017","2":"Ibadan","3":"17ayt18HTCIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.166666667","9":"-0.7904646970","10":"6.248344e-01","11":"5011.059705","12":"3"},{"1":"2017","2":"Mokwa","3":"17ayt21whtrtMK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.142857143","9":"0.3290979506","10":"1.083055e-01","11":"42757.042011","12":"3"},{"1":"2017","2":"Ibadan","3":"17ayt25HTC1IB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.160000000","9":"-0.7265851196","10":"5.279259e-01","11":"3157.665767","12":"4"},{"1":"2017","2":"Ibadan","3":"17ayt25HTC3IB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.160000000","9":"-0.4900864497","10":"2.401847e-01","11":"11366.533228","12":"4"},{"1":"2017","2":"Ibadan","3":"17ayt28highDMIB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.142857143","9":"-0.4340166268","10":"1.883704e-01","11":"44614.050422","12":"4"},{"1":"2017","2":"Ibadan","3":"17ayt32highyldIB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.090909091","9":"0.1590965393","10":"2.531171e-02","11":"9687.574399","12":"3"},{"1":"2017","2":"Ibadan","3":"17ayt32yrtIB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.090909091","9":"-0.4470358816","10":"1.998411e-01","11":"41725.655872","12":"3"},{"1":"2017","2":"Ibadan","3":"17.CASS.PYT.46.setC.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.891304348","9":"0.4703353531","10":"2.212153e-01","11":"10920.250151","12":"40"},{"1":"2017","2":"Ibadan","3":"17.CASS.PYT.49.setA.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.877551020","9":"0.4793087661","10":"2.297369e-01","11":"10120.364457","12":"42"},{"1":"2017","2":"Ibadan","3":"17clonalevaIB","4":"CET","5":"7","6":"FALSE","7":"TRUE","8":"0.003080082","9":"-0.9292501495","10":"8.635058e-01","11":"2421.516632","12":"3"},{"1":"2017","2":"Ikenne","3":"17clonalevalhighDMIK","4":"CET","5":"8","6":"FALSE","7":"FALSE","8":"0.004237288","9":"0.0678408416","10":"4.602380e-03","11":"35183.407224","12":"3"},{"1":"2017","2":"Ibadan","3":"17clonalevalhighTCIB","4":"CET","5":"7","6":"FALSE","7":"TRUE","8":"0.020000000","9":"-0.0844533504","10":"7.132368e-03","11":"13261.662249","12":"3"},{"1":"2017","2":"Ikenne","3":"17clonalevalyrtIK","4":"CET","5":"7","6":"FALSE","7":"FALSE","8":"0.006172840","9":"-0.9431789998","10":"8.895866e-01","11":"1474.783579","12":"3"},{"1":"2017","2":"Ibadan","3":"17.GS.C0.C1.AYT.20.setA.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.2920538569","10":"8.529546e-02","11":"7697.692304","12":"20"},{"1":"2017","2":"Ikenne","3":"17.GS.C0.C1.AYT.20.setA.IK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.6210349862","10":"3.856845e-01","11":"5169.769930","12":"20"},{"1":"2017","2":"Mokwa","3":"17.GS.C0.C1.AYT.20.setA.MK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4278602246","10":"1.830644e-01","11":"6874.918393","12":"20"},{"1":"2017","2":"Ubiaja","3":"17.GS.C0.C1.AYT.20.setA.UB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4448285878","10":"1.978725e-01","11":"6750.300883","12":"20"},{"1":"2017","2":"Ibadan","3":"17.GS.C0.C1.AYT.20.setB.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.950000000","9":"0.5686968621","10":"3.234161e-01","11":"7630.298419","12":"19"},{"1":"2017","2":"Ibadan","3":"17.GS.C1.C0.AYT.25.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.3713811137","10":"1.379239e-01","11":"9367.378228","12":"25"},{"1":"2017","2":"Ibadan","3":"17.GS.C1.C2.AYT.26.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.538461538","9":"0.2312499831","10":"5.347655e-02","11":"10780.147194","12":"14"},{"1":"2017","2":"Ibadan","3":"17.GS.C1.C2.AYT.28.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.857142857","9":"0.4738890289","10":"2.245708e-01","11":"6882.707691","12":"24"},{"1":"2017","2":"Ikenne","3":"17.GS.C1.C2.AYT.28.IK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.857142857","9":"0.6606289393","10":"4.364306e-01","11":"5002.240739","12":"24"},{"1":"2017","2":"Mokwa","3":"17.GS.C1.C2.AYT.28.MK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.857142857","9":"0.2357725736","10":"5.558871e-02","11":"8382.592469","12":"24"},{"1":"2017","2":"Ubiaja","3":"17.GS.C1.C2.AYT.28.UB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.857142857","9":"0.2153791386","10":"4.638817e-02","11":"8464.256380","12":"24"},{"1":"2017","2":"Ibadan","3":"17.GS.C1.PYT.20.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.950000000","9":"0.2277901152","10":"5.188834e-02","11":"11780.165042","12":"19"},{"1":"2017","2":"Ikenne","3":"17.GS.C1.UYT.34.IK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4762560220","10":"2.268198e-01","11":"6655.180500","12":"34"},{"1":"2017","2":"Mokwa","3":"17.GS.C1.UYT.34.MK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4606837105","10":"2.122295e-01","11":"6780.767259","12":"34"},{"1":"2017","2":"Ubiaja","3":"17.GS.C1.UYT.34.UB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.3479355376","10":"1.210591e-01","11":"7565.519748","12":"34"},{"1":"2017","2":"Umudike","3":"17.GS.C1.UYT.34.UM","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4635671256","10":"2.148945e-01","11":"6757.828171","12":"34"},{"1":"2017","2":"Mokwa","3":"17.GS.C2.AYT.34.MK","4":"AYT","5":"19","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.5709873581","10":"3.260266e-01","11":"4768.297466","12":"35"},{"1":"2017","2":"Ibadan","3":"17.GS.C2.res.AYT.14.IB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4157664440","10":"1.728617e-01","11":"6890.367258","12":"14"},{"1":"2017","2":"Ago-Owu","3":"17.GS.C2.setA.UYT.36.AG","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.972222222","9":"0.5275928219","10":"2.783542e-01","11":"6097.618796","12":"35"},{"1":"2018","2":"Ibadan","3":"17.GS.C2.setA.UYT.36.IB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.972222222","9":"0.2442886901","10":"5.967696e-02","11":"7582.528267","12":"35"},{"1":"2017","2":"Ikenne","3":"17.GS.C2.setA.UYT.36.IK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.3313233687","10":"1.097752e-01","11":"7522.044083","12":"35"},{"1":"2017","2":"Mokwa","3":"17.GS.C2.setA.UYT.36.MK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.3576720143","10":"1.279293e-01","11":"7368.649233","12":"35"},{"1":"2017","2":"Ago-Owu","3":"17.GS.C2.setB.UYT.36.AG","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4645448738","10":"2.158019e-01","11":"5587.078562","12":"35"},{"1":"2017","2":"Mokwa","3":"17.GS.C2.setB.UYT.36.MK","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.5147418348","10":"2.649592e-01","11":"5586.243996","12":"32"},{"1":"2017","2":"Ikenne","3":"17.GS.C3B.CET.145.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.046511628","9":"0.6131603036","10":"3.759656e-01","11":"16214.461901","12":"6"},{"1":"2017","2":"Ibadan","3":"17.GS.C3B.ExpCET.60.IB","4":"CET","5":"10","6":"FALSE","7":"TRUE","8":"0.090909091","9":"0.6908981966","10":"4.773403e-01","11":"11011.183221","12":"5"},{"1":"2017","2":"Ibadan","3":"17.GS.C3B.ExpCET.61.IB","4":"CET","5":"10","6":"FALSE","7":"TRUE","8":"0.107142857","9":"0.8621799226","10":"7.433542e-01","11":"5182.893105","12":"6"},{"1":"2017","2":"Ibadan","3":"17.GS.C3B.PYT.40.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.150000000","9":"0.5430314778","10":"2.948832e-01","11":"13897.407359","12":"6"},{"1":"2017","2":"Ikenne","3":"17.GS.C3B.PYT.60.IK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.090909091","9":"0.8677434690","10":"7.529787e-01","11":"5204.144454","12":"5"},{"1":"2017","2":"Ikenne","3":"17.GS.C3B.PYT.61.IK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.107142857","9":"0.8913463993","10":"7.944984e-01","11":"4150.049938","12":"6"},{"1":"2017","2":"Mokwa","3":"17.GS.C3.CET.283.MK","4":"CET","5":"10","6":"FALSE","7":"FALSE","8":"0.939163498","9":"0.3324354039","10":"1.105133e-01","11":"10283.579027","12":"179"},{"1":"2018","2":"Ibadan","3":"17.GS.C3.ExpCET.63.IB","4":"CET","5":"10","6":"FALSE","7":"TRUE","8":"0.100000000","9":"0.6843405486","10":"4.683220e-01","11":"13198.688146","12":"6"},{"1":"2017","2":"Ikenne","3":"17.GS.C3.PYT.36.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.171428571","9":"0.1885217925","10":"3.554047e-02","11":"25702.717978","12":"6"},{"1":"2017","2":"Ubiaja","3":"17.GS.C3.PYT.60.UB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.890909091","9":"0.4095941964","10":"1.677674e-01","11":"8171.841223","12":"49"},{"1":"2017","2":"Ibadan","3":"17.GS.C3.PYT.80.IB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.969230769","9":"0.4562279723","10":"2.081440e-01","11":"9387.515311","12":"63"},{"1":"2017","2":"Ikenne","3":"17.GS.C3.PYT.80.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.969230769","9":"0.4552526031","10":"2.072549e-01","11":"8711.114626","12":"50"},{"1":"2017","2":"Ubiaja","3":"17.GS.C4.CB.149.UB","4":"CrossingBlock","5":"10","6":"FALSE","7":"FALSE","8":"1.000000000","9":"0.3791586839","10":"1.437613e-01","11":"8563.906783","12":"118"},{"1":"2017","2":"Ikenne","3":"17.GS.C4.CET.1124.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.005586592","9":"0.9305301351","10":"8.658863e-01","11":"2309.369987","12":"6"},{"1":"2017","2":"Ibadan","3":"17.GS.C4.CET.456.IB","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.011961722","9":"0.5991338095","10":"3.589613e-01","11":"11786.529485","12":"5"},{"1":"2017","2":"Ago-Owu","3":"17.GS.GeneticGain.AG","4":"GeneticGain","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"-0.3091097784","10":"9.554886e-02","11":"11918.453402","12":"22"},{"1":"2017","2":"Ago-Owu","3":"17.GS.Pd.PYT.14.AG","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.500000000","9":"0.0279860745","10":"7.832204e-04","11":"8213.339810","12":"7"},{"1":"2017","2":"Ago-Owu","3":"17.GS.Yrt.PYT.09.AG","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.666666667","9":"0.3842400450","10":"1.476404e-01","11":"8129.629133","12":"6"},{"1":"2017","2":"Ikenne","3":"17NCRPyrtIK","4":"NCRP","5":"12","6":"TRUE","7":"TRUE","8":"0.312500000","9":"0.8916830250","10":"7.950986e-01","11":"4317.622627","12":"5"},{"1":"2017","2":"Ikenne","3":"17pyt14highTCIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.214285714","9":"-0.8327014541","10":"6.933917e-01","11":"4095.345073","12":"3"},{"1":"2017","2":"Ibadan","3":"17pyt18HDMIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.166666667","9":"-0.5394150874","10":"2.909686e-01","11":"18141.717392","12":"3"},{"1":"2018","2":"Ikenne","3":"17pyt23highTCIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.130434783","9":"-0.6628744271","10":"4.394025e-01","11":"7487.860803","12":"3"},{"1":"2017","2":"Ibadan","3":"17pyt25expHTCIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.160000000","9":"-0.6634098867","10":"4.401127e-01","11":"3745.041649","12":"4"},{"1":"2017","2":"Ibadan","3":"17pyt28whtrtIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.107142857","9":"0.8180960786","10":"6.692812e-01","11":"17245.897961","12":"3"},{"1":"2017","2":"Ibadan","3":"17pyt30HTCIB","4":"PYT","5":"5","6":"TRUE","7":"FALSE","8":"0.133333333","9":"-0.2464294534","10":"6.072748e-02","11":"14051.142107","12":"4"},{"1":"2018","2":"Ikenne","3":"17pyt34highDMIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.088235294","9":"-0.2047649588","10":"4.192869e-02","11":"33864.068411","12":"3"},{"1":"2018","2":"Ikenne","3":"17pyt34highTCIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.088235294","9":"-0.9908342243","10":"9.817525e-01","11":"243.731092","12":"3"},{"1":"2017","2":"Ibadan","3":"17pyt35yrtIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.114285714","9":"0.0701305248","10":"4.918291e-03","11":"14886.025242","12":"4"},{"1":"2017","2":"Ibadan","3":"17pyt36HDM2IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.078947368","9":"-0.9001762267","10":"8.103172e-01","11":"6704.542672","12":"3"},{"1":"2017","2":"Ibadan","3":"17pyt36HDMIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.083333333","9":"-0.0409932171","10":"1.680444e-03","11":"13334.483217","12":"3"},{"1":"2017","2":"Ikenne","3":"17pyt40highDMIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.075000000","9":"-0.3322809446","10":"1.104106e-01","11":"31443.500131","12":"3"},{"1":"2017","2":"Ibadan","3":"17pyt56HTCIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.089285714","9":"-0.0640636762","10":"4.104155e-03","11":"10626.946903","12":"5"},{"1":"2017","2":"Zaria","3":"17uyt10pdZA","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.300000000","9":"0.5442273135","10":"2.961834e-01","11":"22315.992232","12":"3"},{"1":"2017","2":"Ubiaja","3":"17uyt15UB","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.266666667","9":"-0.7258104281","10":"5.268008e-01","11":"4610.408864","12":"4"},{"1":"2018","2":"Ibadan","3":"18ayt10highDMIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.300000000","9":"-0.9805034951","10":"9.613871e-01","11":"685.023964","12":"3"},{"1":"2018","2":"Ikenne","3":"18ayt12highTCIK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.250000000","9":"-0.0146946989","10":"2.159342e-04","11":"13354.044568","12":"3"},{"1":"2018","2":"Mokwa","3":"18ayt12highTCMK","4":"AYT","5":"11","6":"TRUE","7":"FALSE","8":"0.250000000","9":"-0.5805570101","10":"3.370464e-01","11":"8855.023462","12":"3"},{"1":"2018","2":"Ubiaja","3":"18ayt12highTCUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.250000000","9":"-0.8569992567","10":"7.344477e-01","11":"3546.962814","12":"3"},{"1":"2018","2":"Ibadan","3":"18ayt12HTCIB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.250000000","9":"-0.7289534074","10":"5.313731e-01","11":"6259.416529","12":"3"},{"1":"2018","2":"Ibadan","3":"18ayt14wrthighDMIB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.214285714","9":"-0.9998920231","10":"9.997841e-01","11":"2.146281","12":"3"},{"1":"2018","2":"Ikenne","3":"18ayt18HighTCIK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.166666667","9":"-0.3034524432","10":"9.208339e-02","11":"12126.977566","12":"3"},{"1":"2018","2":"Ubiaja","3":"18ayt18highTCUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.157894737","9":"-0.0013672243","10":"1.869302e-06","11":"13356.903817","12":"3"},{"1":"2018","2":"Ibadan","3":"18ayt20highDMIB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.200000000","9":"0.2739097454","10":"7.502655e-02","11":"8483.346789","12":"4"},{"1":"2018","2":"Ikenne","3":"18ayt20highYLDIK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.150000000","9":"0.6483626673","10":"4.203741e-01","11":"7742.021223","12":"3"},{"1":"2018","2":"Ibadan","3":"18.C3B.PYT.45.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.111111111","9":"-0.6534074879","10":"4.269413e-01","11":"12688.908054","12":"5"},{"1":"2018","2":"Ibadan","3":"18.CASS.PYT.52.IB","4":"PYT","5":"38","6":"TRUE","7":"FALSE","8":"0.903846154","9":"0.3548826445","10":"1.259417e-01","11":"10748.272120","12":"47"},{"1":"2018","2":"Ikenne","3":"18CET122highTCIK","4":"CET","5":"7","6":"FALSE","7":"TRUE","8":"0.025423729","9":"-0.7689578345","10":"5.912962e-01","11":"5459.028203","12":"3"},{"1":"2018","2":"Ibadan","3":"18.CMSSurveyVarieties.AYT33.IB","4":"AYT","5":"19","6":"TRUE","7":"FALSE","8":"0.937500000","9":"0.2061483024","10":"4.249712e-02","11":"12434.854901","12":"30"},{"1":"2018","2":"Ikenne","3":"18.CMSSurveyVarieties.AYT33.IK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.937500000","9":"0.3184630371","10":"1.014187e-01","11":"11669.654757","12":"30"},{"1":"2018","2":"Ago-Owu","3":"18.GS.C1.C2.PYT.60.AG","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.3352088747","10":"1.123650e-01","11":"7172.312449","12":"60"},{"1":"2018","2":"Ikenne","3":"18.GS.C1.C2.UYT.26.IK","4":"UYT","5":"22","6":"TRUE","7":"TRUE","8":"0.923076923","9":"0.1890098512","10":"3.572472e-02","11":"7460.066513","12":"24"},{"1":"2018","2":"Mokwa","3":"18.GS.C1.C2.UYT.26.MK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.923076923","9":"0.4144763275","10":"1.717906e-01","11":"6407.399597","12":"24"},{"1":"2018","2":"Ubiaja","3":"18.GS.C1.C2.UYT.26.UB","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.923076923","9":"0.2031562718","10":"4.127247e-02","11":"7417.146651","12":"24"},{"1":"2018","2":"Ikenne","3":"18.GS.C1.UYT.34.IK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.4565713309","10":"2.084574e-01","11":"6813.235773","12":"34"},{"1":"2018","2":"Mokwa","3":"18.GS.C1.UYT.34.MK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.4032281617","10":"1.625930e-01","11":"7208.015746","12":"34"},{"1":"2018","2":"Ubiaja","3":"18.GS.C1.UYT.34.UB","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.4380759535","10":"1.919105e-01","11":"6955.663375","12":"34"},{"1":"2018","2":"Umudike","3":"18.GS.C1.UYT.34.UM","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.4785800524","10":"2.290389e-01","11":"6636.079780","12":"34"},{"1":"2018","2":"Ibadan","3":"18.GS.C2.setA.UYT.36.IB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.972222222","9":"0.5572477854","10":"3.105251e-01","11":"5720.571535","12":"34"},{"1":"2018","2":"Ikenne","3":"18.GS.C2.setA.UYT.36.IK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.6545830011","10":"4.284789e-01","11":"4829.124898","12":"35"},{"1":"2018","2":"Kano","3":"18.GS.C2.setA.UYT.36.KN","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.4678016140","10":"2.188384e-01","11":"6600.503827","12":"35"},{"1":"2018","2":"Mokwa","3":"18.GS.C2.setA.UYT.36.MK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.4878913228","10":"2.380379e-01","11":"6438.274940","12":"35"},{"1":"2018","2":"Umudike","3":"18.GS.C2.setA.UYT.36.UM","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.1370558438","10":"1.878430e-02","11":"8290.880582","12":"35"},{"1":"2018","2":"Ibadan","3":"18.GS.C2.setB.UYT.36.IB","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4082205496","10":"1.666440e-01","11":"6518.381511","12":"36"},{"1":"2018","2":"Ikenne","3":"18.GS.C2.setB.UYT.36.IK","4":"UYT","5":"28","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.8153377046","10":"6.647756e-01","11":"2356.612629","12":"36"},{"1":"2018","2":"Kano","3":"18.GS.C2.setB.UYT.36.KN","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.5668248979","10":"3.212905e-01","11":"4771.297468","12":"36"},{"1":"2018","2":"Mokwa","3":"18.GS.C2.setB.UYT.36.MK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.2627823677","10":"6.905457e-02","11":"6544.504430","12":"36"},{"1":"2018","2":"Umudike","3":"18.GS.C2.setB.UYT.36.UM","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.3043657653","10":"9.263852e-02","11":"6378.710350","12":"36"},{"1":"2018","2":"Ago-Owu","3":"18.GS.C2.UYT.36.setA.AG","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.972222222","9":"0.6005166094","10":"3.606202e-01","11":"5402.503860","12":"35"},{"1":"2018","2":"Ago-Owu","3":"18.GS.C2.UYT.36.setB.AG","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.3309067183","10":"1.094993e-01","11":"6260.180127","12":"36"},{"1":"2018","2":"Ago-Owu","3":"18.GS.C3.AYT.28.AG","4":"AYT","5":"18","6":"TRUE","7":"FALSE","8":"0.892857143","9":"0.6154877526","10":"3.788252e-01","11":"6151.092626","12":"25"},{"1":"2018","2":"Ikenne","3":"18.GS.C3.AYT.30.IK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.5874732333","10":"3.451248e-01","11":"6400.121332","12":"30"},{"1":"2018","2":"Mokwa","3":"18.GS.C3.AYT.30.MK","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.4260636546","10":"1.815302e-01","11":"7998.937482","12":"30"},{"1":"2018","2":"Ubiaja","3":"18.GS.C3.AYT.30.UB","4":"AYT","5":"20","6":"TRUE","7":"FALSE","8":"1.000000000","9":"0.3481434313","10":"1.212038e-01","11":"8024.663383","12":"28"},{"1":"2018","2":"Ikenne","3":"18.GS.C3B.AYT.35.IK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.228571429","9":"0.6372053872","10":"4.060307e-01","11":"8807.957507","12":"7"},{"1":"2018","2":"Ibadan","3":"18.GS.C3B.AYT.35.ON","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.228571429","9":"0.7309106501","10":"5.342304e-01","11":"5870.223974","12":"8"},{"1":"2019","2":"Ibadan","3":"18.GS.C3B.AYT.40.IB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.150000000","9":"-0.0606727284","10":"3.681180e-03","11":"19636.815099","12":"6"},{"1":"2018","2":"Ubiaja","3":"18.GS.C3B.AYT.40.UB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.150000000","9":"0.5733770026","10":"3.287612e-01","11":"13229.693339","12":"6"},{"1":"2018","2":"Mokwa","3":"18.GS.C3.PYT.24.MK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.916666667","9":"0.3274511614","10":"1.072243e-01","11":"10292.370480","12":"22"},{"1":"2018","2":"Ikenne","3":"18.GS.C4B.CET.250.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.025316456","9":"0.5548959044","10":"3.079095e-01","11":"8836.412201","12":"6"},{"1":"2018","2":"Ikenne","3":"18.GS.C4B.CET.341.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.067164179","9":"0.4329328358","10":"1.874308e-01","11":"12836.083807","12":"17"},{"1":"2018","2":"Ikenne","3":"18.GS.C4B.CET.560.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.667946257","9":"0.3970300897","10":"1.576329e-01","11":"9443.272086","12":"305"},{"1":"2018","2":"Ikenne","3":"18.GS.C4B.CET.600.setA.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.619565217","9":"0.4281113384","10":"1.832793e-01","11":"7735.532820","12":"311"},{"1":"2018","2":"Ikenne","3":"18.GS.C4B.CET.600.setB.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.822262118","9":"0.4952312570","10":"2.452540e-01","11":"9431.224328","12":"385"},{"1":"2018","2":"Ikenne","3":"18.GS.C4.PYT.50.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.160000000","9":"0.8122401053","10":"6.597340e-01","11":"8327.048954","12":"8"},{"1":"2018","2":"Ibadan","3":"18.GS.C4.PYT.54.SET3.IB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.092592593","9":"0.3482114974","10":"1.212512e-01","11":"14787.205489","12":"5"},{"1":"2018","2":"Ikenne","3":"18.GS.CET.120.REP.IK","4":"CET","5":"5","6":"TRUE","7":"FALSE","8":"0.040983607","9":"0.8464738460","10":"7.165180e-01","11":"3794.596553","12":"5"},{"1":"2018","2":"Ikenne","3":"18.Hawaii.CET.862.IK","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.005044136","9":"0.0451900505","10":"2.042141e-03","11":"14374.351563","12":"4"},{"1":"2018","2":"Abuja","3":"18NCRP16wrtAB","4":"NCRP","5":"15","6":"TRUE","7":"FALSE","8":"0.875000000","9":"0.1606569874","10":"2.581067e-02","11":"6172.955961","12":"13"},{"1":"2018","2":"Ikenne","3":"18NCRP16wrtIK","4":"NCRP","5":"12","6":"TRUE","7":"TRUE","8":"0.937500000","9":"-0.0502170955","10":"2.521757e-03","11":"6320.526271","12":"13"},{"1":"2018","2":"Ubiaja","3":"18NCRP16wrtUB","4":"NCRP","5":"15","6":"TRUE","7":"FALSE","8":"0.789473684","9":"0.1314440619","10":"1.727754e-02","11":"6227.026162","12":"13"},{"1":"2018","2":"Zaria","3":"18NCRP16wrtZA","4":"NCRP","5":"14","6":"TRUE","7":"FALSE","8":"0.937500000","9":"0.2349841723","10":"5.521756e-02","11":"5986.619021","12":"13"},{"1":"2018","2":"Ibadan","3":"18NCRP16yrtIB","4":"NCRP","5":"12","6":"TRUE","7":"FALSE","8":"0.312500000","9":"0.5292864189","10":"2.801441e-01","11":"15168.594860","12":"5"},{"1":"2018","2":"Ikenne","3":"18NCRP16yrtIK","4":"NCRP","5":"12","6":"TRUE","7":"TRUE","8":"0.312500000","9":"0.8620325866","10":"7.431002e-01","11":"5413.318631","12":"5"},{"1":"2018","2":"Ubiaja","3":"18NCRP16yrtUB","4":"NCRP","5":"15","6":"TRUE","7":"FALSE","8":"0.166666667","9":"0.5895733431","10":"3.475967e-01","11":"12524.733910","12":"3"},{"1":"2018","2":"Zaria","3":"18NCRP16yrtZA","4":"NCRP","5":"14","6":"TRUE","7":"FALSE","8":"0.312500000","9":"0.9000757152","10":"8.101363e-01","11":"4000.753070","12":"5"},{"1":"2018","2":"Ibadan","3":"18NCRP17wrtIB","4":"NCRP","5":"12","6":"TRUE","7":"FALSE","8":"0.941176471","9":"-0.1131417225","10":"1.280105e-02","11":"5218.545385","12":"14"},{"1":"2018","2":"Abuja","3":"18NCRPAB","4":"NCRP","5":"10","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.7552799669","10":"5.704478e-01","11":"3996.368035","12":"11"},{"1":"2018","2":"Ago-Owu","3":"18NCRPAG","4":"NCRP","5":"10","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.6534223510","10":"4.269608e-01","11":"5331.309716","12":"11"},{"1":"2018","2":"Ikenne","3":"18NCRPIK","4":"NCRP","5":"10","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.8557150254","10":"7.322482e-01","11":"2491.047158","12":"11"},{"1":"2018","2":"Mokwa","3":"18NCRPMK","4":"NCRP","5":"10","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.8137380209","10":"6.621696e-01","11":"3143.028564","12":"11"},{"1":"2018","2":"Ubiaja","3":"18NCRPUB","4":"NCRP","5":"10","6":"TRUE","7":"TRUE","8":"0.611111111","9":"-0.1946486143","10":"3.788808e-02","11":"8951.074082","12":"11"},{"1":"2018","2":"Zaria","3":"18NCRPZA","4":"NCRP","5":"10","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.9096279175","10":"8.274229e-01","11":"1605.582415","12":"11"},{"1":"2018","2":"Ibadan","3":"18pyt115highTCIB","4":"PYT","5":"5","6":"TRUE","7":"TRUE","8":"0.043478261","9":"-0.4214349394","10":"1.776074e-01","11":"12302.664961","12":"4"},{"1":"2018","2":"Ikenne","3":"18pyt13yrthighDMIK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.230769231","9":"-0.9969841119","10":"9.939773e-01","11":"80.444517","12":"3"},{"1":"2018","2":"Ibadan","3":"18pyt35highTCIB","4":"PYT","5":"5","6":"TRUE","7":"TRUE","8":"0.111111111","9":"-0.8534022861","10":"7.282955e-01","11":"4064.591454","12":"4"},{"1":"2018","2":"Ibadan","3":"18pyt36highTCIB","4":"PYT","5":"5","6":"TRUE","7":"TRUE","8":"0.083333333","9":"0.4865761240","10":"2.367563e-01","11":"10194.591421","12":"3"},{"1":"2018","2":"Ibadan","3":"18pyt40highDMIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.075000000","9":"-0.0426548059","10":"1.819432e-03","11":"13332.626756","12":"3"},{"1":"2018","2":"Ibadan","3":"18pyt42highyldIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.071428571","9":"-0.2346535878","10":"5.506231e-02","11":"12621.465482","12":"3"},{"1":"2018","2":"Ibadan","3":"18pyt60highTCIB","4":"PYT","5":"5","6":"TRUE","7":"TRUE","8":"0.050000000","9":"-0.1863144468","10":"3.471307e-02","11":"12893.268740","12":"3"},{"1":"2018","2":"Ubiaja","3":"18pyt72highTCUB","4":"PYT","5":"5","6":"TRUE","7":"TRUE","8":"0.041666667","9":"-0.8518463419","10":"7.256422e-01","11":"2952.625477","12":"3"},{"1":"2018","2":"Ibadan","3":"18pyt88highTCIB","4":"PYT","5":"5","6":"TRUE","7":"TRUE","8":"0.045454545","9":"-0.6597672128","10":"4.352928e-01","11":"8447.794713","12":"4"},{"1":"2019","2":"Ibadan","3":"19ayt18highYldIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.166666667","9":"-0.6904452693","10":"4.767147e-01","11":"18496.086880","12":"3"},{"1":"2019","2":"Ibadan","3":"19ayt20highTCIB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.200000000","9":"0.0354060333","10":"1.253587e-03","11":"14940.847741","12":"4"},{"1":"2019","2":"Ikenne","3":"19ayt20highTCIK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.150000000","9":"-0.8468979559","10":"7.172361e-01","11":"3776.856638","12":"3"},{"1":"2019","2":"Mokwa","3":"19ayt20highTCMK","4":"AYT","5":"14","6":"TRUE","7":"FALSE","8":"0.200000000","9":"-0.4265416915","10":"1.819378e-01","11":"12237.883810","12":"4"},{"1":"2019","2":"Ubiaja","3":"19ayt20highTCUB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.200000000","9":"-0.7240056637","10":"5.241842e-01","11":"7118.014455","12":"4"},{"1":"2019","2":"Ibadan","3":"19ayt28highDMIB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.107142857","9":"-0.8595916653","10":"7.388978e-01","11":"9228.939017","12":"3"},{"1":"2019","2":"Ikenne","3":"19.CASS.PYT.52.IK","4":"PYT","5":"16","6":"TRUE","7":"FALSE","8":"0.903846154","9":"0.4747714358","10":"2.254079e-01","11":"9832.498732","12":"45"},{"1":"2019","2":"Ibadan","3":"19cet30PdIB","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.103448276","9":"-0.8520175036","10":"7.259338e-01","11":"6460.202689","12":"3"},{"1":"2019","2":"Ibadan","3":"19.CMSSurveyVarieties.AYT.33.IB","4":"AYT","5":"20","6":"TRUE","7":"TRUE","8":"0.937500000","9":"-0.3950438230","10":"1.560596e-01","11":"9531.009690","12":"28"},{"1":"2019","2":"Ikenne","3":"19.CMSSurveyVarieties.AYT33.IK","4":"AYT","5":"28","6":"TRUE","7":"TRUE","8":"0.937500000","9":"0.0698393076","10":"4.877529e-03","11":"12923.411333","12":"30"},{"1":"2019","2":"Abuja","3":"19.CMSSurveyVarieties.AYT.40.AB","4":"AYT","5":"15","6":"FALSE","7":"TRUE","8":"0.815789474","9":"0.3273929834","10":"1.071862e-01","11":"9472.257264","12":"31"},{"1":"2019","2":"Ago-Owu","3":"19.East-africa.PYT.16.AG","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.875000000","9":"0.5145712024","10":"2.647835e-01","11":"11254.955523","12":"14"},{"1":"2019","2":"Mokwa","3":"19.East-africa.PYT.16.MK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.750000000","9":"0.0290861541","10":"8.460044e-04","11":"14720.978002","12":"11"},{"1":"2019","2":"Ubiaja","3":"19.East-africa.PYT.16.UB","4":"PYT","5":"20","6":"TRUE","7":"TRUE","8":"0.750000000","9":"-0.1782554810","10":"3.177502e-02","11":"12852.928488","12":"12"},{"1":"2020","2":"Ubiaja","3":"19geneticgainUB","4":"GeneticGain","5":"13","6":"FALSE","7":"TRUE","8":"0.807259074","9":"0.0817475314","10":"6.682659e-03","11":"9490.776247","12":"434"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C1.C2.C3.AYT.42.AG","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.904761905","9":"0.1719072358","10":"2.955210e-02","11":"7643.221374","12":"37"},{"1":"2019","2":"Ubiaja","3":"19.GS.C1.C2.C3.AYT.42.UB","4":"AYT","5":"10","6":"TRUE","7":"FALSE","8":"0.904761905","9":"0.2649938025","10":"7.022172e-02","11":"7123.472232","12":"38"},{"1":"2019","2":"Abuja","3":"19.GS.C2.UYT.36.setA.AB","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.3871808126","10":"1.499090e-01","11":"7182.929450","12":"35"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C2.UYT.36.setA.AG","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.2615072065","10":"6.838602e-02","11":"7871.765911","12":"35"},{"1":"2019","2":"Ibadan","3":"19.GS.C2.UYT.36.setA.IB","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"-0.0809612046","10":"6.554717e-03","11":"8563.977018","12":"34"},{"1":"2019","2":"Ikenne","3":"19.GS.C2.UYT.36.setA.IK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.1094593552","10":"1.198135e-02","11":"8348.362824","12":"35"},{"1":"2019","2":"Mokwa","3":"19.GS.C2.UYT.36.setA.MK","4":"UYT","5":"19","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.0219924908","10":"4.836696e-04","11":"8445.513633","12":"35"},{"1":"2019","2":"Ubiaja","3":"19.GS.C2.UYT.36.setA.UB","4":"UYT","5":"18","6":"TRUE","7":"TRUE","8":"0.972222222","9":"0.2901372228","10":"8.417961e-02","11":"7738.316394","12":"35"},{"1":"2019","2":"Zaria","3":"19.GS.C2.UYT.36.setA.ZA","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.972222222","9":"0.5276757502","10":"2.784417e-01","11":"6182.015501","12":"34"},{"1":"2019","2":"Abuja","3":"19.GS.C2.UYT.36.setB.AB","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.5675159417","10":"3.220743e-01","11":"4765.786833","12":"36"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C2.UYT.36.setB.AG","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.2156665952","10":"4.651208e-02","11":"6196.341907","12":"35"},{"1":"2019","2":"Ibadan","3":"19.GS.C2.UYT.36.setB.IB","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.0180458446","10":"3.256525e-04","11":"7027.665645","12":"36"},{"1":"2019","2":"Ikenne","3":"19.GS.C2.UYT.36.setB.IK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.2036251239","10":"4.146319e-02","11":"6738.470601","12":"36"},{"1":"2019","2":"Mokwa","3":"19.GS.C2.UYT.36.setB.MK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"-0.1156315938","10":"1.337067e-02","11":"6935.959791","12":"36"},{"1":"2019","2":"Ubiaja","3":"19.GS.C2.UYT.36.setB.UB","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.2890889293","10":"8.357241e-02","11":"6442.444695","12":"36"},{"1":"2019","2":"Zaria","3":"19.GS.C2.UYT.36.setB.ZA","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"1.000000000","9":"0.5793492176","10":"3.356455e-01","11":"4670.382105","12":"36"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C3.AYT.20.EB.AG","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.250000000","9":"-0.0131594206","10":"1.731703e-04","11":"21063.948091","12":"5"},{"1":"2019","2":"Mokwa","3":"19.GS.C3.AYT.20.EB.MK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.250000000","9":"-0.7224029317","10":"5.218660e-01","11":"10073.134214","12":"5"},{"1":"2019","2":"Ubiaja","3":"19.GS.C3.AYT.20.EB.UB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.250000000","9":"0.3149191357","10":"9.917406e-02","11":"18978.237264","12":"5"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C3B.AYT.21.PD.AG","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.238095238","9":"0.6299330415","10":"3.968156e-01","11":"13355.964281","12":"5"},{"1":"2019","2":"Mokwa","3":"19.GS.C3B.AYT.21.PD.MK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.238095238","9":"-0.8703204783","10":"7.574577e-01","11":"7236.912430","12":"4"},{"1":"2019","2":"Ubiaja","3":"19.GS.C3B.AYT.21.PD.UB","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.238095238","9":"-0.6562788458","10":"4.307019e-01","11":"12605.639732","12":"5"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C3.UYT.28.AG","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.607142857","9":"0.7077969851","10":"5.009766e-01","11":"4572.782106","12":"16"},{"1":"2019","2":"Ikenne","3":"19.GS.C3.UYT.28.IK","4":"UYT","5":"20","6":"TRUE","7":"TRUE","8":"0.607142857","9":"0.3491897153","10":"1.219335e-01","11":"7968.593742","12":"17"},{"1":"2019","2":"Ibadan","3":"19.GS.C4.AYT.30.IB","4":"AYT","5":"20","6":"TRUE","7":"TRUE","8":"0.366666667","9":"-0.2283059272","10":"5.212360e-02","11":"12146.400591","12":"11"},{"1":"2019","2":"Ikenne","3":"19.GS.C4.AYT.30.IK","4":"AYT","5":"10","6":"TRUE","7":"TRUE","8":"0.366666667","9":"0.6838017215","10":"4.675848e-01","11":"7457.119717","12":"10"},{"1":"2019","2":"Ikenne","3":"19.GS.C4B.PYT.132.IK","4":"PYT","5":"20","6":"TRUE","7":"TRUE","8":"0.205357143","9":"0.6061588380","10":"3.674285e-01","11":"9219.990742","12":"23"},{"1":"2019","2":"Ikenne","3":"19.GS.C4B.PYT.135.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.800000000","9":"0.3700985814","10":"1.369730e-01","11":"5236.805355","12":"85"},{"1":"2019","2":"Ubiaja","3":"19.GS.C4B.PYT.135.UB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.800000000","9":"-0.0388881020","10":"1.512284e-03","11":"6153.356983","12":"108"},{"1":"2019","2":"Ibadan","3":"19.GS.C4B.PYT.140.IB","4":"PYT","5":"9","6":"TRUE","7":"TRUE","8":"0.387596899","9":"0.3930958916","10":"1.545244e-01","11":"10714.154387","12":"49"},{"1":"2019","2":"Abuja","3":"19.GS.C4B.PYT.160.AB","4":"PYT","5":"9","6":"TRUE","7":"TRUE","8":"0.340425532","9":"-0.0807651786","10":"6.523014e-03","11":"6967.643093","12":"46"},{"1":"2019","2":"Ikenne","3":"19.GS.C4B.PYT.500.IK","4":"PYT","5":"9","6":"TRUE","7":"FALSE","8":"0.471238938","9":"0.2805988982","10":"7.873574e-02","11":"9942.026500","12":"210"},{"1":"2019","2":"Mokwa","3":"19.GS.C4B.PYT.78.MK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.858974359","9":"0.4779004393","10":"2.283888e-01","11":"5653.394613","12":"66"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C4B.PYT.88.AG","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.943181818","9":"0.4018647136","10":"1.614952e-01","11":"10318.286204","12":"83"},{"1":"2019","2":"Mokwa","3":"19.GS.C4B.PYT.88.MK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.943181818","9":"0.5517169357","10":"3.043916e-01","11":"8341.818930","12":"81"},{"1":"2019","2":"Ibadan","3":"19.GS.C4C.CE.420.IB","4":"CET","5":"5","6":"FALSE","7":"TRUE","8":"0.014044944","9":"0.7670037250","10":"5.882947e-01","11":"12493.198044","12":"5"},{"1":"2019","2":"Ibadan","3":"19.GS.C4C.CE.822.IB","4":"CET","5":"7","6":"FALSE","7":"TRUE","8":"0.017291066","9":"0.4237386551","10":"1.795544e-01","11":"8927.439562","12":"11"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C4.PYT.80.SETA.AG","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.075949367","9":"0.5460015289","10":"2.981177e-01","11":"12086.061138","12":"6"},{"1":"2019","2":"Ikenne","3":"19.GS.C4.PYT.80.SETA.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.075000000","9":"0.5075639045","10":"2.576211e-01","11":"12783.391427","12":"6"},{"1":"2019","2":"Ago-Owu","3":"19.GS.C4.PYT.80.SETB.AG","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.075000000","9":"0.8647640524","10":"7.478169e-01","11":"5312.892474","12":"5"},{"1":"2019","2":"Ikenne","3":"19.GS.C4.PYT.80.SETB.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.062500000","9":"0.6795398756","10":"4.617744e-01","11":"12244.335476","12":"5"},{"1":"2019","2":"Ibadan","3":"19.Hawaii.PYT.54.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.111111111","9":"0.2571908694","10":"6.614714e-02","11":"8580.490648","12":"6"},{"1":"2019","2":"Ikenne","3":"19.Hawaii.PYT.54.IK","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.111111111","9":"0.6663242177","10":"4.439880e-01","11":"5108.787802","12":"6"},{"1":"2019","2":"Ibadan","3":"19.Hawaii.PYT.60.IB","4":"PYT","5":"10","6":"TRUE","7":"FALSE","8":"0.100000000","9":"-0.0316986042","10":"1.004802e-03","11":"9179.035965","12":"6"},{"1":"2019","2":"Ikenne","3":"19.Hawaii.PYT.60.IK","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.100000000","9":"0.6999108049","10":"4.898751e-01","11":"4687.164154","12":"6"},{"1":"2019","2":"Abuja","3":"19NCRPAB","4":"NCRP","5":"15","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.2556348033","10":"6.534915e-02","11":"8695.588141","12":"11"},{"1":"2019","2":"Ago-Owu","3":"19NCRPAG","4":"NCRP","5":"15","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.6255491136","10":"3.913117e-01","11":"5662.973328","12":"11"},{"1":"2019","2":"Ikenne","3":"19NCRPIK","4":"NCRP","5":"15","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.9011251570","10":"8.120265e-01","11":"1748.823873","12":"11"},{"1":"2019","2":"Mokwa","3":"19NCRPMK","4":"NCRP","5":"20","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.8853292829","10":"7.838079e-01","11":"2011.357637","12":"11"},{"1":"2019","2":"Ubiaja","3":"19NCRPUB","4":"NCRP","5":"15","6":"TRUE","7":"TRUE","8":"0.611111111","9":"-0.1431157900","10":"2.048213e-02","11":"9113.011564","12":"11"},{"1":"2019","2":"Zaria","3":"19NCRPZA","4":"NCRP","5":"20","6":"TRUE","7":"TRUE","8":"0.611111111","9":"0.8362603916","10":"6.993314e-01","11":"2797.290507","12":"11"},{"1":"2019","2":"Ibadan","3":"19pyt42HTCbulkIB","4":"PYT","5":"10","6":"TRUE","7":"TRUE","8":"0.095238095","9":"0.5795654461","10":"3.358961e-01","11":"27471.663933","12":"4"},{"1":"2019","2":"Ibadan","3":"19pyt57highTCIB","4":"PYT","5":"5","6":"TRUE","7":"TRUE","8":"0.070175439","9":"-0.0296813845","10":"8.809846e-04","11":"14946.421727","12":"4"},{"1":"2018","2":"Jos","3":"96uyt20MKSelJS","4":"UYT","5":"20","6":"TRUE","7":"FALSE","8":"0.550000000","9":"-0.2192794420","10":"4.808347e-02","11":"2899.541988","12":"9"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>MaxNOHAV,<span class="at">y=</span>cor2si,<span class="at">color=</span>NcloneForReg,<span class="at">size=</span>NcloneForReg)) <span class="sc">+</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;The cor(SI_GETGV,SI_TrialBLUPs) vs. MaxNOHAV as a proxy for plot size&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/cor2si%20vs%20MaxNOHAV-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;=</span><span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>MaxNOHAV,<span class="at">y=</span>TrialMSE,<span class="at">color=</span>NcloneForReg,<span class="at">size=</span>NcloneForReg)) <span class="sc">+</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Trial-specific selection error ests. vs. MaxNOHAV&quot;</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;NcloneForReg&gt;=5&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/TrialMSE%20vs%20MaxNOHAV%20-%20NcloneForReg%20more%20than%205-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;=</span><span class="dv">10</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>         cor2si<span class="sc">&gt;=</span><span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>MaxNOHAV,<span class="at">y=</span>TrialMSE)) <span class="sc">+</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Trial-specific selection error ests. vs. MaxNOHAV&quot;</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Trials with Positive &#39;cor2si&#39;. NcloneForReg&gt;=10 and cor2si&gt;=0&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/TrialMSE%20vs%20MaxNOHAV%20-%20pos%20cor%20only-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;=</span><span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">cut_width</span>(MaxNOHAV,<span class="dv">5</span>),<span class="at">y=</span>TrialMSE)) <span class="sc">+</span> </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Trial-specific selection error ests. vs. MaxNOHAV&quot;</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;NcloneForReg&gt;=5&quot;</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="st">&quot;Binned MaxNOHAV&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/TrialMSE%20vs%20MaxNOHAV%20-%20binner%20-%20Nclone%20more%20than%205-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;=</span><span class="dv">10</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>         cor2si<span class="sc">&gt;=</span><span class="fl">0.2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">cut_width</span>(MaxNOHAV,<span class="dv">5</span>),<span class="at">y=</span>TrialMSE)) <span class="sc">+</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Trial-specific selection error ests. vs. MaxNOHAV&quot;</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;NcloneForReg&gt;=10 and cor2si&gt;=0.2&quot;</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="st">&quot;Binned MaxNOHAV&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/TrialMSE%20vs%20MaxNOHAV%20-%20big%20and%20pos%20cor%20only-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;=</span><span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>MaxNOHAV,<span class="at">y=</span><span class="dv">1</span><span class="sc">-</span>r2_si,<span class="at">size=</span>NcloneForReg,<span class="at">color=</span>NcloneForReg)) <span class="sc">+</span> </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;lm&#39;</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">color=</span><span class="st">&#39;red&#39;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/1-r2%20vs%20MaxNOHAV-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;</span><span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>r2_si,<span class="at">y=</span>cor2si,<span class="at">size=</span>NcloneForReg,<span class="at">color=</span>NcloneForReg)) <span class="sc">+</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/cor2si%20vs%20r2_si-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;=</span><span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>cor2si,<span class="at">y=</span>TrialMSE,<span class="at">size=</span>NcloneForReg,<span class="at">color=</span>NcloneForReg)) <span class="sc">+</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/TrialMSE%20vs%20cor2si-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="regression-analysis" class="section level2">
+<h2>Regression analysis</h2>
+<p>Try to measure an effect size of increasing the number of stands per plot.</p>
+<p>Regression 1: NcloneForReg&gt;=5</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(TrialMSE<span class="sc">~</span>MaxNOHAV<span class="sc">+</span>NcloneForReg,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>   <span class="at">data =</span> estSelError <span class="sc">%&gt;%</span> <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;=</span><span class="dv">5</span>)) <span class="sc">%&gt;%</span> summary</span></code></pre></div>
+<pre><code>
+Call:
+lm(formula = TrialMSE ~ MaxNOHAV + NcloneForReg, data = estSelError %&gt;% 
+    filter(NcloneForReg &gt;= 5))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7642.2 -2190.8  -761.5  1465.9 18919.2 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  10684.412    556.226  19.209  &lt; 2e-16 ***
+MaxNOHAV      -148.712     35.886  -4.144 4.42e-05 ***
+NcloneForReg     1.790      1.714   1.044    0.297    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 3772 on 305 degrees of freedom
+Multiple R-squared:  0.0598,    Adjusted R-squared:  0.05364 
+F-statistic:   9.7 on 2 and 305 DF,  p-value: 8.239e-05</code></pre>
+<p>Regression 2: NcloneForReg&gt;=10, cor2si&gt;=0.2</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(TrialMSE<span class="sc">~</span>MaxNOHAV<span class="sc">+</span>NcloneForReg,</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>   <span class="at">data =</span> estSelError <span class="sc">%&gt;%</span> <span class="fu">filter</span>(NcloneForReg<span class="sc">&gt;=</span><span class="dv">10</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                 cor2si<span class="sc">&gt;=</span><span class="fl">0.2</span>)) <span class="sc">%&gt;%</span> summary</span></code></pre></div>
+<pre><code>
+Call:
+lm(formula = TrialMSE ~ MaxNOHAV + NcloneForReg, data = estSelError %&gt;% 
+    filter(NcloneForReg &gt;= 10, cor2si &gt;= 0.2))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6122.2 -1391.3  -176.5  1298.8 10335.9 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  8606.959    534.561  16.101  &lt; 2e-16 ***
+MaxNOHAV      -94.342     32.678  -2.887   0.0044 ** 
+NcloneForReg    5.844      1.332   4.388 2.01e-05 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2476 on 169 degrees of freedom
+Multiple R-squared:  0.1688,    Adjusted R-squared:  0.159 
+F-statistic: 17.16 on 2 and 169 DF,  p-value: 1.635e-07</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur 10.16
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] magrittr_2.0.1  forcats_0.5.1   stringr_1.4.0   dplyr_1.0.7    
+ [5] purrr_0.3.4     readr_1.4.0     tidyr_1.1.3     tibble_3.1.2   
+ [9] ggplot2_3.3.5   tidyverse_1.3.1 workflowr_1.6.2
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.7        lattice_0.20-44   lubridate_1.7.10  here_1.0.1       
+ [5] assertthat_0.2.1  rprojroot_2.0.2   digest_0.6.27     utf8_1.2.1       
+ [9] R6_2.5.0          cellranger_1.1.0  backports_1.2.1   reprex_2.0.0     
+[13] evaluate_0.14     highr_0.9         httr_1.4.2        pillar_1.6.1     
+[17] rlang_0.4.11      readxl_1.3.1      rstudioapi_0.13   whisker_0.4      
+[21] jquerylib_0.1.4   Matrix_1.3-4      rmarkdown_2.9     labeling_0.4.2   
+[25] splines_4.1.0     munsell_0.5.0     broom_0.7.8       compiler_4.1.0   
+[29] httpuv_1.6.1      modelr_0.1.8      xfun_0.24         pkgconfig_2.0.3  
+[33] mgcv_1.8-36       htmltools_0.5.1.1 tidyselect_1.1.1  viridisLite_0.4.0
+[37] fansi_0.5.0       crayon_1.4.1      dbplyr_2.1.1      withr_2.4.2      
+[41] later_1.2.0       grid_4.1.0        nlme_3.1-152      jsonlite_1.7.2   
+[45] gtable_0.3.0      lifecycle_1.0.0   DBI_1.1.1         git2r_0.28.0     
+[49] scales_1.1.1      cli_3.0.0         stringi_1.6.2     farver_2.1.0     
+[53] fs_1.5.0          promises_1.2.0.1  xml2_1.3.2        bslib_0.2.5.1    
+[57] ellipsis_0.3.2    generics_0.1.0    vctrs_0.3.8       tools_4.1.0      
+[61] glue_1.4.2        hms_1.1.0         yaml_2.2.1        colorspace_2.0-2 
+[65] rvest_1.0.0       knitr_1.33        haven_2.4.1       sass_0.4.0       </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
