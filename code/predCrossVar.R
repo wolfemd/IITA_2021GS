@@ -31,16 +31,18 @@ predCrossVars<-function(CrossesToPredict,modelType,
     if(predType=="VPM" & modelType=="AD"){ DomEffectList<-NULL; } }
 
   # Set-up a loop over the crosses
-  require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
-  # require(furrr); plan(multisession, workers = ncores)
+  #require(furrr); require(future.callr); plan(callr, workers = ncores)
+  require(furrr); plan(multisession, workers = ncores)
+  # cl <- parallel::makeCluster(ncores);
+  # require(furrr); plan(cluster, workers = cl, gc = TRUE)
+  #options(future.globals.maxSize=50000*1024^2); options(future.rng.onMisuse="ignore")
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
-
   crossespredicted<-CrossesToPredict %>%
     mutate(predVars=future_pmap(.,
                                 predOneCross,
                                 modelType=modelType,
-                                # haploMat=haploMat,
-                                # recombFreqMat=recombFreqMat,
+                                haploMat=haploMat,
+                                recombFreqMat=recombFreqMat,
                                 predType=predType,
                                 postMeanAddEffects=postMeanAddEffects,
                                 postMeanDomEffects=postMeanDomEffects,
@@ -48,6 +50,7 @@ predCrossVars<-function(CrossesToPredict,modelType,
                                 DomEffectList=DomEffectList,
                                 nBLASthreads=nBLASthreads)) %>%
     unnest(predVars)
+  #parallel::stopCluster(cl)
   totcomputetime<-proc.time()[3]-starttime
   print(paste0("Done predicting fam vars. ",
                "Took ",round((totcomputetime)/60,2),
@@ -222,8 +225,8 @@ predCrossMeans<-function(CrossesToPredict,predType,
   parents<-CrossesToPredict %$% union(sireID,damID)
   doseMat<-doseMat[parents,colnames(AddEffectList[[1]])]
 
-  require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
-  #require(furrr); plan(multisession, workers = ncores)
+  #require(furrr); require(future.callr); plan(callr, workers = ncores)
+  require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
   if(predType=="BV"){
