@@ -622,8 +622,8 @@ runGenomicPredictions<-function(modelType,
     return(results)
   }
 
-  require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
-  #require(furrr); plan(multisession, workers = ncores)
+  #require(furrr); require(future.callr); plan(callr, workers = ncores)
+  require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
   predictions<-blups %>%
     mutate(genomicPredOut=future_map(TrainingData,
@@ -708,7 +708,8 @@ predictCrosses<-function(modelType,
                             modelType="AD",
                             haploMat=haploMat,
                             recombFreqMat=recombFreqMat,
-                            ncores=ncores,nBLASthreads=nBLASthreads) %>%
+                            ncores=ncores,nBLASthreads=nBLASthreads)
+    predvars %<>%
       unnest(predVars) %>%
       mutate(predOf=ifelse(predOf=="VarA","VarBV","VarDD"))
   }
@@ -825,8 +826,8 @@ predictCrosses<-function(modelType,
       mutate(Trait2=Trait1) %>%
       select(sireID,damID,predOf,Trait1,Trait2,predMean)
     ## Compute Var SELIND
-    require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
-    # require(furrr); plan(multisession, workers = ncores)
+    #require(furrr); require(future.callr); plan(callr, workers = ncores)
+    require(furrr); plan(multisession, workers = ncores)
     options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
     predvars %<>%
