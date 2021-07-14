@@ -229,8 +229,8 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores,nBLASt
     return(results)
   }
 
-  require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
-  #require(furrr); plan(multisession, workers = ncores)
+  #require(furrr); require(future.callr); plan(callr, workers = ncores)
+  require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
   traintestdata<-traintestdata %>%
     mutate(modelOut=future_pmap(.,fitModel,
@@ -543,8 +543,8 @@ varPredAccuracy<-function(crossValOut,snpeffs,ped,modelType,
   if(selInd==TRUE){
     # compute predicted selection index variances
 
-    require(furrr); require(future.callr); plan(callr, workers = ncores, gc=TRUE)
-    #require(furrr); plan(multisession, workers = ncores)
+    #require(furrr); require(future.callr); plan(callr, workers = ncores)
+    require(furrr); plan(multisession, workers = ncores)
     options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
     cvout %<>%
