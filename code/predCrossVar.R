@@ -219,8 +219,9 @@ quadform<-function(D,x,y){ return(as.numeric(colSums(x*(D%*%y)))) }
 predCrossMeans<-function(CrossesToPredict,predType,
                          AddEffectList,DomEffectList=NULL,
                          doseMat,
-                         ncores=1,nBLASthreads=NULL,...){
-
+                         ncores=1,
+                         ...){
+  #nBLASthreads=NULL,
   means<-tibble(Trait=names(AddEffectList))
   parents<-CrossesToPredict %$% union(sireID,damID)
   doseMat<-doseMat[parents,colnames(AddEffectList[[1]])]
@@ -232,10 +233,10 @@ predCrossMeans<-function(CrossesToPredict,predType,
   if(predType=="BV"){
     means<-means %>%
       mutate(predictedMeans=future_map(Trait,function(Trait,
-                                                      nBLASthreads=nBLASthreads,
+                                                      #nBLASthreads=nBLASthreads,
                                                       ...){
 
-        if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+        #if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
 
         parentGEBVs<-tcrossprod(doseMat,AddEffectList[[Trait]])
 
@@ -252,10 +253,10 @@ predCrossMeans<-function(CrossesToPredict,predType,
   if(predType=="TGV"){
     means<-means %>%
       mutate(predictedMeans=future_map(Trait,function(Trait,
-                                                      nBLASthreads=nBLASthreads,
+                                                      #BLASthreads=nBLASthreads,
                                                       ...){
 
-        if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+        #if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
 
         predmeans<-CrossesToPredict %>%
           mutate(predOf="MeanTGV",
