@@ -108,14 +108,15 @@ saveRDS(gpreds_dirdom,file = here::here("output","genomicPredictions_ModelDirDom
 # 1) start a screen shell 
 screen; # or screen -r if re-attaching...
 # 2) start the singularity Linux shell inside that
-singularity shell /workdir/$USER/rocker.sif; 
+#singularity shell /workdir/$USER/rocker.sif; 
+singularity shell ~/rocker2.sif; 
 # Project directory, so R will use as working dir.
 cd /home/mw489/implementGMSinCassava/;
 # 3) Start R
 R
 ```
 
-Load input data
+### Load input data
 ```{r load inputs for predictCrosses, eval=F}
 require(tidyverse); require(magrittr); 
 # 5 threads per Rsession for matrix math (openblas)
@@ -194,8 +195,285 @@ nrow(CrossesToPredict)
 
 Run the "AD" and "DirDom" modelTypes.  
 
+### Testing
+```{r debug inputs}
+# modelType="DirDom";
+# stdSelInt = 2.67; 
+# selInd=TRUE;
+# set.seed(111);
+# SIwts=SIwts[sample(1:length(SIwts),3,replace = F)];
+# 
+# # predict first 3 crosses only for speed
+# CrossesToPredict=CrossesToPredict %>% slice(1:3);
+# 
+# # sample 1000 SNPs to make preds go faster
+# set.seed(22222)
+# snps2keep<-sample(colnames(dosages),size = 1000,replace = F)
+# 
+# dosages=dosages[,snps2keep];
+# haploMat=haploMat[,snps2keep];
+# recombFreqMat=recombFreqMat[snps2keep,snps2keep];
+# ncores=15;nBLASthreads=5
+# 
+# # model DirDom
+# snpeffs=gpreds_dirdom$genomicPredOut[[1]];
+# snpeffs %<>% 
+#   filter(Trait %in% names(SIwts)) %>% 
+#   mutate(across(contains("snpeff"),~map(.,~.[snps2keep,,drop=F])))
+```
+```{r debugged version of predictCrosses}
+# predictCrosses<-function(modelType,
+#                          stdSelInt = 2.67,
+#                          selInd,SIwts = NULL,
+#                          CrossesToPredict,
+#                          snpeffs,dosages,
+#                          haploMat,recombFreqMat,
+#                          ncores=1,nBLASthreads=NULL){
+#   ## Format SNP effect matrices ~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+#   AlleleSubEffectList<-snpeffs$allelesubsnpeff %>%
+#     `names<-`(.,snpeffs$Trait) %>%
+#     map(.,~t(.))
+# 
+#   if(modelType=="AD"){
+#     # DomDevEffects for model "AD" to predict VarTGV = VarBV + VarDD
+#     DomDevEffectList=snpeffs$domdevsnpeff %>%
+#       `names<-`(.,snpeffs$Trait) %>%
+#       map(.,~t(.)) }
+# 
+#   if(modelType=="DirDom"){
+#     # AddEffectList + DomEffectList --> VarTGV; AlleleSubEffectList --> VarBV;
+#     AddEffectList<-snpeffs$addsnpeff %>%
+#       `names<-`(.,snpeffs$Trait) %>%
+#       map(.,~t(.))
+#     DomEffectList<-snpeffs$domsnpeff %>%
+#       `names<-`(.,snpeffs$Trait) %>%
+#       map(.,~t(.)) }
+# 
+#   ## Predict cross variances ~~~~~~~~~~~~~~~~~~~~~~~~
+#   print("Predicting cross variance parameters")
+#   if(modelType=="A"){
+#     predictedvars<-predCrossVars(CrossesToPredict=CrossesToPredict,
+#                                  AddEffectList=AlleleSubEffectList,
+#                                  modelType="A",
+#                                  haploMat=haploMat,
+#                                  recombFreqMat=recombFreqMat,
+#                                  ncores=ncores,nBLASthreads=nBLASthreads) %>%
+#       unnest(predVars) %>%
+#       mutate(predOf="VarBV") }
+#   if(modelType=="AD"){
+#     predictedvars<-predCrossVars(CrossesToPredict=CrossesToPredict,
+#                                  AddEffectList=AlleleSubEffectList,
+#                                  DomEffectList=DomDevEffectList,
+#                                  modelType="AD",
+#                                  haploMat=haploMat,
+#                                  recombFreqMat=recombFreqMat,
+#                                  ncores=ncores,nBLASthreads=nBLASthreads)
+#     predictedvars %<>%
+#       unnest(predVars) %>%
+#       mutate(predOf=ifelse(predOf=="VarA","VarBV","VarDD"))
+#   }
+#   if(modelType=="DirDom"){
+#     predictedvarTGV<-predCrossVars(CrossesToPredict=CrossesToPredict,
+#                                    AddEffectList=AddEffectList,
+#                                    DomEffectList=DomEffectList,
+#                                    modelType="AD", # no "DirDom" model in predCrossVars() nor is it needed
+#                                    haploMat=haploMat,
+#                                    recombFreqMat=recombFreqMat,
+#                                    ncores=ncores,nBLASthreads=nBLASthreads)
+#     predictedvarBV<-predCrossVars(CrossesToPredict=CrossesToPredict,
+#                              AddEffectList=AlleleSubEffectList,
+#                              DomEffectList=NULL,
+#                              modelType="A", # no "DirDom" model in predCrossVars() nor is it needed
+#                              haploMat=haploMat,
+#                              recombFreqMat=recombFreqMat,
+#                              ncores=ncores,nBLASthreads=nBLASthreads)
+#     predictedvars<-predictedvarBV %>%
+#       unnest(predVars) %>%
+#       mutate(predOf="VarBV") %>%
+#       bind_rows(predictedvarTGV %>%
+#                   unnest(predVars)) }
+# 
+#   ## Predict cross means ~~~~~~~~~~~~~~~~~~~~~~~~
+#   print("Predicting cross means")
+#   ### predict MeanBVs
+#   predictedmeans<-predCrossMeans(AddEffectList=AlleleSubEffectList,
+#                                  CrossesToPredict=CrossesToPredict,
+#                                  doseMat=dosages,
+#                                  ncores=ncores,
+#                                  nBLASthreads=nBLASthreads,
+#                                  predType="BV")
+#   if(modelType=="AD"){
+#     ### DO NOT predict MeanTGV ~but~ duplicate MeanBV as MeanTGV prediction
+#     ### there IS predVarTGV for this model, output predUC-TGV (i.e. UC_variety)
+#     predictedmeans %<>%
+#       bind_rows(predictedmeans %>% mutate(predOf="TGV")) }
+# 
+#   if(modelType=="DirDom"){
+#     ### predict MeanTGVs
+#     ####  Prediction of MeanTGV is only available for the DirDom model
+#     #### or a model with "genotypic" additive-dominance SNP effects
+#     #### As implemented, modelType="AD" is the "classical" partition (BVs+ DomDevs)
+#     predictedmeans %<>%
+#       bind_rows(predCrossMeans(AddEffectList=AddEffectList,
+#                                DomEffectList=DomEffectList,
+#                                CrossesToPredict=CrossesToPredict,
+#                                doseMat=dosages,
+#                                ncores=ncores,
+#                                nBLASthreads=nBLASthreads,
+#                                predType="TGV"))
+#   }
+# 
+#   ## SIMPLIFIED, TIDY, CROSS-WISE OUTPUT ~~~~~~~~~~~~~~~~~~~~~~~~
+#   # store raw mean and var preds
+#   rawPreds<-list(predMeans=list(predictedmeans),
+#                  predVars=list(predictedvars))
+# 
+#   ## tidy pred. means ~~~~~~
+#   predictedmeans %<>%
+#     mutate(predOf=gsub("Mean","",predOf),
+#            Trait2=Trait) %>% # to match with variance pred. output
+#     rename(Trait1=Trait) %>% # to match with variance pred. output
+#     select(sireID,damID,predOf,Trait1,Trait2,predMean)
+# 
+#   ## tidy pred. vars ~~~~~~
+#   predictedvars %<>%
+#     select(sireID,damID,Nsegsnps,predOf,Trait1,Trait2,predVar) %>%
+#     mutate(predOf=gsub("Var","",predOf))
+#   if(modelType=="AD"){
+#     predictedvars %<>%
+#       filter(predOf=="BV") %>%
+#       bind_rows(predictedvars %>%
+#                   pivot_wider(names_from = "predOf",
+#                               values_from = "predVar",
+#                               names_prefix = "predVar") %>%
+#                   mutate(predVar=predVarBV+predVarDD,
+#                          predOf="TGV") %>%
+#                   select(-predVarBV,-predVarDD))
+#   }
+#   if(modelType=="DirDom"){
+#     predictedvars %<>%
+#       filter(predOf=="BV") %>%
+#       bind_rows(predictedvars %>%
+#                   filter(predOf!="BV") %>%
+#                   pivot_wider(names_from = "predOf",
+#                               values_from = "predVar",
+#                               names_prefix = "predVar") %>%
+#                   mutate(predVar=predVarA+predVarD,
+#                          predOf="TGV") %>%
+#                   select(-predVarA,-predVarD))
+#   }
+# 
+#   ## SELECTION INDEX MEANS AND VARIANCES ~~~~~~~~~~~~~~~~~~~~~~~~
+#   #### Compute and add to tidy output, if requested
+#   if(selInd){
+#     print("Computing SELECTION INDEX means and variances.")
+#     traits<-unique(predictedmeans$Trait1)
+#     ## Compute Mean SELIND
+#     predictedmeans %<>%
+#       select(-Trait2) %>%
+#       spread(Trait1,predMean) %>%
+#       select(sireID,damID,predOf,all_of(traits)) %>%
+#       mutate(SELIND=as.numeric((predictedmeans %>%
+#                                   select(-Trait2) %>%
+#                                   spread(Trait1,predMean) %>%
+#                                   select(all_of(names(SIwts))) %>%
+#                                   as.matrix(.))%*%SIwts)) %>%
+#       relocate(SELIND, .after = predOf) %>%
+#       pivot_longer(cols = c(SELIND,all_of(traits)),
+#                    names_to = "Trait1",
+#                    values_to = "predMean") %>%
+#       mutate(Trait2=Trait1) %>%
+#       select(sireID,damID,predOf,Trait1,Trait2,predMean)
+#     ## Compute Var SELIND
+#     require(furrr); plan(multisession, workers = ncores)
+#     options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+# 
+#     predictedvars %<>%
+#       nest(predVars=c(Trait1,Trait2,predVar)) %>%
+#       ## loop over each rep-fold-predOf-sireIDxdamID
+#       mutate(predVars=future_map(predVars,function(predVars,...){
+# 
+#         gmat<-predVars %>%
+#           pivot_wider(names_from = "Trait2",
+#                       values_from = "predVar") %>%
+#           column_to_rownames(var = "Trait1") %>%
+#           as.matrix
+#         gmat[lower.tri(gmat)]<-t(gmat)[lower.tri(gmat)]
+#         gmat %<>% .[names(SIwts),names(SIwts)]
+#         predSelIndVar<-SIwts%*%gmat%*%SIwts
+#         ## add sel index predictions to component trait
+#         ## var-covar predictions
+# 
+#         predVars<-tibble(Trait1="SELIND",Trait2="SELIND",
+#                          predVar=as.numeric(predSelIndVar)) %>%
+#           bind_rows(predVars)
+#         return(predVars) })) %>%
+#       unnest(predVars)
+#     plan(sequential)
+#   }
+# 
+#   ## USEFULNESS CRITERIA ~~~~~~~~~~~~~~~~~~~~~~~~
+#   tidyPreds<-predictedvars %>%
+#     inner_join(predictedmeans) %>%
+#     rename(Trait=Trait1) %>%
+#     select(sireID,damID,Nsegsnps,predOf,Trait,predMean,predVar) %>%
+#     mutate(predSD=sqrt(predVar),
+#            predUsefulness=predMean+(stdSelInt*predSD))
+# 
+#   predictions<-tibble(tidyPreds=list(tidyPreds),
+#                       rawPreds=list(rawPreds))
+#   return(predictions)
+# }
+``` 
+```{r run tests of both modelTypes}
+# set.seed(111);
+# SIwts=SIwts[sample(1:length(SIwts),3,replace = F)];
+# # predict first 3 crosses only for speed
+# CrossesToPredict=CrossesToPredict %>% slice(1:3);
+# # sample 1000 SNPs to make preds go faster
+# set.seed(22222)
+# snps2keep<-sample(colnames(dosages),size = 1000,replace = F)
+# dosages=dosages[,snps2keep];
+# haploMat=haploMat[,snps2keep];
+# recombFreqMat=recombFreqMat[snps2keep,snps2keep];
+# 
+# # model DirDom
+# snpeffs=gpreds_dirdom$genomicPredOut[[1]];
+# snpeffs %<>%
+#   filter(Trait %in% names(SIwts)) %>%
+#   mutate(across(contains("snpeff"),~map(.,~.[snps2keep,,drop=F])))
+# testpreds_dirdom<-predictCrosses(modelType="DirDom",
+#                                  stdSelInt = 2.67, 
+#                                  selInd=TRUE, SIwts=SIwts,
+#                                  CrossesToPredict=CrossesToPredict,
+#                                  snpeffs=snpeffs,
+#                                  dosages=dosages,
+#                                  haploMat=haploMat,recombFreqMat=recombFreqMat,
+#                                  ncores=15,nBLASthreads=5)
+# 
+# 
+# # model AD
+# snpeffs=gpreds_ad$genomicPredOut[[1]];
+# snpeffs %<>%
+#   filter(Trait %in% names(SIwts)) %>%
+#   mutate(across(contains("snpeff"),~map(.,~.[snps2keep,,drop=F])))
+# testpreds_ad<-predictCrosses(modelType="AD",
+#                              stdSelInt = 2.67, 
+#                              selInd=TRUE, SIwts=SIwts,
+#                              CrossesToPredict=CrossesToPredict,
+#                              snpeffs=snpeffs,
+#                              dosages=dosages,
+#                              haploMat=haploMat,recombFreqMat=recombFreqMat,
+#                              ncores=15,nBLASthreads=5)
 
-cbsulm15 - July 13 - 3:30pm
+```
+
+
+
+### Full run 
+
+cbsulm15 - July 25 - 7:30pm
 ```{r predict UC - top 121 parents - model DirDom}
 start<-proc.time()[3]
 crossPreds_dirdom<-predictCrosses(modelType="DirDom",stdSelInt = 2.67, 
@@ -204,22 +482,13 @@ crossPreds_dirdom<-predictCrosses(modelType="DirDom",stdSelInt = 2.67,
                                   snpeffs=gpreds_dirdom$genomicPredOut[[1]],
                                   dosages=dosages,
                                   haploMat=haploMat,recombFreqMat=recombFreqMat,
-                                  ncores=15,nBLASthreads=5)
+                                  ncores=20,nBLASthreads=5)
 runtime<-proc.time()[3]-start; runtime/60
 saveRDS(crossPreds_dirdom,file = here::here("output","genomicMatePredictions_top121parents_ModelDirDom.rds"))
 
-# Error: Problem with `mutate()` column `predVars`.
-# ℹ `predVars = future_pmap(...)`.
-# ✖ Failed to retrieve the value of MultisessionFuture (<none>) from cluster RichSOCKnode #20 (PID 28094 on ‘localhost’). The reason reported was ‘error reading from connection’
-# Run `rlang::last_error()` to see where the error occurred.
-# In addition: Warning message:
-# In list(...) : closing unused connection 3 (localhost)
-# > runtime<-proc.time()[3]-start; runtime/60
-#  elapsed
-# 45.65038
 ```
 
-cbsulm15
+cbsulm17 - July 25 at 7:30pm
 ```{r predict UC - top 121 parents - model AD}
 start<-proc.time()[3]
 crossPreds_ad<-predictCrosses(modelType="AD",stdSelInt = 2.67, 
@@ -228,10 +497,9 @@ crossPreds_ad<-predictCrosses(modelType="AD",stdSelInt = 2.67,
                               snpeffs=gpreds_ad$genomicPredOut[[1]],
                               dosages=dosages,
                               haploMat=haploMat,recombFreqMat=recombFreqMat,
-                              ncores=15,nBLASthreads=5)
+                              ncores=20,nBLASthreads=5)
 runtime<-proc.time()[3]-start; runtime/60
 saveRDS(crossPreds_ad,file = here::here("output","genomicMatePredictions_top121parents_ModelAD.rds"))
-
 ```
 
 # [TO DO] Write predictions to disk
