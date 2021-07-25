@@ -715,19 +715,19 @@ predictCrosses<-function(modelType,
   }
   if(modelType=="DirDom"){
     predictedvarTGV<-predCrossVars(CrossesToPredict=CrossesToPredict,
-                              AddEffectList=AddEffectList,
-                              DomEffectList=DomEffectList,
-                              modelType="AD", # no "DirDom" model in predCrossVars() nor is it needed
-                              haploMat=haploMat,
-                              recombFreqMat=recombFreqMat,
-                              ncores=ncores,nBLASthreads=nBLASthreads)
+                                   AddEffectList=AddEffectList,
+                                   DomEffectList=DomEffectList,
+                                   modelType="AD", # no "DirDom" model in predCrossVars() nor is it needed
+                                   haploMat=haploMat,
+                                   recombFreqMat=recombFreqMat,
+                                   ncores=ncores,nBLASthreads=nBLASthreads)
     predictedvarBV<-predCrossVars(CrossesToPredict=CrossesToPredict,
-                             AddEffectList=AlleleSubEffectList,
-                             DomEffectList=NULL,
-                             modelType="A", # no "DirDom" model in predCrossVars() nor is it needed
-                             haploMat=haploMat,
-                             recombFreqMat=recombFreqMat,
-                             ncores=ncores,nBLASthreads=nBLASthreads)
+                                  AddEffectList=AlleleSubEffectList,
+                                  DomEffectList=NULL,
+                                  modelType="A", # no "DirDom" model in predCrossVars() nor is it needed
+                                  haploMat=haploMat,
+                                  recombFreqMat=recombFreqMat,
+                                  ncores=ncores,nBLASthreads=nBLASthreads)
     predictedvars<-predictedvarBV %>%
       unnest(predVars) %>%
       mutate(predOf="VarBV") %>%
@@ -770,7 +770,7 @@ predictCrosses<-function(modelType,
                  predVars=list(predictedvars))
 
   ## tidy pred. means ~~~~~~
-  predictedvars %<>%
+  predictedmeans %<>%
     mutate(predOf=gsub("Mean","",predOf),
            Trait2=Trait) %>% # to match with variance pred. output
     rename(Trait1=Trait) %>% # to match with variance pred. output
@@ -808,7 +808,7 @@ predictCrosses<-function(modelType,
   #### Compute and add to tidy output, if requested
   if(selInd){
     print("Computing SELECTION INDEX means and variances.")
-    traits<-unique(predmeans$Trait1)
+    traits<-unique(predictedmeans$Trait1)
     ## Compute Mean SELIND
     predictedmeans %<>%
       select(-Trait2) %>%
@@ -826,7 +826,6 @@ predictCrosses<-function(modelType,
       mutate(Trait2=Trait1) %>%
       select(sireID,damID,predOf,Trait1,Trait2,predMean)
     ## Compute Var SELIND
-    #require(furrr); require(future.callr); plan(callr, workers = ncores)
     require(furrr); plan(multisession, workers = ncores)
     options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
@@ -851,6 +850,7 @@ predictCrosses<-function(modelType,
           bind_rows(predVars)
         return(predVars) })) %>%
       unnest(predVars)
+    plan(sequential)
   }
 
   ## USEFULNESS CRITERIA ~~~~~~~~~~~~~~~~~~~~~~~~
