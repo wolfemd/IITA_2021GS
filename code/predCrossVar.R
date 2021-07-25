@@ -173,7 +173,8 @@ predOneCrossVar<-function(Trait1,Trait2,progenyLD,modelType,
     if(predType=="PMV"){ predVarD_pmv<-predVarD_vpm+sum(diag(progenyLDsq%*%postVarCovarOfDomEffects)) }
   }
 
-  rm(progenyLD,progenyLDsq); gc()
+  if(modelType=="A"){ rm(progenyLD); gc() }
+  if(modelType=="AD"){ rm(progenyLD,progenyLDsq); gc() }
 
   # Tidy the results
   out<-tibble(predOf="VarA",predVar=predVarA_vpm)
