@@ -31,11 +31,7 @@ predCrossVars<-function(CrossesToPredict,modelType,
     if(predType=="VPM" & modelType=="AD"){ DomEffectList<-NULL; } }
 
   # Set-up a loop over the crosses
-  #require(furrr); require(future.callr); plan(callr, workers = ncores)
   require(furrr); plan(multisession, workers = ncores)
-  # cl <- parallel::makeCluster(ncores);
-  # require(furrr); plan(cluster, workers = cl, gc = TRUE)
-  #options(future.globals.maxSize=50000*1024^2); options(future.rng.onMisuse="ignore")
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
   crossespredicted<-CrossesToPredict %>%
     mutate(predVars=future_pmap(.,
@@ -48,9 +44,12 @@ predCrossVars<-function(CrossesToPredict,modelType,
                                 postMeanDomEffects=postMeanDomEffects,
                                 AddEffectList=AddEffectList,
                                 DomEffectList=DomEffectList,
-                                nBLASthreads=nBLASthreads)) %>%
+                                nBLASthreads=nBLASthreads))
+  plan(sequential)
+
+  crossespredicted %<>%
     unnest(predVars)
-  #parallel::stopCluster(cl)
+
   totcomputetime<-proc.time()[3]-starttime
   print(paste0("Done predicting fam vars. ",
                "Took ",round((totcomputetime)/60,2),
@@ -227,7 +226,6 @@ predCrossMeans<-function(CrossesToPredict,predType,
   parents<-CrossesToPredict %$% union(sireID,damID)
   doseMat<-doseMat[parents,colnames(AddEffectList[[1]])]
 
-  #require(furrr); require(future.callr); plan(callr, workers = ncores)
   require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
 
@@ -249,9 +247,11 @@ predCrossMeans<-function(CrossesToPredict,predType,
           mutate(predOf="MeanBV",
                  predMean=(sireGEBV+damGEBV)/2)
         return(predmeans) }))
+    plan(sequential)
   }
 
   if(predType=="TGV"){
+    plan(multisession, workers = ncores)
     means<-means %>%
       mutate(predictedMeans=future_map(Trait,function(Trait,
                                                       #BLASthreads=nBLASthreads,
@@ -271,6 +271,7 @@ predCrossMeans<-function(CrossesToPredict,predType,
                    meanG<-sum(g)
                    return(meanG)}))
         return(predmeans) }))
+    plan(sequential)
   }
   means<-means %>%
     unnest(predictedMeans)
