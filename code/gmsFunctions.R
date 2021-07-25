@@ -455,6 +455,7 @@ runCrossVal<-function(TrainTestData,modelType,grms,nrepeats,nfolds,ncores=1,
                                           modelType=modelType,augmentTP=NULL,TrainTestData=TrainTestData,grms=grms),
                                 .progress = FALSE)) %>%
     unnest(accuracy)
+  plan(sequential)
   return(cvsamples)
 }
 
@@ -635,6 +636,7 @@ runGenomicPredictions<-function(modelType,
                                                grms=grms,
                                                dosages=dosages,
                                                nBLASthreads=nBLASthreads)))
+  plna(sequential)
 
   predictions %<>%
     select(-TrainingData) %>%

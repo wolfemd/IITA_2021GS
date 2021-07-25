@@ -229,7 +229,6 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores,nBLASt
     return(results)
   }
 
-  #require(furrr); require(future.callr); plan(callr, workers = ncores)
   require(furrr); plan(multisession, workers = ncores)
   options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
   traintestdata<-traintestdata %>%
@@ -240,6 +239,7 @@ getMarkEffs<-function(parentfolds,blups,gid,modelType,grms,dosages,ncores,nBLASt
                                 dosages=dosages,
                                 nBLASthreads=nBLASthreads),
            modelType=modelType)
+  plan(sequential)
 
   traintestdata %<>%
     select(-blupsMat,-sampleIDs) %>%
@@ -543,10 +543,8 @@ varPredAccuracy<-function(crossValOut,snpeffs,ped,modelType,
   if(selInd==TRUE){
     # compute predicted selection index variances
 
-    #require(furrr); require(future.callr); plan(callr, workers = ncores)
     require(furrr); plan(multisession, workers = ncores)
     options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
-
     cvout %<>%
       ## loop over each rep-fold-predOf-sireIDxdamID
       mutate(predVars=future_map(predVars,function(predVars){
@@ -565,6 +563,8 @@ varPredAccuracy<-function(crossValOut,snpeffs,ped,modelType,
                          predVar=as.numeric(predSelIndVar)) %>%
           bind_rows(predVars)
         return(predVars) }))
+    plan(sequential)
+
   }
   out %<>%
     mutate(predOf=ifelse(predOf=="GEBV","VarBV","VarTGV")) %>%
