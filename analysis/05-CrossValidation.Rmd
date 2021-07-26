@@ -19,6 +19,10 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F,
 
 4.  [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map *and* recombination frequency matrix, for use in predictions.
 
+Also:
+
+5.  [Extract and process PHG files](08-PHGfiles.html): Extract a VCF file from the PHG `*.db` file produced by Evan Long. Subsequently, prepare haplotype and dosage matrices, genetic map *and* recombination frequency matrix, for use in predictions.
+
 # Automating cross-validation
 
 In the manuscript, the cross-validation is documented many pages and scripts, [documented here](https://wolfemd.github.io/PredictOutbredCrossVar/).
@@ -232,6 +236,8 @@ saveRDS(cvAD_5rep5fold,here::here("output","cvAD_5rep5fold_predAccuracy.rds"))
 # [1] "Accuracies predicted. Took  19.73242 hrs total.Goodbye!"
 # > saveRDS(cvAD_5rep5fold,here::here("output","cvAD_5rep5fold_predAccuracy.rds"))
 ```
+
+# [TO DO] PHG parent-wise cross-validation
 
 # [TO DO] Standard clone-wise cross-validation
 

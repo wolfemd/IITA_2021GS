@@ -15,6 +15,8 @@ navbar:
       href: 03-validatePedigree.html
     - text: Preprocessing input data
       href: 04-PreprocessDataFiles.html
+    - text: Preprocess PHG files
+      href: 08-PHGfiles.html
   - text: Cross-validation
     href: 05-CrossValidation.html
   - text: Genomic (mate) predictions
