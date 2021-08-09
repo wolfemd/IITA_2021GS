@@ -1,10 +1,16 @@
-name: implementGMSinCassava
+name: IITA_2021GS
 output_dir: ../docs
 navbar:
-  title: implementGMSinCassava
+  title: IITA_2021GS
   left:
   - text: Home
     href: index.html
+  - text: Imputation (DCas21_6038)
+    menu:
+    - text: Conversion DArT report DCas21_6038 to VCF
+      href: convertDCas21_6038_ToVCF.html
+    - text: Impute DCas21_6038
+      href: ImputeDCas21_6038.html
   - text: Preliminary Steps
     menu:
     - text: Data Cleaning
@@ -15,8 +21,6 @@ navbar:
       href: 03-validatePedigree.html
     - text: Preprocessing input data
       href: 04-PreprocessDataFiles.html
-    - text: Preprocess PHG files
-      href: 08-PHGfiles.html
   - text: Cross-validation
     href: 05-CrossValidation.html
   - text: Genomic (mate) predictions
@@ -32,7 +36,7 @@ navbar:
   right:
   - icon: fa-github
     text: Source code
-    href: https://github.com/wolfemd/implementGMSinCassava
+    href: https://github.com/wolfemd/IITA_2021GS
 output:
   workflowr::wflow_html:
     toc: yes

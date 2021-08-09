@@ -1,5 +1,5 @@
 ---
-title: "Implementation Tests for Genomic Mate Selection in Cassava"
+title: "IITA 2021 Genomic Prediction and Mate Selection"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,64 +8,71 @@ editor_options:
   chunk_output_type: console
 ---
 
-Available data and software make it hypothetically possible to predict cross variances (mendelian sampling variance) and use it to select mates, *e.g.* using the usefuleness criterion (UC).
-
-New information also adds new sources of uncertainty:
-
--   Phasing error
--   Use of a (or various) genetic map(s) to predict recombination frequencies
--   Inherent uncertainty in marker effects and their effect on variance prediction
-
-We used cross-validation to estimate the accuracy of predicting means, variances and the usefulness of crosses on selection indices. That analysis leveraged a high-quality validated pedigree-based phasing pipeline. That pipeline is considerably more involved and may not be implementable on the entire breeding germplasm.
-
-Here I test cross-variance prediction in our current breeding pipeline's available data. We will assess the whether and how to start using cross variance predictions in practice.
+-   I recently (Aug 3, 2021) completed thorough testing to develop a protocol for genomic *mate* selection in NextGen Cassava and will implement it here for the first time in practice! Check [here](https://wolfemd.github.io/implementGMSinCassava/) to see the implementation tests / code-base development documented.
+-   Subsequently, I have developed my entire code base into an R package [genomicMateSelectR](https://wolfemd.github.io/genomicMateSelectR/index.html). The package is fully documented (in rough draft version), but doesn't yet include a tutorial / vignette.
+-   The IITA DArTseqLD report (DCas21_6038), which contains the GS C5 (i.e. progeny of crosses made in 2020, "TMS20F"), was recently (July 19, 2021) released.
+-   The imputations of DCas21_6038, genomic predictions and mate selection that follows will leverage [genomicMateSelectR](https://wolfemd.github.io/genomicMateSelectR/index.html) functions and will form the principal example of their use.
 
 [**See the Results here!**](07-Results.html)
 
-# Analysis steps
+# August 2021
 
-1.  [Prepare training dataset](01-cleanTPdata.html): Download data from DB, "Clean" and format DB data. Use the standard pipeline to obtain complete breeding trial data for IITA, generate de-regressed BLUPs for downstream analysis.
+## Imputation of DCas21_6038
 
-    -   Copy `gsFunctions.R` from `code/` of most recent NextGen prediction, [NRCRI C3b predicted April 2021](https://wolfemd.github.io/NRCRI_2021GS/).
+**Steps**:
 
-    -   Reference [previous analysis for IITA (2020)](https://wolfemd.github.io/IITA_2020GS/) in case there are variations.
+1.  [Convert DCas21-6038 report to VCF for imputation](convertDCas21_6038_ToVCF.html):
+2.  [Impute DCas21-6038](ImputeDCas21_6038.html): with West Africa reference panel merged with additional GS progeny (IITA TMS18)
+
+**Files**: Access on Cassavabase FTP server here, use "Guest" credentials
+
+-   **RefPanel VCF filename:** `chr*_RefPanelAndGSprogeny_ReadyForGP_72719.vcf.gz`\
+    ([**Click here for FTP server location**](ftp://ftp.cassavabase.org/marnin_datasets/nextgenImputation2019/ImputationStageIII_72619/))
+-   **Imputed filename:** `output/chr*_DCas21_6038_WA_REFimputed.vcf.gz`\
+    ([**Click here for FTP server location**](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/))
+-   **Post-impute filtered filename:** `output/chr*_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz`\
+    ([**Click here for FTP server location**](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/))
+-   **All chrom. combined, RefPanel and DCas21_6038 VCF merged** `output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz`\
+    ([**Click here for FTP server location**](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/))
+
+# Preliminary data steps
+
+1.  [Prepare training dataset](01-cleanTPdata.html): Download data from DB, "Clean" and format DB data.
 
 2.  [Get BLUPs combining all trial data](02-GetBLUPs.html): Combine data from all trait-trials to get BLUPs for downstream genomic prediction. Fit mixed-model to multi-trial dataset and extract BLUPs, de-regressed BLUPs and weights. Include two rounds of outlier removal.
 
 3.  [Validate the pedigree obtained from cassavabase](03-validatePedigree.html): Before setting up a cross-validation scheme for predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown relationships or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.
 
-4.  [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map *and* recombination frequency matrix, for use in predictions.
+4.  [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, GRMs, pedigree and BLUPs, genetic map *and* recombination frequency matrix, for use in predictions.
 
-5.  [Parent-wise and standard cross-validation](05-CrossValidation.html):
+# Genomic (mate) predictions
 
-    -   Compute parent-wise cross-validation folds using the validated pedigree. Fit models to get marker effects and make subsequent predictions of cross means and (co)variances.
-    -   **Models "AD"** (classic BV+DD partition of additive+dominance) and **"DirDom"** (genotypic add+dom partition with genome-wide homozygosity effect).
-    -   Include use of selection index weights to compute index accuracy.
-    -   Include new models and index predictions in standard fold cross-validation in addition to the parent-wise scheme / function.
+5.  [Parent-wise and standard cross-validation](05-CrossValidation.html): estimate selection index (and component trait) prediction accuracies using the direction-dominance (**DirDom**) model.
 
-6.  [Genomic predictions](06-GenomicPredictions.html):
+    -   Additionally, [check accuracy and similarity of predictions at reduced marker density](https://wolfemd.github.io/IITA_2021GS/05-CrossValidation.html#Optimize_marker_density_for_speed): Cross-variance prediction is slow, but significant speed gains can be made by using fewer markers. Faster predictions will mean more crosses can be predicted and considered.
 
-    -   (A) Standard genomic prediction of individual GEBV and GETGV for all selection candidates using all available data. (B) Predict cross means and variances for genomic mate selection.
+        -   ***If,*** accuracy and $cor_{preds}(All\_SNPs, Reduced\_Set)$ are similar based on both kinds of cross-validation, proceed to make cross-variance predictions with reduced marker set; possibly use full marker set for cross-mean predictions.
 
-    -   Include models "AD" *and* "DirDom"
+    -    [Click here to see the results](https://wolfemd.github.io/IITA_2021GS/07-Results.html#Prediction_accuracy_estimates)**!**
 
-    -   Include prediction of selection index GEBV/GETGV and $UC^{SI}_{parent}$/$UC^{SI}_{variety}$.
+6.  [Genomic predictions](06-GenomicPredictions.html): First, predict of individual GEBV/GETGV for all selection candidates using all available data and return marker effects for use downstream. Next, Select a top set of candidate parents, for whom we would like to predict cross performances. Finally, predict all pairwise crosses of candidate parents and evaluate them for genomic mate selection. Select the top crosses and plant a crossing nursery with the parents indicated.
 
-    -   New functions at `gmsFunctions.R` in `code/`
+    -    [Click here to see the results](https://wolfemd.github.io/IITA_2021GS/07-Results.html#Genomic_Predictions)**!**
 
-7.  [Results](07-Results.html): Home for plots and summary tables.
+7.  [Results and recommendations](07-Results.html): Home for all plots, summary tables, conclusions and recommendations.
 
 # Data and code repository access
 
-[**FULL REPOSITORY DOWNLOAD FROM CASSAVABASE FTP SERVER**](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/output/)
+[CLICK HERE FOR ACCESS TO THE FULL REPOSITORY](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/) \
+(select "Guest" credentials when prompted by the Cassavabase FTP server)
 
 or
 
-[**DOWNLOAD FROM GitHub**](https://github.com/wolfemd/implementGMSinCassava/tree/master/output)**\***
+[**DOWNLOAD FROM GitHub\***](https://github.com/wolfemd/IITA_2021GS/)
 
 \*GitHub only hosts files max 50 Mb.
 
-# Guide to key directories and file names
+# Key directories and file names
 
 1.  `data/`: raw data (e.g. unimputed SNP data)
 2.  `output/`: outputs (e.g. imputed SNP data)
@@ -73,24 +80,14 @@ or
 4.  `docs/`: compiled **.html**, "knitted" from **.Rmd**
 5.  `code/`: supporting functions sourced in `analysis/*.Rmd`'s.
 
-**FILES OF INTEREST**: everything is in the `output/` sub-directory.
+**FILES OF INTEREST**: everything is in the `output/` sub-directory ([click here](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/) and select "Guest" credentials when prompted by the Cassavabase FTP server).
 
--   **GEBVs for parent selection:** \`\`
--   **GETGVs for variety advancement:** \`\`
+-   **GEBVs for parent selection and GETGVs for variety advancement:**
+
+    -   [download DirDom model genomic predictions](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicPredictions_ModelDirDom.csv)
+
+-   **Predicted means, variances and usefulness of crosses among top parents:**
+
+    -   [download DirDom model genomic mate predictions](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicMatePredictions_topParents_ModelDirDom.csv)
+
 -   Kinship matrices, dosages, haplotype matrix, recombination frequency matrix, genetic map files
-
-# Analyses To Do
-
-**Additional future analyses to do:**
-
-1.  PHG imputed and phased marker data
-2.  AWC's genetic map
-3.  Multi-trait and/or Bayesian models
-4.  Other efforts to improve variance prediction accuracy?
-5.  Simulation to explore factors impacting estimate of accuracy
-
--   Impact of phasing switch errors
-
-    -   Quality and quantity of data available on parents
-    -   Relatedness of parents
-    -   What is the relationship between the true accuracy and estimate of accuracy?

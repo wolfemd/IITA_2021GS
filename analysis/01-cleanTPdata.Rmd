@@ -28,29 +28,59 @@ Downloaded **all** IITA field trials.
 
 1.  [Cassavabase search wizard](https://www.cassavabase.org/breeders/search):
 
-2.  Selected *all* IITA trials currently available. Make a list. Named it **ALL_IITA_TRIALS_2021May04**.
+2.  Selected *all* IITA trials currently available. Make a list. 
 
 3.  Go to **Manage** --\> **Download** [here](https://www.cassavabase.org/breeders/download). Download phenotypes (plot-basis only) and meta-data as CSV using the corresponding boxes / drop-downs.
 
-4.  Store flatfiles, unaltered in directory `data/DatabaseDownload_2021May04/`.
+4.  Store flatfiles, unaltered in directory `data/DatabaseDownload_2021May04/` and `data/DatabaseDownload_2021Aug08/`.
 
-```{bash, eval=F, include=F}
-cd /home/jj332_cas/marnin/implementGMSinCassava
-```
+
+May 4 download contained _all_ IITA data to date. Trial list is named **ALL_IITA_TRIALS_2021May04**.
+
+Aug 8 wanted to up date last 3 months of trial uploads. Downloaded 2020 and 2021 data only, using "Wizard" instead of "Download" page. Trial list is named **IITA_Trials2020and2021_2021Aug088**. 
+
 
 ```{r}
-rm(list=ls())
-library(tidyverse); library(magrittr);
-source(here::here("code","gsFunctions.R"))
+library(tidyverse); library(magrittr); 
+library(genomicMateSelectR)
 ```
 
 Read DB data.
 
 ```{r}
-dbdata<-readDBdata(phenotypeFile = here::here("data/DatabaseDownload_2021May04"
-                                              ,"2021-05-04T193557phenotype_download.csv"),
-                  metadataFile = here::here("data/DatabaseDownload_2021May04"
-                                              ,"2021-05-04T194847metadata_download.csv"))
+dbdata_may4<-readDBdata(phenotypeFile = here::here("data/DatabaseDownload_2021May04"
+                                                   ,"2021-05-04T193557phenotype_download.csv"),
+                        metadataFile = here::here("data/DatabaseDownload_2021May04"
+                                                  ,"2021-05-04T194847metadata_download.csv"))
+```
+
+**NOTE:** Frustratingly, the usual download method for DB data I use (the download page) is non-responsive at the moment. 
+As an alternative, I downloaded via the Wizard instead. The two tools produce slightly different results which breaks my code. Below, manually read and combine the May 4 DB data with Aug 8 download. Replace all trials in the May 4 download with trials data downloaded Aug 8. 
+```{r}
+indata<-read.csv(here::here("data/DatabaseDownload_2021Aug08"
+                            ,"phenotype.csv"),skip = 3,
+                 na.strings = c("#VALUE!",NA,".",""," ","-","\""),
+                 stringsAsFactors = F)
+
+meta<-read.csv(here::here("data/DatabaseDownload_2021Aug08",
+                          "metadata.csv"),skip = 2,
+               na.strings = c("#VALUE!",NA,".",""," ","-","\""),
+               stringsAsFactors = F) %>% 
+      rename(programName=breedingProgramName,
+             programDescription=breedingProgramDescription,
+             programDbId=breedingProgramDbId)
+indata<-left_join(indata,meta) 
+
+table(unique(indata$studyName) %in% dbdata_may4$studyName)
+
+dbdata<-dbdata_may4 %>% 
+  filter(!studyName %in% indata$studyName) %>% 
+  mutate(across(contains("CO_334"),~as.numeric(.))) %>% 
+  bind_rows(indata %>% 
+              mutate(replicate=as.character(replicate),
+                     rowNumber=as.character(rowNumber)) %>% 
+              mutate(across(contains("CO_334"),~as.numeric(.))))
+
 ```
 
 # Group and select trials to analyze
@@ -94,6 +124,7 @@ dbdata %<>%
 dbdata %>% 
     group_by(programName) %>% 
     summarize(N=n()) %>% rmarkdown::paged_table()
+# Aug 2021: 547203
 #	May 2021:	524390 (now including a ~200K plot seedling nursery) plots
 ## Dec 2020: 475097 plots (~155K are seedling nurseries which will be excluded from most analyses)
 ```
@@ -351,9 +382,32 @@ print(paste0(nrow(germNamesWithGenos_NoLocalSourcedGBS)," germNames without loca
 genosForPhenos<-bind_rows(germNamesWithGenos_HasLocalSourcedGBS,
                         germNamesWithGenos_NoLocalSourcedGBS) %>% 
   bind_rows(germNamesWithDArT)
+```
+Check for new germplasm "TMS20" and match DArT names to germplasmName. 
 
+- Prasad helped me download an assisting file from the DB:
+- 16 plates information from folder 2021_GS
+- Go to to the folder https://cassavabase.org/folder/8885
+- Click on Download Genotyping plate layouts then selected Download intertek formatted file
+- In the [DArTseqLD-to-VCF conversion step](convertDCas21_6038_ToVCF.html) I see that the DArT system changes "." to "_" so I will to in order to match
+
+```{r}
+genosForPhenos %<>% 
+  bind_rows(readxl::read_xls(here::here("data/DatabaseDownload_2021Aug08",
+                                        "8885_genotyping_plate_layouts.xls")) %>% 
+              select(`Sample ID`) %>% 
+              separate(`Sample ID`,c("FullSampleName","germplasmName"),"\\|\\|\\|") %>% 
+              mutate(FullSampleName=gsub("\\.","_",FullSampleName),
+                     OrigKeyFile="DArTseqLD", 
+                     OriginOfSample="IITA",
+                     programName="IITA"))
+```
+
+```{r}
 print(paste0(nrow(genosForPhenos)," total germNames with genos either GBS or DArT"))
+```
 
+```{r}
 dbdata %<>% 
     left_join(genosForPhenos) 
 
@@ -365,32 +419,7 @@ dbdata %<>%
 
 ```
 
-```{r}
-# # going to check against SNP data
-# snps<-readRDS(file=url(paste0("ftp://ftp.cassavabase.org/marnin_datasets/NGC_BigData/",
-#                               "DosageMatrix_RefPanelAndGSprogeny_ReadyForGP_73019.rds")))
-# rownames_snps<-rownames(snps); rm(snps); gc()
-# # current matches to SNP data
-# dbdata %>%
-#   distinct(GID,germplasmName,FullSampleName) %>%
-#   semi_join(tibble(GID=rownames_snps)) %>% nrow() # 10707
-# dbdata %>%
-#   distinct(GID,germplasmName,FullSampleName) %>%
-#   semi_join(tibble(GID=rownames_snps)) %>%
-#   filter(grepl("TMS13|2013_",GID,ignore.case = F)) %>% nrow() # 2424 TMS13
-# dbdata %>%
-#   distinct(GID,germplasmName,FullSampleName) %>%
-#   semi_join(tibble(GID=rownames_snps)) %>%
-#   filter(grepl("TMS14",GID,ignore.case = F)) %>% nrow() # 2236 TMS14
-# dbdata %>%
-#   distinct(GID,germplasmName,FullSampleName) %>%
-#   semi_join(tibble(GID=rownames_snps)) %>%
-#   filter(grepl("TMS15",GID,ignore.case = F)) %>% nrow() # 2287 TMS15
-# dbdata %>%
-#   distinct(GID,germplasmName,FullSampleName) %>%
-#   semi_join(tibble(GID=rownames_snps)) %>%
-#   filter(grepl("TMS18",GID,ignore.case = F)) %>% nrow() # 2401 TMS18
-```
+
 
 # [User input] Choose locations
 
@@ -401,14 +430,14 @@ Based on previous locations used for IITA analysis, but adding based on list of 
 dbdata %<>% 
   filter(locationName %in% c("Abuja","Ago-Owu","Ibadan","Ikenne","Ilorin","Jos","Kano",
                              "Malam Madori","Mokwa","Ubiaja","Umudike","Warri","Zaria"))
-nrow(dbdata) # [1] 479588
+nrow(dbdata) # [1] 497414
 ```
 
 
 ## Output "cleaned" file
 
 ```{r}
-saveRDS(dbdata,file=here::here("output","IITA_CleanedTrialData_2021May10.rds"))
+saveRDS(dbdata,file=here::here("output","IITA_CleanedTrialData_2021Aug08.rds"))
 ```
 
 # Detect experimental designs
@@ -431,7 +460,7 @@ Start with cleaned data from previous step.
 rm(list=ls()); gc()
 library(tidyverse); library(magrittr);
 source(here::here("code","gsFunctions.R"))
-dbdata<-readRDS(here::here("output","IITA_CleanedTrialData_2021May10.rds"))
+dbdata<-readRDS(here::here("output","IITA_CleanedTrialData_2021Aug08.rds"))
 ```
 
 ```{r}
@@ -452,7 +481,7 @@ dbdata %>%
 ## Output file
 
 ```{r}
-saveRDS(dbdata,file=here::here("output","IITA_ExptDesignsDetected_2021May10.rds"))
+saveRDS(dbdata,file=here::here("output","IITA_ExptDesignsDetected_2021Aug08.rds"))
 ```
 
 # Next step

@@ -1,0 +1,192 @@
+---
+title: "Impute IITA DCas21-6038"
+site: workflowr::wflow_site
+date: "2021-Aug-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+# Previous 
+
+1.  [Convert DCas21-6038 report to VCF for imputation](convertDCas21_6038_ToVCF.html):
+
+# Copy data
+
+Copy the imputation reference panel from 2019 to the `data/` folder. 
+
+```{bash,eval = FALSE}
+mkdir /workdir/mw489/;
+cp -r ~/IITA_2021GS /workdir/mw489/;
+cp -r /home/jj332_cas/CassavaGenotypeData/CassavaGeneticMap /workdir/mw489/IITA_2021GS/data/;
+cp /home/jj332_cas/CassavaGenotypeData/nextgenImputation2019/ImputationStageIII_72619/chr*_RefPanelAndGSprogeny_ReadyForGP_72719.vcf.gz  /workdir/mw489/IITA_2021GS/data/;
+```
+
+# Impute with West Africa RefPanel
+
+Impute with [Beagle V5.0](https://faculty.washington.edu/browning/beagle/b5_0.html).
+
+Use the "imputation reference panel" dataset from 2019 merged with the imputed GS progeny TMS13-14-15 + TMS18, e.g. `chr1_RefPanelAndGSprogeny_ReadyForGP_72719.vcf.gz` as reference for the current imputation.
+
+Used 1 large memory Cornell CBSU machine (e.g. [cbsulm17; 112 cores, 512 GB RAM](https://biohpc.cornell.edu/lab/hardware.aspx)), running 1 chromosome at a time.
+
+```{bash set-up R environment, eval=F}
+# 1) start a screen shell 
+screen; # or screen -r if re-attaching...
+# Project directory, so R will use as working dir.
+cd /workdir/mw489/IITA_2021GS/
+# 3) Start R
+R
+```
+
+```{r,eval = FALSE}
+targetVCFpath<-here::here("data/Report-DCas21-6038/") # location of the targetVCF
+refVCFpath<-here::here("data/")
+mapPath<-here::here("data/CassavaGeneticMap/")
+outPath<-here::here("output/")
+outSuffix<-"DCas21_6038"
+```
+
+```{r,eval = FALSE}
+library(tidyverse); library(magrittr); 
+library(genomicMateSelectR)
+purrr::map(1:18,
+           ~genomicMateSelectR::runBeagle5(targetVCF=paste0(targetVCFpath,"chr",.,
+                                                            "_DCas21_6038.vcf.gz"),
+                                           refVCF=paste0(refVCFpath,"chr",.,
+                                                         "_RefPanelAndGSprogeny_ReadyForGP_72719.vcf.gz"),
+                                           mapFile=paste0(mapPath,"chr",.,
+                                                          "_cassava_cM_pred.v6_91019.map"),
+                                           outName=paste0(outPath,"chr",.,
+                                                          "_DCas21_6038_WA_REFimputed"),
+                                           nthreads=112))
+
+```
+
+Clean up Beagle log files after run. Move to sub-directory `output/BeagleLogs/`.
+```{bash,eval = FALSE}
+cd /workdir/mw489/IITA_2021GS/output/; 
+mkdir BeagleLogs;
+cp *_DCas21_6038_WA_REFimputed.log BeagleLogs/
+cp -r BeagleLogs ~/IITA_2021GS/output/
+cp *_DCas21_6038_WA_REFimputed* ~/IITA_2021GS/output/
+cp *_DCas21_6038_WA_REFimputed.vcf.gz ~/IITA_2021GS/output/
+```
+
+# Post-impute filter
+
+Standard post-imputation filter: AR2>0.75 (DR2>0.75 as of Beagle5.0), P_HWE>1e-20, MAF>0.005 [0.5%]. 
+
+Loop to filter all 18 VCF files in parallel
+```{r,eval = FALSE}
+inPath<-here::here("output/")
+outPath<-here::here("output/")
+require(furrr); plan(multisession, workers = 18)
+future_map(1:18,
+           ~genomicMateSelectR::postImputeFilter(inPath=inPath,
+                                                 inName=paste0("chr",.,"_DCas21_6038_WA_REFimputed"),
+                                                 outPath=outPath,
+                                                 outName=paste0("chr",.,"_DCas21_6038_WA_REFimputedAndFiltered")))
+plan(sequential)
+```
+
+Check what's left
+```{r,eval = FALSE}
+purrr::map(1:18,~system(paste0("zcat ",here::here("output/"),"chr",.,"_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz | wc -l")))
+# 7580
+# 3604
+# 3685
+# 3411
+# 3721
+# 3349
+# 1716
+# 3151
+# 3286
+# 2635
+# 2897
+# 2745
+# 2625
+# 5219
+# 3519
+# 2751
+# 2612
+# 2913
+```
+
+```{bash, eval=F}
+cd /workdir/mw489/IITA_2021GS/output/;
+cp -r *_DCas21_6038_WA_REFimputed* ~/IITA_2021GS/output/
+```
+
+# Formats for downstream analysis
+
+Need to create a genome-wide VCF with the RefPanel + DCas21_6038 VCFs merged.
+
+The downstream [preprocessing steps](04-PreprocessDataFiles.html) in the pipeline will take that as input to create haplotype and dosage matrices, etc.
+```{bash, eval=F}
+cd /workdir/mw489/IITA_2021GS/
+R;
+```
+
+
+```{r, eval=F}
+require(furrr); plan(multisession, workers = 18)
+# 1. Subset RefPanel to sites remaining after post-impute filter of DCas21_6038
+future_map(1:18,~system(paste0("vcftools --gzvcf ","/workdir/mw489/IITA_2021GS/data/chr",
+                              .,"_RefPanelAndGSprogeny_ReadyForGP_72719.vcf.gz"," ",
+                              "--positions ","/workdir/mw489/IITA_2021GS/data/chr",.,
+                              "_DCas21_6038_WA_REFimputed.sitesPassing"," ",
+                              "--recode --stdout | bgzip -c -@ 24 > ",
+                              "/workdir/mw489/IITA_2021GS/output/chr",.,
+                              "_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz")))
+plan(sequential)
+
+# 2. Merge RefPanel and DCas21_6038
+library(tidyverse); library(magrittr); library(genomicMateSelectR)
+inPath<-here::here("output/")
+outPath<-here::here("output/")
+future_map(1:18,~mergeVCFs(inPath=inPath,
+                           inVCF1=paste0("chr",.,"_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge"),
+                           inVCF2=paste0("chr",.,"_DCas21_6038_WA_REFimputedAndFiltered"),
+                           outPath=outPath,
+                           outName=paste0("chr",.,"_RefPanelAndGSprogeny_ReadyForGP_2021Aug08")))
+# 3. Concatenate chromosomes
+
+## Index with tabix first
+future_map(1:18,~system(paste0("tabix -f -p vcf ",inPath,
+                               "chr",.,"_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz")))
+plan(sequential)
+## bcftools concat
+system(paste0("bcftools concat ",
+              "--output ",outPath,
+              "AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz ",
+              "--output-type z --threads 18 ",
+              paste0(inPath,"chr",1:18,
+                     "_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz",
+                     collapse = " ")))
+```
+
+```{bash, eval=F}
+cd /workdir/mw489/IITA_2021GS/output/
+cp *_RefPanelAndGSprogeny_ReadyForGP_2021Aug08* ~/IITA_2021GS/output/
+# vcftools --gzvcf AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz 
+# After filtering, kept 23332 out of 23332 Individuals
+# After filtering, kept 61239 out of a possible 61239 Sites
+```
+
+# Next 
+
+1.  [Prepare training dataset](01-cleanTPdata.html): Download data from DB, "Clean" and format DB data.
+
+2.  [Get BLUPs combining all trial data](02-GetBLUPs.html): Combine data from all trait-trials to get BLUPs for downstream genomic prediction. Fit mixed-model to multi-trial dataset and extract BLUPs, de-regressed BLUPs and weights. Include two rounds of outlier removal.
+
+3. **[uses imputed data as input]** [Validate the pedigree obtained from cassavabase](03-validatePedigree.html): Before setting up a cross-validation scheme for predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown relationships or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.
+
+4. **[uses imputed data as input]** [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, GRMs, pedigree and BLUPs, genetic map *and* recombination frequency matrix, for use in predictions.
+
+
+

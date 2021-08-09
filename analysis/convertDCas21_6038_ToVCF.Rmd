@@ -1,0 +1,142 @@
+---
+title: "Convert IITA DCas21-6038 to VCF"
+site: workflowr::wflow_site
+date: "2021-Aug-08"
+output: 
+  workflowr::wflow_html:
+    toc: true
+editor_options:
+  chunk_output_type: inline
+---
+
+```{bash, eval=F}
+screen; 
+cd ~/IITA_2021GS/;  
+R;
+```
+
+# Input Parameters
+```{r, eval=F}
+devtools::install_github("wolfemd/genomicMateSelectR", ref = 'master') 
+```
+
+```{r, eval=F}
+library(tidyverse); library(magrittr); 
+library(genomicMateSelectR)
+
+dartvcfInput<-here::here("data/Report-DCas21-6038","Report_6038_VCF_Ref_Version6.txt")
+dartcountsInput<-here::here("data/Report-DCas21-6038","Report_6038_Counts_Ref_Version6.csv")
+outName<-here::here("data/Report-DCas21-6038","DCas21_6038")
+nskipvcf<-2; nskipcounts<-3; ncores<-20
+```
+
+# Prelim. check format
+
+Manual check that the files read in corretly. 
+
+```{r, eval=F}
+vcf<-read.table(dartvcfInput,
+                stringsAsFactors = F,skip = nskipvcf, header = T, sep = "\t", comment.char = "")
+readCounts<-read.csv(dartcountsInput, stringsAsFactors = F,header = T,skip=nskipcounts)
+
+dim(vcf)
+# [1] 13603  1485
+dim(readCounts)
+# [1] 27206  1519
+# 
+# # Initial look at names....
+colnames(readCounts)[1:100]
+ #  [1] "AlleleID"                    "CloneID"                    
+ #  [3] "ClusterTempIndex"            "AlleleSequence"             
+ #  [5] "TrimmedSequence"             "TrimmedSequence_plus_Strand"
+ #  [7] "Short"                       "Lowcomplexity"              
+ #  [9] "Chrom_Cassava_v61"           "ChromPos_Cassava_v61"       
+ # [11] "SNP_ChromPos_Cassava_v61"    "AlnCnt_Cassava_v61"         
+ # [13] "AlnEvalue_Cassava_v61"       "Strand_Cassava_v61"         
+ # [15] "SeqDiff_Cassava_v61"         "ClusterConsensusSequence"   
+ # [17] "ClusterSize"                 "AlleleSeqDist"              
+ # [19] "SNP"                         "SnpPosition"                
+ # [21] "CallRate"                    "OneRatioRef"                
+ # [23] "OneRatioSnp"                 "FreqHomRef"                 
+ # [25] "FreqHomSnp"                  "FreqHets"                   
+ # [27] "PICRef"                      "PICSnp"                     
+ # [29] "AvgPIC"                      "AvgCountRef"                
+ # [31] "AvgCountSnp"                 "RatioAvgCountRefAvgCountSnp"
+ # [33] "FreqHetsMinusFreqMinHom"     "AlleleCountsCorrelation"    
+ # [35] "aggregateTagsTotal"          "DerivedCorrMinusSeedCorr"   
+ # [37] "RepRef"                      "RepSNP"                     
+ # [39] "RepAvg"                      "PicRepRef"                  
+ # [41] "PicRepSNP"                   "TotalPicRepRefTest"         
+ # [43] "TotalPicRepSnpTest"          "TMS20F1286P0032_A35051"     
+ # [45] "IITA.TMS.IBA090454_A35123"   "TMS20F1583P0053_A35131"     
+ # [47] "TMS20F1048P0026_A35138"      "TMS20F1286P0007_A35059"     
+ # [49] "TMS20F1677P0003_A35067"      "TMS20F1679P0035_A35075"     
+ # [51] "TMS20F1613P0027_A35083"      "TMS20F1286P0017_A35091"     
+ # [53] "IITA.TMS.IBA090091_A35099"   "TMS20F1621P0005_A35107"     
+ # [55] "TMS20F1621P0001_A35115"      "TMS20F1613P0022_A35052"     
+ # [57] "TMS20F1679P0037_A35124"      "TMS20F1589P0087_A35132"     
+ # [59] "TMS20F1048P0031_A35139"      "TMS20F1582P0024_A35060"     
+ # [61] "TMS20F1589P0070_A35068"      "IITA.TMS.IBA051632_A35076"  
+ # [63] "TMS20F1613P0032_A35084"      "TMS20F1590P0055_A35092" 
+
+colnames(vcf)[1:30]
+#  [1] "X.CHROM"                   "POS"                      
+#  [3] "ID"                        "REF"                      
+#  [5] "ALT"                       "QUAL"                     
+#  [7] "FILTER"                    "INFO"                     
+#  [9] "FORMAT"                    "TMS20F1286P0032_A35051"   
+# [11] "IITA.TMS.IBA090454_A35123" "TMS20F1583P0053_A35131"   
+# [13] "TMS20F1048P0026_A35138"    "TMS20F1286P0007_A35059"   
+# [15] "TMS20F1677P0003_A35067"    "TMS20F1679P0035_A35075"   
+# [17] "TMS20F1613P0027_A35083"    "TMS20F1286P0017_A35091"   
+# [19] "IITA.TMS.IBA090091_A35099" "TMS20F1621P0005_A35107"   
+# [21] "TMS20F1621P0001_A35115"    "TMS20F1613P0022_A35052"   
+# [23] "TMS20F1679P0037_A35124"    "TMS20F1589P0087_A35132"   
+# [25] "TMS20F1048P0031_A35139"    "TMS20F1582P0024_A35060"   
+# [27] "TMS20F1589P0070_A35068"    "IITA.TMS.IBA051632_A35076"
+# [29] "TMS20F1613P0032_A35084"    "TMS20F1590P0055_A35092" 
+
+# rm(vcf,readCounts); gc()
+```
+
+
+# Run conversion function
+```{r, eval=F}
+genomicMateSelectR::convertDart2vcf(dartvcfInput,dartcountsInput,outName,
+                                    nskipvcf=2,nskipcounts=3,ncores)
+# VCF written successfully
+
+# However, see warnings for future function dev.
+# 5: The `path` argument of `write_lines()` is deprecated as of readr 1.4.0.
+# Please use the `file` argument instead.
+# This warning is displayed once every 8 hours.
+# Call `lifecycle::last_warnings()` to see where this warning was generated.
+# 6: In write.table(tmp, paste0(outName, ".vcf"), append = T, sep = "\t",  :
+#   appending column names to file
+```
+
+# Genomewide to per-chrom VCFs
+
+Split the genome-wide VCF into per-chromosome VCFs for imputation.
+
+```{r,eval = FALSE}
+require(furrr); plan(multisession, workers = 18)
+options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+  
+vcfIn<-here::here("data/Report-DCas21-6038","DCas21_6038.vcf.gz")
+filters<-"--minDP 4 --maxDP 50" # because using GT not PL for impute (Beagle5)
+outPath<-here::here("data/Report-DCas21-6038/")
+outSuffix<-"DCas21_6038"
+
+future_map(1:18,
+           ~genomicMateSelectR::splitVCFbyChr(Chr=.,
+                                              vcfIn=vcfIn,filters=filters,
+                                              outPath=outPath,
+                                              outSuffix=outSuffix))
+plan(sequential)
+
+```
+
+# Next step
+
+2.  [Impute DCas21-6038](ImputeDCas21_6038.html): with West Africa reference panel merged with additional GS progeny (IITA TMS18)
