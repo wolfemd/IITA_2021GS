@@ -11,9 +11,9 @@
 
 
 
-<title>Implementation Tests for Genomic Mate Selection in Cassava</title>
+<title>IITA 2021 Genomic Prediction and Mate Selection</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -237,12 +237,27 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">implementGMSinCassava</a>
+      <a class="navbar-brand" href="index.html">IITA_2021GS</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
   <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Imputation (DCas21_6038)
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="convertDCas21_6038_ToVCF.html">Conversion DArT report DCas21_6038 to VCF</a>
+    </li>
+    <li>
+      <a href="ImputeDCas21_6038.html">Impute DCas21_6038</a>
+    </li>
+  </ul>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -292,7 +307,7 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/wolfemd/implementGMSinCassava">
+  <a href="https://github.com/wolfemd/IITA_2021GS">
     <span class="fa fa-github"></span>
      
     Source code
@@ -307,7 +322,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Implementation Tests for Genomic Mate Selection in Cassava</h1>
+<h1 class="title toc-ignore">IITA 2021 Genomic Prediction and Mate Selection</h1>
 
 </div>
 
@@ -332,13 +347,13 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-07-14
+<strong>Last updated:</strong> 2021-08-09
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>implementGMSinCassava/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>IITA_2021GS/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
@@ -363,16 +378,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree2953ee69dd0359ef4248148f5cfe318ffa6078e8targetblank2953ee6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/implementGMSinCassava/tree/2953ee69dd0359ef4248148f5cfe318ffa6078e8" target="_blank">2953ee6</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree6f2057f628fafc6049a09fd9ff3df2605653ae47targetblank6f2057fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/implementGMSinCassava/tree/6f2057f628fafc6049a09fd9ff3df2605653ae47" target="_blank">6f2057f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree2953ee69dd0359ef4248148f5cfe318ffa6078e8targetblank2953ee6a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree6f2057f628fafc6049a09fd9ff3df2605653ae47targetblank6f2057fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/implementGMSinCassava/tree/2953ee69dd0359ef4248148f5cfe318ffa6078e8" target="_blank">2953ee6</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/implementGMSinCassava/tree/6f2057f628fafc6049a09fd9ff3df2605653ae47" target="_blank">6f2057f</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -382,92 +397,36 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/accuracies.png
-    Ignored:    analysis/fig2.png
-    Ignored:    analysis/fig3.png
-    Ignored:    analysis/fig4.png
-    Ignored:    code/.DS_Store
+    Ignored:    analysis/.DS_Store
     Ignored:    data/.DS_Store
+    Ignored:    output/.DS_Store
 
 Untracked files:
-    Untracked:  accuracies.png
-    Untracked:  analysis/docs/
-    Untracked:  analysis/speedUpPredCrossVar.Rmd
-    Untracked:  code/AlphaAssign-Python/
-    Untracked:  code/calcGameticLD.cpp
-    Untracked:  code/col_sums.cpp
+    Untracked:  IITA_2021GS.Rproj
     Untracked:  code/convertDart2vcf.R
-    Untracked:  code/helloworld.cpp
     Untracked:  code/imputationFunctions.R
-    Untracked:  code/matmult.cpp
-    Untracked:  code/misc.cpp
-    Untracked:  code/test.cpp
-    Untracked:  data/CassavaGeneticMap/
+    Untracked:  data/DatabaseDownload_2021Aug08/
     Untracked:  data/DatabaseDownload_2021May04/
     Untracked:  data/GBSdataMasterList_31818.csv
     Untracked:  data/IITA_GBStoPhenoMaster_33018.csv
     Untracked:  data/NRCRI_GBStoPhenoMaster_40318.csv
     Untracked:  data/PedigreeGeneticGainCycleTime_aafolabi_01122020.xls
-    Untracked:  data/blups_forCrossVal.rds
+    Untracked:  data/Report-DCas21-6038/
     Untracked:  data/chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam
-    Untracked:  data/dosages_IITA_filtered_2021May13.rds
-    Untracked:  data/genmap_2021May13.rds
-    Untracked:  data/haps_IITA_filtered_2021May13.rds
-    Untracked:  data/recombFreqMat_1minus2c_2021May13.rds
-    Untracked:  fig2.png
-    Untracked:  fig3.png
-    Untracked:  figure/
-    Untracked:  output/IITA_CleanedTrialData_2021May10.rds
-    Untracked:  output/IITA_ExptDesignsDetected_2021May10.rds
-    Untracked:  output/IITA_blupsForModelTraining_twostage_asreml_2021May10.rds
+    Untracked:  output/IITA_CleanedTrialData_2021Aug08.rds
     Untracked:  output/IITA_trials_NOT_identifiable.csv
-    Untracked:  output/crossValPredsA.rds
-    Untracked:  output/crossValPredsAD.rds
-    Untracked:  output/cvAD_5rep5fold_markerEffects.rds
-    Untracked:  output/cvAD_5rep5fold_meanPredAccuracy.rds
-    Untracked:  output/cvAD_5rep5fold_parentfolds.rds
-    Untracked:  output/cvAD_5rep5fold_predMeans.rds
-    Untracked:  output/cvAD_5rep5fold_predVars.rds
-    Untracked:  output/cvAD_5rep5fold_varPredAccuracy.rds
-    Untracked:  output/cvDirDom_5rep5fold_markerEffects.rds
-    Untracked:  output/cvDirDom_5rep5fold_meanPredAccuracy.rds
-    Untracked:  output/cvDirDom_5rep5fold_parentfolds.rds
-    Untracked:  output/cvDirDom_5rep5fold_predMeans.rds
-    Untracked:  output/cvDirDom_5rep5fold_predVars.rds
-    Untracked:  output/cvDirDom_5rep5fold_varPredAccuracy.rds
-    Untracked:  output/cvMeanPredAccuracyA.rds
-    Untracked:  output/cvMeanPredAccuracyAD.rds
-    Untracked:  output/cvPredMeansA.rds
-    Untracked:  output/cvPredMeansAD.rds
-    Untracked:  output/cvVarPredAccuracyA.rds
-    Untracked:  output/cvVarPredAccuracyAD.rds
-    Untracked:  output/genomicPredictions_ModelAD.rds
-    Untracked:  output/genomicPredictions_ModelDirDom.rds
-    Untracked:  output/kinship_A_IITA_2021May13.rds
-    Untracked:  output/kinship_D_IITA_2021May13.rds
-    Untracked:  output/markEffsTest.rds
-    Untracked:  output/markerEffects.rds
-    Untracked:  output/markerEffectsA.rds
-    Untracked:  output/markerEffectsAD.rds
     Untracked:  output/maxNOHAV_byStudy.csv
-    Untracked:  output/obsCrossMeansAndVars.rds
-    Untracked:  output/parentfolds.rds
-    Untracked:  output/ped2check_genome.rds
-    Untracked:  output/ped2genos.txt
-    Untracked:  output/pednames2keep.txt
-    Untracked:  output/pednames_Prune100_25_pt25.log
-    Untracked:  output/pednames_Prune100_25_pt25.nosex
-    Untracked:  output/pednames_Prune100_25_pt25.prune.in
-    Untracked:  output/pednames_Prune100_25_pt25.prune.out
-    Untracked:  output/potential_dams.txt
-    Untracked:  output/potential_sires.txt
-    Untracked:  output/predVarTest.rds
-    Untracked:  output/samples2keep_IITA_2021May13.txt
-    Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.log
-    Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.nosex
-    Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.in
-    Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.out
-    Untracked:  output/verified_ped.txt
+
+Unstaged changes:
+    Modified:   analysis/05-CrossValidation.Rmd
+    Modified:   analysis/06-GenomicPredictions.Rmd
+    Modified:   analysis/07-Results.Rmd
+    Deleted:    analysis/inputsForSimulation.Rmd
+    Deleted:    implementGMSinCassava.Rproj
+    Deleted:    output/README.md
+    Deleted:    output/cvAD_5rep5fold_predAccuracy.rds
+    Deleted:    output/cvDirDom_5rep5fold_predAccuracy.rds
+    Deleted:    output/estimateSelectionError.rds
 
 </code></pre>
 <p>
@@ -506,6 +465,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/6f2057f628fafc6049a09fd9ff3df2605653ae47/analysis/index.Rmd" target="_blank">6f2057f</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-09
+</td>
+<td>
+Publish project. Imputation completed. Run and complete ‘cleanTPdata’ step.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/implementGMSinCassava/934141c48eff754aa674925be5357d0a2b8be7d3/docs/index.html" target="_blank">934141c</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -649,55 +642,72 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Available data and software make it hypothetically possible to predict cross variances (mendelian sampling variance) and use it to select mates, <em>e.g.</em> using the usefuleness criterion (UC).</p>
-<p>New information also adds new sources of uncertainty:</p>
 <ul>
-<li>Phasing error</li>
-<li>Use of a (or various) genetic map(s) to predict recombination frequencies</li>
-<li>Inherent uncertainty in marker effects and their effect on variance prediction</li>
+<li>I recently (Aug 3, 2021) completed thorough testing to develop a protocol for genomic <em>mate</em> selection in NextGen Cassava and will implement it here for the first time in practice! Check <a href="https://wolfemd.github.io/implementGMSinCassava/">here</a> to see the implementation tests / code-base development documented.</li>
+<li>Subsequently, I have developed my entire code base into an R package <a href="https://wolfemd.github.io/genomicMateSelectR/index.html">genomicMateSelectR</a>. The package is fully documented (in rough draft version), but doesn’t yet include a tutorial / vignette.</li>
+<li>The IITA DArTseqLD report (DCas21_6038), which contains the GS C5 (i.e. progeny of crosses made in 2020, “TMS20F”), was recently (July 19, 2021) released.</li>
+<li>The imputations of DCas21_6038, genomic predictions and mate selection that follows will leverage <a href="https://wolfemd.github.io/genomicMateSelectR/index.html">genomicMateSelectR</a> functions and will form the principal example of their use.</li>
 </ul>
-<p>We used cross-validation to estimate the accuracy of predicting means, variances and the usefulness of crosses on selection indices. That analysis leveraged a high-quality validated pedigree-based phasing pipeline. That pipeline is considerably more involved and may not be implementable on the entire breeding germplasm.</p>
-<p>Here I test cross-variance prediction in our current breeding pipeline’s available data. We will assess the whether and how to start using cross variance predictions in practice.</p>
 <p><a href="07-Results.html"><strong>See the Results here!</strong></a></p>
-<div id="analysis-steps" class="section level1">
-<h1>Analysis steps</h1>
+<div id="august-2021" class="section level1">
+<h1>August 2021</h1>
+<div id="imputation-of-dcas21_6038" class="section level2">
+<h2>Imputation of DCas21_6038</h2>
+<p><strong>Steps</strong>:</p>
 <ol style="list-style-type: decimal">
-<li><p><a href="01-cleanTPdata.html">Prepare training dataset</a>: Download data from DB, “Clean” and format DB data. Use the standard pipeline to obtain complete breeding trial data for IITA, generate de-regressed BLUPs for downstream analysis.</p>
+<li><a href="convertDCas21_6038_ToVCF.html">Convert DCas21-6038 report to VCF for imputation</a>:</li>
+<li><a href="ImputeDCas21_6038.html">Impute DCas21-6038</a>: with West Africa reference panel merged with additional GS progeny (IITA TMS18)</li>
+</ol>
+<p><strong>Files</strong>: Access on Cassavabase FTP server here, use “Guest” credentials</p>
 <ul>
-<li><p>Copy <code>gsFunctions.R</code> from <code>code/</code> of most recent NextGen prediction, <a href="https://wolfemd.github.io/NRCRI_2021GS/">NRCRI C3b predicted April 2021</a>.</p></li>
-<li><p>Reference <a href="https://wolfemd.github.io/IITA_2020GS/">previous analysis for IITA (2020)</a> in case there are variations.</p></li>
-</ul></li>
+<li><strong>RefPanel VCF filename:</strong> <code>chr*_RefPanelAndGSprogeny_ReadyForGP_72719.vcf.gz</code><br />
+(<a href="ftp://ftp.cassavabase.org/marnin_datasets/nextgenImputation2019/ImputationStageIII_72619/"><strong>Click here for FTP server location</strong></a>)</li>
+<li><strong>Imputed filename:</strong> <code>output/chr*_DCas21_6038_WA_REFimputed.vcf.gz</code><br />
+(<a href="ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/"><strong>Click here for FTP server location</strong></a>)</li>
+<li><strong>Post-impute filtered filename:</strong> <code>output/chr*_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz</code><br />
+(<a href="ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/"><strong>Click here for FTP server location</strong></a>)</li>
+<li><strong>All chrom. combined, RefPanel and DCas21_6038 VCF merged</strong> <code>output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz</code><br />
+(<a href="ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/"><strong>Click here for FTP server location</strong></a>)</li>
+</ul>
+</div>
+</div>
+<div id="preliminary-data-steps" class="section level1">
+<h1>Preliminary data steps</h1>
+<ol style="list-style-type: decimal">
+<li><p><a href="01-cleanTPdata.html">Prepare training dataset</a>: Download data from DB, “Clean” and format DB data.</p></li>
 <li><p><a href="02-GetBLUPs.html">Get BLUPs combining all trial data</a>: Combine data from all trait-trials to get BLUPs for downstream genomic prediction. Fit mixed-model to multi-trial dataset and extract BLUPs, de-regressed BLUPs and weights. Include two rounds of outlier removal.</p></li>
 <li><p><a href="03-validatePedigree.html">Validate the pedigree obtained from cassavabase</a>: Before setting up a cross-validation scheme for predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown relationships or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.</p></li>
-<li><p><a href="04-PreprocessDataFiles.html">Preprocess data files</a>: Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map <em>and</em> recombination frequency matrix, for use in predictions.</p></li>
-<li><p><a href="05-CrossValidation.html">Parent-wise and standard cross-validation</a>:</p>
+<li><p><a href="04-PreprocessDataFiles.html">Preprocess data files</a>: Prepare haplotype and dosage matrices, GRMs, pedigree and BLUPs, genetic map <em>and</em> recombination frequency matrix, for use in predictions.</p></li>
+</ol>
+</div>
+<div id="genomic-mate-predictions" class="section level1">
+<h1>Genomic (mate) predictions</h1>
+<ol start="5" style="list-style-type: decimal">
+<li><p><a href="05-CrossValidation.html">Parent-wise and standard cross-validation</a>: estimate selection index (and component trait) prediction accuracies using the direction-dominance (<strong>DirDom</strong>) model.</p>
 <ul>
-<li>Compute parent-wise cross-validation folds using the validated pedigree. Fit models to get marker effects and make subsequent predictions of cross means and (co)variances.</li>
-<li><strong>Models “AD”</strong> (classic BV+DD partition of additive+dominance) and <strong>“DirDom”</strong> (genotypic add+dom partition with genome-wide homozygosity effect).</li>
-<li>Include use of selection index weights to compute index accuracy.</li>
-<li>Include new models and index predictions in standard fold cross-validation in addition to the parent-wise scheme / function.</li>
-</ul></li>
-<li><p><a href="06-GenomicPredictions.html">Genomic predictions</a>:</p>
+<li><p>Additionally, <a href="https://wolfemd.github.io/IITA_2021GS/05-CrossValidation.html#Optimize_marker_density_for_speed">check accuracy and similarity of predictions at reduced marker density</a>: Cross-variance prediction is slow, but significant speed gains can be made by using fewer markers. Faster predictions will mean more crosses can be predicted and considered.</p>
 <ul>
-<li><ol style="list-style-type: upper-alpha">
-<li>Standard genomic prediction of individual GEBV and GETGV for all selection candidates using all available data. (B) Predict cross means and variances for genomic mate selection.</li>
-</ol></li>
-<li><p>Include models “AD” <em>and</em> “DirDom”</p></li>
-<li><p>Include prediction of selection index GEBV/GETGV and <span class="math inline">\(UC^{SI}_{parent}\)</span>/<span class="math inline">\(UC^{SI}_{variety}\)</span>.</p></li>
-<li><p>New functions at <code>gmsFunctions.R</code> in <code>code/</code></p></li>
+<li><strong><em>If,</em></strong> accuracy and <span class="math inline">\(cor_{preds}(All\_SNPs, Reduced\_Set)\)</span> are similar based on both kinds of cross-validation, proceed to make cross-variance predictions with reduced marker set; possibly use full marker set for cross-mean predictions.</li>
 </ul></li>
-<li><p><a href="07-Results.html">Results</a>: Home for plots and summary tables.</p></li>
+<li><p><a href="https://wolfemd.github.io/IITA_2021GS/07-Results.html#Prediction_accuracy_estimates">Click here to see the results</a><strong>!</strong></p></li>
+</ul></li>
+<li><p><a href="06-GenomicPredictions.html">Genomic predictions</a>: First, predict of individual GEBV/GETGV for all selection candidates using all available data and return marker effects for use downstream. Next, Select a top set of candidate parents, for whom we would like to predict cross performances. Finally, predict all pairwise crosses of candidate parents and evaluate them for genomic mate selection. Select the top crosses and plant a crossing nursery with the parents indicated.</p>
+<ul>
+<li><a href="https://wolfemd.github.io/IITA_2021GS/07-Results.html#Genomic_Predictions">Click here to see the results</a><strong>!</strong></li>
+</ul></li>
+<li><p><a href="07-Results.html">Results and recommendations</a>: Home for all plots, summary tables, conclusions and recommendations.</p></li>
 </ol>
 </div>
 <div id="data-and-code-repository-access" class="section level1">
 <h1>Data and code repository access</h1>
-<p><a href="ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/output/"><strong>FULL REPOSITORY DOWNLOAD FROM CASSAVABASE FTP SERVER</strong></a></p>
+<p><a href="ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/">CLICK HERE FOR ACCESS TO THE FULL REPOSITORY</a><br />
+(select “Guest” credentials when prompted by the Cassavabase FTP server)</p>
 <p>or</p>
-<p><a href="https://github.com/wolfemd/implementGMSinCassava/tree/master/output"><strong>DOWNLOAD FROM GitHub</strong></a><strong>*</strong></p>
+<p><a href="https://github.com/wolfemd/IITA_2021GS/"><strong>DOWNLOAD FROM GitHub*</strong></a></p>
 <p>*GitHub only hosts files max 50 Mb.</p>
 </div>
-<div id="guide-to-key-directories-and-file-names" class="section level1">
-<h1>Guide to key directories and file names</h1>
+<div id="key-directories-and-file-names" class="section level1">
+<h1>Key directories and file names</h1>
 <ol style="list-style-type: decimal">
 <li><code>data/</code>: raw data (e.g. unimputed SNP data)</li>
 <li><code>output/</code>: outputs (e.g. imputed SNP data)</li>
@@ -705,30 +715,17 @@ Start workflowr project.
 <li><code>docs/</code>: compiled <strong>.html</strong>, “knitted” from <strong>.Rmd</strong></li>
 <li><code>code/</code>: supporting functions sourced in <code>analysis/*.Rmd</code>’s.</li>
 </ol>
-<p><strong>FILES OF INTEREST</strong>: everything is in the <code>output/</code> sub-directory.</p>
+<p><strong>FILES OF INTEREST</strong>: everything is in the <code>output/</code> sub-directory (<a href="ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/">click here</a> and select “Guest” credentials when prompted by the Cassavabase FTP server).</p>
 <ul>
-<li><strong>GEBVs for parent selection:</strong> ``</li>
-<li><strong>GETGVs for variety advancement:</strong> ``</li>
-<li>Kinship matrices, dosages, haplotype matrix, recombination frequency matrix, genetic map files</li>
-</ul>
-</div>
-<div id="analyses-to-do" class="section level1">
-<h1>Analyses To Do</h1>
-<p><strong>Additional future analyses to do:</strong></p>
-<ol style="list-style-type: decimal">
-<li>PHG imputed and phased marker data</li>
-<li>AWC’s genetic map</li>
-<li>Multi-trait and/or Bayesian models</li>
-<li>Other efforts to improve variance prediction accuracy?</li>
-<li>Simulation to explore factors impacting estimate of accuracy</li>
-</ol>
+<li><p><strong>GEBVs for parent selection and GETGVs for variety advancement:</strong></p>
 <ul>
-<li><p>Impact of phasing switch errors</p>
-<ul>
-<li>Quality and quantity of data available on parents</li>
-<li>Relatedness of parents</li>
-<li>What is the relationship between the true accuracy and estimate of accuracy?</li>
+<li><a href="ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicPredictions_ModelDirDom.csv">download DirDom model genomic predictions</a></li>
 </ul></li>
+<li><p><strong>Predicted means, variances and usefulness of crosses among top parents:</strong></p>
+<ul>
+<li><a href="ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicMatePredictions_topParents_ModelDirDom.csv">download DirDom model genomic mate predictions</a></li>
+</ul></li>
+<li><p>Kinship matrices, dosages, haplotype matrix, recombination frequency matrix, genetic map files</p></li>
 </ul>
 </div>
 
