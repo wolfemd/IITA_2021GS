@@ -11,7 +11,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F, 
-                      eval = FALSE, # <- NOTE THAT EVAL SET TO FALSE! 
+                      #eval = FALSE, # <- NOTE THAT EVAL SET TO FALSE! 
                       tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
 ```
 
@@ -40,7 +40,7 @@ May 4 download contained _all_ IITA data to date. Trial list is named **ALL_IITA
 Aug 8 wanted to up date last 3 months of trial uploads. Downloaded 2020 and 2021 data only, using "Wizard" instead of "Download" page. Trial list is named **IITA_Trials2020and2021_2021Aug088**. 
 
 
-```{r}
+```{r, message=FALSE, warning=F}
 library(tidyverse); library(magrittr); 
 library(genomicMateSelectR)
 ```
