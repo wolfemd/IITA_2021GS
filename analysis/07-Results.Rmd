@@ -1,7 +1,7 @@
 ---
 title: "Results"
 site: workflowr::wflow_site
-date: "2021-June-07"
+date: "2021-July-26"
 output: 
   workflowr::wflow_html:
     code_folding: hide
@@ -10,25 +10,35 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F, 
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, 
                       tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
 ```
 
-# Raw data
+The summaries below correspond to the results of [analyses outlined here](https://wolfemd.github.io/IITA_2021GS/) and linked in the navbar above.
 
-Summary of the number of unique plots, locations, years, etc. in the cleaned plot-basis data. See [here](01-cleanTPdata.html) for details..
+1.  [Preliminary summaries] of the population, the data, results of pedigree validation,
+2.  [Prediction accuracy estimates]
+3.  [Genomic Predictions] and [Genomic mate selection].
+
+# Preliminary summaries
+
+## Raw data
+
+Summary of the number of unique plots, locations, years, etc. in the cleaned plot-basis data (`output/IITA_ExptDesignsDetected_2021May10.rds`, [download from FTP](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/output/IITA_ExptDesignsDetected_2021May10.rds)). See [the data cleaning step here](01-cleanTPdata.html) for details.
 
 ```{r}
 library(tidyverse); library(magrittr); library(ragg)
-rawdata<-readRDS(file=here::here("output","IITA_ExptDesignsDetected_2021May10.rds"))
+rawdata<-readRDS(file=here::here("output","IITA_ExptDesignsDetected_2021Aug08.rds"))
 rawdata %>% 
   summarise(Nplots=nrow(.),
             across(c(locationName,studyYear,studyName,TrialType,GID), ~length(unique(.)),.names = "N_{.col}")) %>% 
   rmarkdown::paged_table()
 ```
-This _is not_ the same number of clones as are expected to be genotyped-and-phenotyped.
 
-Break down the plots based on the trial design and TrialType (really a grouping of the population that is breeding program specific), captured by two logical variables, **CompleteBlocks** and **IncompleteBlocks**.  
+This *is not* the same number of clones as are expected to be genotyped-and-phenotyped.
+
+Next, a break down of the plots based on the trial design and TrialType (really a grouping of the population that is breeding program specific), captured by two logical variables, **CompleteBlocks** and **IncompleteBlocks**.
+
 ```{r}
 rawdata %>% 
   count(TrialType,CompleteBlocks,IncompleteBlocks) %>% 
@@ -37,6 +47,7 @@ rawdata %>%
 ```
 
 Next, look at breakdown of plots by TrialType (rows) and locations (columns):
+
 ```{r, cols.print=16}
 rawdata %>% 
   count(locationName,TrialType) %>% 
@@ -55,24 +66,30 @@ rawdata %>%
   theme_bw() + scale_fill_viridis_d() + 
   labs(title = "Distribution of Raw Phenotypic Values")
 ```
+
 How many genotyped-and-phenotyped clones?
 
 ```{r}
-rawdata %>% 
+genotypedAndPhenotypedClones<-rawdata %>% 
   select(locationName,studyYear,studyName,TrialType,germplasmName,FullSampleName,GID,any_of(traits)) %>% 
   pivot_longer(cols = any_of(traits), values_to = "Value", names_to = "Trait") %>%
   filter(!is.na(Value),!is.na(FullSampleName)) %>%
-  distinct(germplasmName,FullSampleName,GID) %>% 
+  distinct(germplasmName,FullSampleName,GID)
+```
+
+There are `r nrow(genotypedAndPhenotypedClones)` genotyped-and-phenotyped clones!
+
+```{r}
+genotypedAndPhenotypedClones %>% 
   rmarkdown::paged_table()
 ```
-There are 8149 genotyped-and-phenotyped clones! 
 
-# BLUPs
+## BLUPs
 
-These are the BLUPs combining data for each clone across trials/locations _without_ genomic information, used as input for genomic prediction downstream.
+Summarize the BLUPs from the training data, leveraging for each clone data across trials/locations *without* genomic information and to be used as input for genomic prediction downstream (`data/blups_forCrossVal.rds`, [download from FTP](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/data/blups_forCrossVal.rds)). See [the mixed-model analysis step here](02-GetBLUPs.html) and a [subsequent processing step here](04-PreprocessDataFiles.html) for details.
 
 ```{r, message=F, rows.print=12}
-blups<-readRDS(file=here::here("data","blups_forCrossVal.rds")) 
+blups<-readRDS(file=here::here("data","blups_forGP.rds")) 
 gidWithBLUPs<-blups %>% select(Trait,blups) %>% unnest(blups) %$% unique(GID)
 rawdata %>% 
   select(observationUnitDbId,GID,any_of(blups$Trait)) %>% 
@@ -94,6 +111,10 @@ rawdata %>%
   rmarkdown::paged_table()
 ```
 
+-   `Nplots`, `Nclones`: the number of unique plots and clones per trait
+-   `avgREL`: the mean reliability of BLUPs, where for the *j*th clone, $REL_j = 1 - \frac{PEV_j}{V_g}$
+-   `Vg`, `Ve`, `H2`: the genetic and residual variance components and the broad sense heritability ($H^2=\frac{V_g}{V_g+V_e}$).
+
 ```{r}
 blups %>% 
   select(Trait,blups) %>% 
@@ -102,6 +123,8 @@ blups %>%
   theme_bw() + scale_fill_viridis_d() + theme(legend.position = 'none') + 
   labs(title = "Distribution of de-regressed BLUP Values")
 ```
+
+-   de-regressed BLUPs or $drgBLUP_j = \frac{BLUP_j}{REL_j}$
 
 ```{r}
 blups %>% 
@@ -113,28 +136,38 @@ blups %>%
         legend.position = 'none') + 
   labs(title = "Distribution of BLUP Reliabilities")
 ```
-# Marker density and distribution
+
+## Marker density and distribution
+
+Summarize the marker data (`data/dosages_IITA_filtered_2021May13.rds`, [download from FTP](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/data/dosages_IITA_filtered_2021May13.rds)). See the [pre-processing steps here](04-PreprocessDataFiles.html).
+
 ```{r}
 library(tidyverse); library(magrittr);
-snps<-readRDS(file=here::here("data","dosages_IITA_filtered_2021May13.rds"))
+snps<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
 mrks<-colnames(snps) %>% 
   tibble(SNP_ID=.) %>% 
   separate(SNP_ID,c("Chr","Pos","Allele"),"_") %>% 
   mutate(Chr=as.integer(gsub("S","",Chr)),
          Pos=as.numeric(Pos))
+rm(snps);
 mrks %>% 
   ggplot(.,aes(x=Pos,fill=as.character(Chr))) + geom_histogram() + 
   facet_wrap(~Chr,scales = 'free') + theme_bw() + 
   scale_fill_viridis_d() + theme(legend.position = 'none',
                                  axis.text.x = element_text(angle=90))
 ```
+
+In total, `r nrow(mrks)` SNPs genome-wide. Broken down by chromosome:
+
 ```{r, rows.print=18}
-mrks %>% count(Chr) %>% rmarkdown::paged_table()
+mrks %>% count(Chr,name = "Nsnps") %>% rmarkdown::paged_table()
 ```
 
-# Pedigree
+## Pedigree validation
 
-Summarize the pedigree and the [verification results described here](03-validatePedigree.html).
+Introduced new downstream procedures ([the parent-wise cross-validation](05-CrossValidation.html), which rely on a trusted pedigree. To support this, introduced a [new pedigree-validation step](03-validatePedigree.html). The pedigree and validation results are summarized below.
+
+The verified pedigree (`output/verified_ped.txt`), can be [downloaded from the FTP here](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/verified_ped.txt)).
 
 ```{r}
 library(tidyverse); library(magrittr);
@@ -168,20 +201,26 @@ rm(ped2check_genome)
 
 ped2check %<>% 
   mutate(Cohort=NA,
-         Cohort=ifelse(grepl("TMS18",FullSampleName,ignore.case = T),"TMS18",
-                       ifelse(grepl("TMS15",FullSampleName,ignore.case = T),"TMS15",
-                              ifelse(grepl("TMS14",FullSampleName,ignore.case = T),"TMS14",
-                                     ifelse(grepl("TMS13|2013_",FullSampleName,ignore.case = T),"TMS13","GGetc")))))
+         Cohort=ifelse(grepl("TMS20",FullSampleName,ignore.case = T),"TMS20",
+                       ifelse(grepl("TMS19",FullSampleName,ignore.case = T),"TMS19",
+                              ifelse(grepl("TMS18",FullSampleName,ignore.case = T),"TMS18",
+                                     ifelse(grepl("TMS17",FullSampleName,ignore.case = T),"TMS17",
+                                            ifelse(grepl("TMS16",FullSampleName,ignore.case = T),"TMS16",
+                                                   ifelse(grepl("TMS15",FullSampleName,ignore.case = T),"TMS15",
+                                                          ifelse(grepl("TMS14",FullSampleName,ignore.case = T),"TMS14",
+                                                                 ifelse(grepl("TMS13|2013_",FullSampleName,ignore.case = T),"TMS13","GGetc")))))))))
 ```
 
 Proportion of accessions with male, female or both parents in pedigree confirm-vs-rejected?
+
 ```{r}
 ped2check %>% 
   count(FemaleParent,MaleParent) %>% 
   mutate(Prop=round(n/sum(n),2))
 ```
 
-Proportion of accessions _within_ each Cohort with pedigree records confirmed-vs-rejected?
+Proportion of accessions *within* each Cohort with pedigree records confirmed-vs-rejected?
+
 ```{r}
 ped2check %>% 
   count(Cohort,FemaleParent,MaleParent) %>% 
@@ -190,55 +229,60 @@ ped2check %>%
   rmarkdown::paged_table()
 ```
 
-Use only fully-confirmed families / trios. 
-Remove any without both parents confirmed.
-
+Use only fully-confirmed families / trios. Remove any without both parents confirmed.
 
 ```{r}
 ped<-read.table(here::here("output","verified_ped.txt"),
                 header = T, stringsAsFactors = F) %>% 
   mutate(Cohort=NA,
-         Cohort=ifelse(grepl("TMS18",FullSampleName,ignore.case = T),"TMS18",
-                       ifelse(grepl("TMS15",FullSampleName,ignore.case = T),"TMS15",
-                              ifelse(grepl("TMS14",FullSampleName,ignore.case = T),"TMS14",
-                                     ifelse(grepl("TMS13|2013_",FullSampleName,ignore.case = T),"TMS13","GGetc")))))
+         Cohort=ifelse(grepl("TMS20",FullSampleName,ignore.case = T),"TMS20",
+                       ifelse(grepl("TMS19",FullSampleName,ignore.case = T),"TMS19",
+                              ifelse(grepl("TMS18",FullSampleName,ignore.case = T),"TMS18",
+                                     ifelse(grepl("TMS17",FullSampleName,ignore.case = T),"TMS17",
+                                            ifelse(grepl("TMS16",FullSampleName,ignore.case = T),"TMS16",
+                                                   ifelse(grepl("TMS15",FullSampleName,ignore.case = T),"TMS15",
+                                                          ifelse(grepl("TMS14",FullSampleName,ignore.case = T),"TMS14",
+                                                                 ifelse(grepl("TMS13|2013_",FullSampleName,ignore.case = T),"TMS13","GGetc")))))))))
 ```
+
 Summary of family sizes
+
 ```{r}
 ped %>% 
   count(SireID,DamID) %$% summary(n)
 ```
+
 ```{r}
-ped %>% nrow(.) # 4259 pedigree entries
+ped %>% nrow(.) # 4473 pedigree entries
 ped %>% 
   count(Cohort,name = "Number of Verified Pedigree Entries")
 ```
+
 ```{r}
+ped %>% distinct(SireID,DamID) %>% nrow(.)
 ped %>% 
   distinct(Cohort,SireID,DamID) %>% 
   count(Cohort,name = "Number of Families per Cohort")
 ```
-730 families. Mean size 5.85, range 1-77.
 
-# Parent-wise Cross-validation
+806 families. Mean size 5.55, range 1-77.
+
+# Prediction accuracy estimates
+
+Two cross-validation procedures were used to measure prediction accuracy. 
+
+First, a brand new procedure to assess the accuracy of genomic predictions of cross means and variances, which is called ([parent-wise cross-validation](05-CrossValidation.html). 
+
+Second, I also ran the standard 5 reps of 5-fold cross-validation, which measures the accuracy of predicting individual performance. 
+
+Both using a additive-plus-dominance model including a directional-dominance term (`modelType="DirDom"`). 
+
+Here are the **Selection index weights** (provided by IITA) and used to compute the SELIND accuracy displayed further below.
 
 ```{r}
-parentfolds<-readRDS(file=here::here("output","parentfolds.rds"))
-summarized_parentfolds<-parentfolds %>% 
-  mutate(Ntestparents=map_dbl(testparents,length),
-         Ntrainset=map_dbl(trainset,length),
-         Ntestset=map_dbl(testset,length),
-         NcrossesToPredict=map_dbl(CrossesToPredict,nrow)) %>% 
-  select(Repeat,Fold,starts_with("N"))
-summarized_parentfolds %>% 
-  rmarkdown::paged_table()
-```
-```{r}
-summarized_parentfolds %>% summarize(across(is.numeric,median,.names = "median{.col}"))
-```
-
-Selection index weights
-```{r}
+# SELECTION INDEX WEIGHTS
+## from IYR+IK
+## note that not ALL predicted traits are on index
 c(logFYLD=20,
   HI=10,
   DM=15,
@@ -249,237 +293,299 @@ c(logFYLD=20,
   PLTHT=10)
 ```
 
-
-## Prediction accuracy
-
-3. [Check prediction accuracy](03-CrossValidation.html): Evaluate prediction accuracy with cross-validation.
-
-### Selection Index Accuracy
-Selection index weights
-```{r}
-# SELECTION INDEX WEIGHTS
-## from IYR+IK
-## note that not ALL predicted traits are on index
-SIwts<-c(logFYLD=20,
-         HI=10,
-         DM=15,
-         MCMDS=-10,
-         logRTNO=12,
-         logDYLD=20,
-         logTOPYLD=15,
-         PLTHT=10) 
-SIwts
-```
+## Plot SELIND prediction accuracy
 
 ```{r}
 library(ggdist)
-accuracy_ad<-readRDS(here::here("output","cvAD_5rep5fold_predAccuracy.rds"))
-accuracy_dirdom<-readRDS(here::here("output","cvDirDom_5rep5fold_predAccuracy.rds"))
-accuracy<-accuracy_ad$meanPredAccuracy %>% 
-  bind_rows(accuracy_dirdom$meanPredAccuracy) %>% 
-  filter(Trait=="SELIND") %>% 
+# PARENT-WISE CV RESULTS
+accuracy_medium<-readRDS(here::here("output","parentWiseCV_medium_set_CrossPredAccuracy.rds"))
+accuracy_reduced<-readRDS(here::here("output","parentWiseCV_reduced_set_CrossPredAccuracy.rds"))
+accuracy<-accuracy_medium$meanPredAccuracy %>%
+  filter(Trait=="SELIND") %>%
   mutate(VarComp=gsub("Mean","",predOf),
-         predOf="Mean") %>% 
-  bind_rows(accuracy_ad$varPredAccuracy %>% 
-              bind_rows(accuracy_dirdom$varPredAccuracy) %>% 
-              filter(Trait1=="SELIND") %>% 
-              rename(Trait=Trait1) %>% 
-              select(-Trait2) %>% 
+         predOf="Mean",
+         Filter="LDprunedR2pt8 \n (~13K)") %>%
+  bind_rows(accuracy_medium$varPredAccuracy %>%
+              filter(Trait1=="SELIND") %>%
+              rename(Trait=Trait1) %>%
+              select(-Trait2) %>%
               mutate(VarComp=gsub("Var","",predOf),
-                     predOf="Var")) %>% 
+                     predOf="Var",
+                     Filter="LDprunedR2pt8 \n (~13K)")) %>%
+  bind_rows(accuracy_reduced$meanPredAccuracy %>%
+  filter(Trait=="SELIND") %>%
+  mutate(VarComp=gsub("Mean","",predOf),
+         predOf="Mean",
+         Filter="LDprunedR2pt6 \n (~8K)") %>%
+  bind_rows(accuracy_reduced$varPredAccuracy %>%
+              filter(Trait1=="SELIND") %>%
+              rename(Trait=Trait1) %>%
+              select(-Trait2) %>%
+              mutate(VarComp=gsub("Var","",predOf),
+                     predOf="Var",
+                     Filter="LDprunedR2pt6 \n (~8K)"))) %>% 
   select(-predVSobs)
+
+# STANDARD CV RESULTS
+standardCV_full<-readRDS(here::here("output",
+                                    "standardCV_full_set_ClonePredAccuracy.rds"))
+standardCV_medium<-readRDS(here::here("output",
+                                    "standardCV_medium_set_ClonePredAccuracy.rds"))
+standardCV_reduced<-readRDS(here::here("output",
+                                       "standardCV_reduced_set_ClonePredAccuracy.rds"))
+accuracy<-standardCV_full %>% 
+  unnest(accuracyEstOut) %>% 
+  select(-splits,-predVSobs,-seeds) %>% 
+  filter(Trait=="SELIND") %>% 
+  rename(Repeat=repeats,Fold=id,VarComp=predOf,AccuracyEst=Accuracy) %>% 
+  mutate(Repeat=paste0("Repeat",Repeat),
+         VarComp=gsub("GE","",VarComp),
+         predOf="IndivPerformance",
+         Filter="FullSet \n (~33K)") %>% 
+    bind_rows(standardCV_medium %>% 
+              unnest(accuracyEstOut) %>% 
+              select(-splits,-predVSobs,-seeds) %>% 
+              filter(Trait=="SELIND") %>% 
+              rename(Repeat=repeats,Fold=id,VarComp=predOf,AccuracyEst=Accuracy) %>% 
+              mutate(Repeat=paste0("Repeat",Repeat),
+                     VarComp=gsub("GE","",VarComp),
+                     predOf="IndivPerformance",
+                    Filter="LDprunedR2pt8 \n (~13K)")) %>% 
+  bind_rows(standardCV_reduced %>% 
+              unnest(accuracyEstOut) %>% 
+              select(-splits,-predVSobs,-seeds) %>% 
+              filter(Trait=="SELIND") %>% 
+              rename(Repeat=repeats,Fold=id,VarComp=predOf,AccuracyEst=Accuracy) %>% 
+              mutate(Repeat=paste0("Repeat",Repeat),
+                     VarComp=gsub("GE","",VarComp),
+                     predOf="IndivPerformance",
+                    Filter="LDprunedR2pt6 \n (~8K)")) %>% 
+  bind_rows(accuracy %>%
+              mutate(predOf=paste0("Cross",predOf))) %>%
+  mutate(Filter=factor(Filter,levels=c("FullSet \n (~33K)","LDprunedR2pt8 \n (~13K)","LDprunedR2pt6 \n (~8K)")),
+         predOf=factor(predOf,levels=c("IndivPerformance","CrossMean","CrossVar")),
+         VarComp=factor(VarComp,levels=c("BV","TGV"))) %>% droplevels
 
 colors<-viridis::viridis(4)[1:2]
 ```
 
+The figure below shows the ultimate summary of all cross-validation, the estimated accuracy predicting individual performance (clone means), cross-means and cross-variances on the **selection index**. Results from 5 repeats of 5-fold clone-wise ("standard") and parent-wise ("NEW") cross-validation are combined in this plot. See further below for a break down by trait. For the "CrossMean" and "CrossVar" panels, the y-axis "AccuracyEst" is the family-size weighted correlation between the predicted and observed cross means and variances. For the "IndivPerformance" panels, the y-axis is an un-weighted correlation between GBLUPs (*i.e.* **GEBV/GETGV**) and phenotypic (*i.e.* non-genomic or *i.i.d.* **BLUPs**). Predictions of breeding value (**BV**) and total genetic value (**TGV**) are distinguished in all plots and relate to the value of a cross for producing future parents and/or elite varieties, respectively among their offspring. Predictions of **BV** use only allele substitution effects ($\alpha$). Predictions of **TGV** incorporate dominance effects/variance. The modelType=**DirDom** was used. 
+
+Two SNP sets, one LD-pruned more than the other (**reduced_set** and **full_set**) were tested.
+
+1) lightly LD-pruned: `plink --indep-pairwise 50 25 0.98` (**considered the "full_set"**)
+2) more strongly pruned `plink --indep-pairwise 1000 'kb' 50 0.6` (**considered the "reduced_set"**)
+
 ```{r}
 accuracy %>% 
-  mutate(predOf=factor(predOf,levels=c("Mean","Var")),
-         VarComp=factor(VarComp,levels=c("BV","TGV"))) %>% 
   ggplot(.,aes(x=VarComp,y=AccuracyEst,fill=VarComp)) +
   ggdist::stat_halfeye(adjust=0.5,.width = 0,fill='gray',width=0.75) +  
   geom_boxplot(width=0.12,notch = TRUE) +
-  ggdist::stat_dots(side = "left",justification = 1.1,
-                    binwidth = 0.03,dotsize=0.6) +
+  ggdist::stat_dots(side = "left",justification = 1.1,dotsize=0.6)+
   theme_bw() + 
   scale_fill_manual(values = colors) + 
-  geom_hline(yintercept = 0, color='black', size=0.9) +
+  geom_hline(data = accuracy %>% distinct(predOf) %>% mutate(yint=c(NA,NA,0)),
+             aes(yintercept = yint), color='black', size=0.9) +
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank(),
         strip.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.title = element_text(face='bold',color = 'black'),
-        strip.text.x = element_text(face='bold',color='black',size=14),
+        strip.text.x = element_text(face='bold',color='black',size=12),
         axis.text.y = element_text(face = 'bold',color='black'),
         legend.text = element_text(face='bold'),
         legend.position = 'bottom') +
-  facet_grid(predOf~modelType,scales = 'free') + 
-  #facet_wrap(~predOf+modelType,scales = 'free_y',nrow=1) + 
-  labs(title="Selection Index Prediction Accuracy") + 
-  coord_cartesian(xlim = c(1.2, NA))
+  facet_grid(predOf~Filter,scales = 'free') + 
+  labs(title="Accuracy predicting performance on the Selection Index",
+       subtitle="Predictions of clone and cross performance (cross means and variances)") 
 ```
 
+Based on the preliminary results (variance predictions not even done yet), the **reduced_set** (**LDprunedR2pt6**) suffers reduced prediction accuracy. I added a **medium_set** (**LDprunedR2pt8**) with about 13K SNP which produces GEBV/GETGV that are highly correlated with the full 33K SNP set and has the same accuracy. 
 
-### Accuracy predicting cross-means
-```{r,fig.width = 10, fig.height=6}
-accuracy_ad$meanPredAccuracy %>% 
-  bind_rows(accuracy_dirdom$meanPredAccuracy) %>% 
+Prediction accuracy estimates are in `output/` ([here](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/)) with filenames ending `_ClonePredAccuracy.rds` and `_CrossPredAccuracy.rds`.
+
+For details on the cross-validation scheme, [see the article](https://www.biorxiv.org/content/10.1101/2021.01.05.425443v1) (and for even more, the [corresponding supplemental documentation here](https://wolfemd.github.io/PredictOutbredCrossVar/)). See also the [genomicMateSelectR::runParentWiseCrossVal()](https://wolfemd.github.io/genomicMateSelectR/reference/runParentWiseCrossVal.html#details) details section.
+
+## Plots with breakdowns by traits
+
+### Standard cross-validation
+
+Results, broken down by trait, for the "standard" 5 repeats of 5-fold cross-validation on the accuracy predicting individual-level performance. Contrast to the cross-mean and cross-variance predictions newly implemented and plotted further below.
+c("FullSet \n (~33K)","LDprunedR2pt8 \n (~13K)","LDprunedR2pt6 \n (~8K)")
+```{r,fig.width = 8.5, fig.height=4, warning=F,message=FALSE}
+standardCV_full %>% 
+  unnest(accuracyEstOut) %>% 
+  select(-splits,-predVSobs,-seeds) %>% 
+  mutate(Filter="Full") %>% 
+  bind_rows(standardCV_medium %>% 
+              unnest(accuracyEstOut) %>% 
+              select(-splits,-predVSobs,-seeds) %>% 
+              mutate(Filter="Medium")) %>% 
+  mutate(Trait=factor(Trait,levels=c("SELIND",blups$Trait)),
+         predOf=factor(paste0(predOf,"_",Filter),levels=c("GEBV_Full","GETGV_Full","GEBV_Medium","GETGV_Medium"))) %>% 
+  ggplot(.,aes(x=predOf,y=Accuracy,fill=predOf,color=predOf)) + 
+  geom_boxplot(notch = TRUE, color='gray40') +
+  scale_fill_manual(values = viridis::viridis(4)[1:4]) + 
+  scale_color_manual(values = viridis::viridis(4)[1:4]) + 
+  #geom_hline(yintercept = 0, color='black', size=0.8) +
+  facet_grid(.~Trait) + 
+  labs(title="Accuracy predicting the performance of untested clones",
+       subtitle="Standard 5-fold cross-validation") + 
+  theme_bw() + 
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position='bottom',
+        axis.text.y = element_text(face='bold'),
+        axis.title.y = element_text(face='bold'),
+        strip.text.x = element_text(face='bold'),
+        plot.title = element_text(face='bold'),
+        legend.title = element_text(face='bold'),
+        legend.text = element_text(face='bold'),
+        panel.spacing = unit(0.2, "lines"))
+```
+
+### Parent-wise cross-validation
+
+#### Cross-mean prediction accuracy
+
+```{r,fig.width = 8.5, fig.height=4, warning=F,message=FALSE}
+#accuracy_full$meanPredAccuracy %>% 
+#  bind_rows(accuracy_medium$meanPredAccuracy) 
+
+accuracy_medium$meanPredAccuracy %>%
+  mutate(Filter="Medium") %>% 
   select(-predVSobs) %>% 
   mutate(Trait=factor(Trait,levels=c("SELIND",blups$Trait)),
-         predOf=factor(paste0(predOf,"_",modelType),levels=c("MeanBV_AD","MeanTGV_AD","MeanBV_DirDom","MeanTGV_DirDom"))) %>% 
-  ggplot(.,aes(x=predOf,y=AccuracyEst,fill=predOf,color=modelType)) + 
-  geom_boxplot(width=0.4,notch = TRUE, color='gray40') +
-  ggdist::stat_dots(side = "left", justification = 1.3,
-                    binwidth = 0.03,dotsize=0.5,layout="swarm") +
+         predOf=factor(paste0(predOf,"_",Filter),levels=c("MeanBV_Full","MeanTGV_Full","MeanBV_Medium","MeanTGV_Medium"))) %>% 
+  ggplot(.,aes(x=predOf,y=AccuracyEst,fill=predOf,color=Filter)) + 
+  geom_boxplot(notch = TRUE, color='gray40') +
   scale_fill_manual(values = viridis::viridis(4)[1:4]) + 
   scale_color_manual(values = viridis::viridis(4)[1:4]) + 
   geom_hline(yintercept = 0, color='black', size=0.8) +
   facet_grid(.~Trait) + 
-  labs(title="Accuracy predicting cross-means") + 
+  labs(title="Accuracy predicting the mean performance of offspring from untested crosses",
+       subtitle="5-fold 'parent-wise' cross-validation") + 
   theme_bw() + 
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank(),
         strip.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.text.y = element_text(face='bold'),
-        strip.text.x = element_text(face='bold'),
         legend.position='bottom',
+        axis.text.y = element_text(face='bold'),
+        axis.title.y = element_text(face='bold'),
+        strip.text.x = element_text(face='bold'),
+        plot.title = element_text(face='bold'),
+        legend.title = element_text(face='bold'),
         legend.text = element_text(face='bold'),
-        panel.spacing = unit(0.05, "lines"))
+        panel.spacing = unit(0.2, "lines"))
 ```
 
-### Accuracy predicting variance params
+#### Cross-variance pred. accuracy
+
 ```{r,fig.width = 10, fig.height=5}
-accuracy_ad$varPredAccuracy %>% 
-  bind_rows(accuracy_dirdom$varPredAccuracy) %>% 
-  select(-predVSobs) %>% 
+#accuracy_full$varPredAccuracy %>% 
+#  bind_rows(accuracy_medium$varPredAccuracy) %>% 
+accuracy_medium$varPredAccuracy %>% 
+  mutate(Filter="Medium") %>% 
+  select(-predVSobs) %>%
   filter(Trait1==Trait2) %>% 
   mutate(Trait1=factor(Trait1,levels=c("SELIND",blups$Trait)),
-         predOf=factor(paste0(predOf,"_",modelType),
-                       levels=c("VarBV_AD","VarTGV_AD",
-                                "VarBV_DirDom","VarTGV_DirDom"))) %>% 
-  ggplot(.,aes(x=predOf,y=AccuracyEst,fill=predOf,color=modelType)) + 
-  geom_boxplot(width=0.4,notch = TRUE,color='gray40') +
-  ggdist::stat_dots(side = "left", justification = 1.3,layout='swarm',
-                    binwidth = 0.03,dotsize=0.4) +
+         predOf=factor(paste0(predOf,"_",Filter),
+                       levels=c("VarBV_Full","VarTGV_Full",
+                                "VarBV_Medium","VarTGV_Medium"))) %>% 
+  ggplot(.,aes(x=predOf,y=AccuracyEst,fill=predOf,color=Filter)) + 
+  geom_boxplot(notch = TRUE,color='gray40') +
   scale_fill_manual(values = viridis::viridis(4)[1:4]) + 
   scale_color_manual(values = viridis::viridis(4)[1:4]) + 
   geom_hline(yintercept = 0, color='black', size=0.8) +
   facet_grid(.~Trait1) + 
-  labs(title="Accuracy predicting cross-variances") + 
+  labs(title="Accuracy predicting variance in performance among offspring of untested crosses",
+       subtitle="5-fold 'parent-wise' cross-validation") + 
   theme_bw() + 
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank(),
         strip.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.text.y = element_text(face='bold'),
-        strip.text.x = element_text(face='bold'),
         legend.position='bottom',
+        axis.text.y = element_text(face='bold'),
+        axis.title.y = element_text(face='bold'),
+        strip.text.x = element_text(face='bold'),
+        plot.title = element_text(face='bold'),
+        legend.title = element_text(face='bold'),
         legend.text = element_text(face='bold'),
-        panel.spacing = unit(0.05, "lines"))
+        panel.spacing = unit(0.2, "lines"))
 ```
 
+#### Cross-co-variance pred. accuracy
 
 ```{r, fig.width = 9, fig.height = 9}
-accuracy_ad$varPredAccuracy %>% 
-  bind_rows(accuracy_dirdom$varPredAccuracy) %>% 
+#accuracy_full$varPredAccuracy %>% 
+#  bind_rows(accuracy_medium$varPredAccuracy) %>% 
+accuracy_medium$varPredAccuracy %>% 
+  mutate(Filter="Medium") %>% 
   select(-predVSobs) %>% 
   filter(Trait1!="SELIND",Trait2!="SELIND",
          Trait1!=Trait2) %>% 
-  mutate(#Trait1=factor(Trait1,levels=c("SELIND",blups$Trait)),
-         #Trait2=factor(Trait2,levels=c("SELIND",blups$Trait)),
-         Trait1=factor(Trait1,levels=c(blups$Trait)),
+  mutate(Trait1=factor(Trait1,levels=c(blups$Trait)),
          Trait2=factor(Trait2,levels=c(blups$Trait)),
-         predOf=factor(paste0(predOf,"_",modelType),
-                       levels=c("VarBV_AD","VarTGV_AD",
-                                "VarBV_DirDom","VarTGV_DirDom"))) %>% 
-  ggplot(.,aes(x=predOf,y=AccuracyEst,fill=predOf,color=modelType)) + 
+         predOf=factor(paste0(predOf,"_",Filter),
+                       levels=c("VarBV_Full","VarTGV_Full",
+                                "VarBV_Medium","VarTGV_Medium"))) %>% 
+  ggplot(.,aes(x=predOf,y=AccuracyEst,fill=predOf,color=Filter)) + 
   geom_boxplot(notch = TRUE) +
   scale_fill_manual(values = viridis::viridis(4)[1:4]) + 
   scale_color_manual(values = viridis::viridis(4)[1:4]) + 
   geom_hline(yintercept = 0, color='gray40', size=0.6) +
   facet_wrap(~Trait1+Trait2,nrow=5) + 
-  labs(title="Accuracy predicting cross-covariances") + 
-  theme_bw() + 
+  labs(title="Accuracy predicting covariance in trait-trait performance within previously untested families",
+       subtitle="5-fold 'parent-wise' cross-validation") + 
+theme_bw() + 
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank(),
         strip.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.text.y = element_text(face='bold'),
-        strip.text.x = element_text(size=8),
-        strip.text.y = element_text(size=8,angle = 0),
         legend.position='bottom',
+        axis.text.y = element_text(face='bold'),
+        axis.title.y = element_text(face='bold'),
+        strip.text.x = element_text(face='bold'),
+        plot.title = element_text(face='bold'),
+        legend.title = element_text(face='bold'),
         legend.text = element_text(face='bold'),
-        panel.spacing = unit(0.05, "lines"))
+        panel.spacing = unit(0.2, "lines"))
 ```
 
-## [TO REDO] Accuracy based only on large families
-
-What if we only compute accuracy with families having >10 or >20 members? 
-```{r, eval=F}
-# library(tidyverse); library(magrittr)
-# cvvars<-readRDS(here::here("output","cvVarPredAccuracyAD.rds"))
-# 
-# big_acc<-cvvars %>% 
-#   mutate(AccuracyEst_n10=map_dbl(predVSobs,function(predVSobs){
-#     z<-predVSobs %>% filter(famSize>=10)
-#     out<-psych::cor.wt(z[,c("predVar","obsVar")],
-#                        w = z$famSize) %$% r[1,2] %>%
-#       round(.,3)
-#     return(out) }),
-#     AccuracyEst_n20=map_dbl(predVSobs,function(predVSobs){
-#       z<-predVSobs %>% filter(famSize>=20)
-#       out<-psych::cor.wt(z[,c("predVar","obsVar")],
-#                          w = z$famSize) %$% r[1,2] %>%
-#         round(.,3)
-#       return(out) }))
-# 
-# big_acc %<>% 
-#   mutate(Trait1=factor(Trait1,levels=c("SELIND",blups$Trait)),
-#          Trait2=factor(Trait2,levels=c("SELIND",blups$Trait)),
-#          predOf=factor(predOf,levels=c("VarBV","VarTGV")))
-# 
-# big_acc %>% 
-#   filter(Trait1==Trait2,predOf=="VarBV") %>%
-#   select(-predVSobs) %>% 
-#   pivot_longer(cols = contains("Accuracy"), names_to = "FamilySizeForValidation",values_to = "AccuracyEst") %>% 
-#   ggplot(.,aes(x=predOf,y=AccuracyEst,fill=FamilySizeForValidation, color=predOf)) + 
-#   geom_boxplot(width=0.4,notch = TRUE,color='gray40') +
-#   scale_fill_manual(values = viridis::viridis(4)[1:3]) + 
-#   #scale_color_manual(values = viridis::viridis(4)[1:3]) + 
-#   geom_hline(yintercept = 0, color='black', size=0.8) +
-#   facet_grid(predOf~Trait1) + 
-#   labs(title="Accuracy predicting cross-variances in bigger famiilies only?") + 
-#   theme_bw() + 
-#   theme(axis.text.x = element_blank(),
-#         axis.title.x = element_blank(),
-#         strip.background = element_blank(),
-#         panel.grid.major = element_blank(),
-#         panel.grid.minor = element_blank(),
-#         axis.text.y = element_text(face='bold'),
-#         strip.text.x = element_text(face='bold'),
-#         legend.position='bottom',
-#         legend.text = element_text(face='bold'),
-#         panel.spacing = unit(0.05, "lines"))
+```{r}
+rm(list=ls())
 ```
 
-# [RUNNING] Genomic Mate Selection
+# Genomic Predictions
 
-Placeholder for summaries of the full-model predictions of cross means and variances to-be-used for selection.
+After evaluating prediction accuracy, the [genomic prediction step](06-GenomicPredictions.html) implements full-training dataset predictions and outputs tidy tables of selection criteria, including rankings on the selection index.
 
-# Genetic Gain Estimates
+**Selection of a subset of parents among which to predict matings:** Went to cassavabase wizard, made a list of all IITA accessions in field trials dated 2020 and 2021 at 4 locations (IBA, IKN, MOK, UBJ), as these can likely source for crossing nurseries. I then used the SELIND GEBV and/or GETGV to rank all clones in the dataset (not just those "likely in field"). Goal is to pick more parents than we really want to cross, then predict the huge number of possible crosses, select the top _crosses_ and then plan the corresponding parents into the crossing nursery. Conditional on the "likely in field list" I ended up with 200 parents-to-predict.
+
+**SNP sets:** With the **full_set** (~31K SNP) predict cross-means only. With the **medium_set** (~13K SNP) predict cross-means and variances. Assuming we find high cor(full_set,medium_set) for the cross-means, then will select the crosses based on means predicted with all SNP and variances predicted with medium set.
+
+-   [**Download CSV of genomic predictions here**](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/output/genomicPredictions_full_set_2021Aug09.csv): Standard genomic predictions of the individual GEBV and GETGV for all selection candidates. Use for parent and/or clone selection.
+-   [**Download CSV of genomic mate predictions here**](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/output/genomicMatePredictions_2021Aug10.csv): Genomic predictions of cross means, variance and usefulness on the selection index and for component traits. Cross mean predictions from **full_set** and variance predictions from **medium_set**.
+
+## Genetic trends (and gain estimates)
+
+Plot genetic trends using *selection index* GEBV and GETGV of the individuals in the population.
+
 
 ```{r}
 # GBLUPs
 ### Two models AD and DirDom
-#gpreds_ad<-readRDS(file = here::here("output","genomicPredictions_ModelAD.rds"))
-gpreds_dirdom<-readRDS(file = here::here("output","genomicPredictions_ModelDirDom.rds"))
-si_getgvs<-gpreds_dirdom$gblups[[1]] %>% 
-#si_getgvs<-gpreds_ad$gblups[[1]] %>% 
+gpreds_full<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds"))
+si_getgvs<-gpreds_full$gblups[[1]] %>% 
   filter(predOf=="GETGV") %>% 
   select(GID,SELIND)
 
@@ -488,8 +594,8 @@ ggcycletime<-readxl::read_xls(here::here("data","PedigreeGeneticGainCycleTime_aa
   mutate(Year_Accession=as.numeric(Year_Accession))
 
 # Need germplasmName field from raw trial data to match GEBV and cycle time
-rawdata<-readRDS(here::here("output","IITA_ExptDesignsDetected_2021May10.rds"))
-si_getgvs %<>% 
+rawdata<-readRDS(here::here("output","IITA_ExptDesignsDetected_2021Aug08.rds"))
+for_trend_plot<-si_getgvs %>% 
   left_join(rawdata %>% 
               distinct(germplasmName,GID)) %>% 
   group_by(GID) %>% 
@@ -499,72 +605,343 @@ si_getgvs %<>%
 # FALSE  TRUE 
 #   193   614 
 
-si_getgvs %<>% 
+for_trend_plot %<>% 
   left_join(.,ggcycletime %>% 
               rename(germplasmName=Accession) %>% 
               mutate(Year_Accession=as.numeric(Year_Accession))) %>% 
   mutate(Year_Accession=case_when(grepl("2013_|TMS13",germplasmName)~2013,
                                   grepl("TMS14",germplasmName)~2014,
                                   grepl("TMS15",germplasmName)~2015,
+                                  grepl("TMS16",germplasmName)~2016,
+                                  grepl("TMS17",germplasmName)~2017,
                                   grepl("TMS18",germplasmName)~2018,
-                                  !grepl("2013_|TMS13|TMS14|TMS15|TMS18",germplasmName)~Year_Accession))
+                                  grepl("TMS19",germplasmName)~2019,
+                                  grepl("TMS20",germplasmName)~2020,
+                                  !grepl("2013_|TMS13|TMS14|TMS15|TMS16|TMS17|TMS18|TMS19|TMS20",germplasmName)~Year_Accession))
 
 # Declare the "eras" as PreGS\<2012 and GS\>=2013.
-si_getgvs %<>% 
+for_trend_plot %<>% 
   filter(Year_Accession>2012 | Year_Accession<2005)
-si_getgvs %<>% 
+for_trend_plot %<>% 
   mutate(GeneticGroup=ifelse(Year_Accession>=2013,"GS","PreGS"))
+
+plottheme<-theme_bw() + 
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position='bottom',
+        axis.text.y = element_text(face='bold'),
+        axis.title.y = element_text(face='bold'),
+        strip.text.x = element_text(face='bold'),
+        plot.title = element_text(face='bold'),
+        legend.title = element_text(face='bold'),
+        legend.text = element_text(face='bold'),
+        panel.spacing = unit(0.2, "lines")) 
+
 ```
-Show rate of genetic gain - getgv vs. accession age
+
+First, for the IITA population, I use historical data on age of clones to perform a regression of GETGV on year-cloned compared the post 2012 (GS) to pre-GS era. The plot below shows the GETGV (y-axis) versus the year each accession was cloned.
+
 ```{r}
-# , fig.height=10, fig.width=12
-si_getgvs %>% 
+for_trend_plot %>% 
   select(GeneticGroup,GID,Year_Accession,SELIND) %>% 
   ggplot(.,aes(x=Year_Accession,y=SELIND,color=GeneticGroup)) + 
-  geom_point(size=1.25) + geom_smooth(method=lm, se=TRUE, size=1.5) + 
-  # facet_wrap(~Trait,scales='free_y', ncol=2) + 
-  theme_bw() +
-  theme(axis.text = element_text(face = 'bold',angle = 0, size=14),
-        axis.title = element_text(face = 'bold',size=16),
-        strip.background.x = element_blank(),
-        strip.text = element_text(face='bold',size=18)) + 
+  geom_point(size=1.25) + 
+  geom_smooth(method=lm, se=TRUE, size=1.5) + 
+  plottheme + theme(panel.grid.major = element_line()) + 
   scale_color_viridis_d() + 
   labs(title = "Selection Index GETGV vs. Accession Age by 'era' [GS vs. PreGS]",
-       subtitle = "SI GETGV from modelType='DirDom'")
+       subtitle = "SI GETGV from modelType='DirDom'") 
+
 ```
-Barplot of mean GEBV vs. Cycle
+
+Next, some fancy boxplot / half-violin plots to compare the distribution of GETGV across the cycles.
+
+```{r, fig.width=8.5}
+si_getgvs %>% 
+  mutate(Cohort=NA,
+         Cohort=ifelse(grepl("TMS20",GID,ignore.case = T),"TMS20",
+                       ifelse(grepl("TMS19",GID,ignore.case = T),"TMS19",
+                              ifelse(grepl("TMS18",GID,ignore.case = T),"TMS18",
+                                     ifelse(grepl("TMS17",GID,ignore.case = T),"TMS17",
+                                            ifelse(grepl("TMS16",GID,ignore.case = T),"TMS16",
+                                                   ifelse(grepl("TMS15",GID,ignore.case = T),"TMS15",
+                                                          ifelse(grepl("TMS14",GID,ignore.case = T),"TMS14",
+                                                                 ifelse(grepl("TMS13|2013_",GID,ignore.case = T),"TMS13","PreGS")))))))),
+         
+         Cohort=factor(Cohort,levels = c("PreGS","TMS13","TMS14","TMS15","TMS16","TMS17","TMS18","TMS19","TMS20"))) %>% 
+  ggplot(.,aes(x=Cohort,y=SELIND,fill=Cohort)) + 
+  ggdist::stat_halfeye(adjust=0.5,.width = 0,fill='gray',width=0.75) +  
+  geom_boxplot(width=0.12,notch = TRUE) +
+  ggdist::stat_dots(side = "left",justification = 1.1,
+                    binwidth = 0.03,dotsize=0.6) + 
+  plottheme + 
+  scale_fill_viridis_d()
+```
+
+Lastly, for continuity sake, barplots of the mean +/- std. error of GEBV across the cycles.
+
 ```{r}
-si_gebvs<-gpreds_dirdom$gblups[[1]] %>% 
+si_gebvs<-gpreds_full$gblups[[1]] %>% 
   filter(predOf=="GEBV") %>% 
   select(GID,SELIND) %>% 
-  mutate(GeneticGroup=case_when(grepl("2013_|TMS13",GID)~"C1",
-                                  grepl("TMS14",GID)~"C2",
-                                  grepl("TMS15",GID)~"C3",
-                                  grepl("TMS18",GID)~"C4",
-                                  !grepl("2013_|TMS13|TMS14|TMS15|TMS18",GID)~"PreGS"),
-         GeneticGroup=factor(GeneticGroup,levels = c("PreGS","C1","C2","C3","C4")))
+  mutate(Cohort=NA,
+         Cohort=ifelse(grepl("TMS20",GID,ignore.case = T),"TMS20",
+                       ifelse(grepl("TMS19",GID,ignore.case = T),"TMS19",
+                              ifelse(grepl("TMS18",GID,ignore.case = T),"TMS18",
+                                     ifelse(grepl("TMS17",GID,ignore.case = T),"TMS17",
+                                            ifelse(grepl("TMS16",GID,ignore.case = T),"TMS16",
+                                                   ifelse(grepl("TMS15",GID,ignore.case = T),"TMS15",
+                                                          ifelse(grepl("TMS14",GID,ignore.case = T),"TMS14",
+                                                                 ifelse(grepl("TMS13|2013_",GID,ignore.case = T),"TMS13","PreGS")))))))),
+         
+         Cohort=factor(Cohort,levels = c("PreGS","TMS13","TMS14","TMS15","TMS16","TMS17","TMS18","TMS19","TMS20")))
 si_gebvs %>% 
-  group_by(GeneticGroup) %>% 
+  group_by(Cohort) %>% 
   summarize(meanGEBV=mean(SELIND),
             stdErr=sd(SELIND)/sqrt(n()),
             upperSE=meanGEBV+stdErr,
             lowerSE=meanGEBV-stdErr) %>% 
-  ggplot(.,aes(x=GeneticGroup,y=meanGEBV,fill=GeneticGroup)) + 
+  ggplot(.,aes(x=Cohort,y=meanGEBV,fill=Cohort)) + 
   geom_bar(stat = 'identity', color='gray60', size=1.25) + 
   geom_linerange(aes(ymax=upperSE,
                      ymin=lowerSE), color='gray60', size=1.25) + 
   #facet_wrap(~Trait,scales='free_y', ncol=1) + 
   theme_bw() +
   geom_hline(yintercept = 0, size=1.15, color='black') + 
-  theme(axis.text.x = element_text(face = 'bold',angle = 0, size=12),
-        axis.title.y = element_text(face = 'bold',size=14),
-        legend.position = 'none',
-        strip.background.x = element_blank(),
-        strip.text = element_text(face='bold',size=14)) + 
+  plottheme + 
   scale_fill_viridis_d() + 
   labs(x=NULL,y="Mean GEBVs",
-       title="Mean +/- Std. Error Selection Index GEBV by Cycle")
+       title="Mean +/- Std. Error Selection Index GEBV by Annual Cohort")
 ```
 
+## Parents selected for cross predictions
 
+I predicted 20100 crosses of 200 elite candidate parents. 
+
+Below is a plot showing the distribution of GETGV for the entire population contrasted to the selected set of parents. Fill color indicates Cohort.
+
+```{r, fig.width=9}
+library(tidyverse); library(magrittr); library(ggdist)
+parentsToPredictCrosses<-readRDS(file = here::here("output",
+                                                   "parentsToPredictCrosses_2021Aug10.rds"))
+for_selected_plot<-si_getgvs %>% 
+  mutate(Cohort=NA,
+         Cohort=ifelse(grepl("TMS20",GID,ignore.case = T),"TMS20",
+                       ifelse(grepl("TMS19",GID,ignore.case = T),"TMS19",
+                              ifelse(grepl("TMS18",GID,ignore.case = T),"TMS18",
+                                     ifelse(grepl("TMS17",GID,ignore.case = T),"TMS17",
+                                            ifelse(grepl("TMS16",GID,ignore.case = T),"TMS16",
+                                                   ifelse(grepl("TMS15",GID,ignore.case = T),"TMS15",
+                                                          ifelse(grepl("TMS14",GID,ignore.case = T),"TMS14",
+                                                                 ifelse(grepl("TMS13|2013_",GID,ignore.case = T),"TMS13","PreGS")))))))),
+         
+         Cohort=factor(Cohort,levels = c("PreGS","TMS13","TMS14","TMS15","TMS16","TMS17","TMS18","TMS19","TMS20")))
+for_selected_plot %>% 
+  mutate(Cycle="AllGermplasm") %>% 
+  bind_rows(for_selected_plot %>% 
+              filter(GID %in% parentsToPredictCrosses) %>% 
+              mutate(Cycle="SelectedParents")) %>% 
+  mutate(Cycle=factor(Cycle,levels = c("AllGermplasm","SelectedParents"))) %>% 
+  ggplot(.,aes(x=Cycle,y=SELIND,fill=Cycle)) + 
+  ggdist::stat_halfeye(adjust=0.5,.width = 0,fill='gray',width=0.75) +  
+  geom_boxplot(width=0.09,notch = TRUE) +
+  ggdist::stat_dots(aes(color=Cohort),side = "left",justification = 1.1,dotsize=.8) + 
+  scale_fill_viridis_d() + scale_color_viridis_d() + 
+  plottheme + 
+  labs(title="Distribution of selection index GETGV in parents selected for mate predictions",
+       subtitle="compared to the overall population")
+```
+```{r}
+for_selected_plot %>% 
+  filter(GID %in% parentsToPredictCrosses) %>% 
+  count(Cohort, name = "NparentsToPredCrosses")
+```
+
+Surprisingly, a significant amount of parents from the "PreGS" (i.e. GeneticGain pop. clones is recommended). Not sure that is what we will actually want to do in practice, but it makes sense when viewed in light of the rankings plotted above: they still have elite GEBV/GETGV.
+
+## Genomic mate selection
+
+```{r, eval=F}
+library(tidyverse); library(magrittr); library(ggdist)
+# crossPreds<-readRDS(here::here("output","genomicMatePredictions_2021Aug10.rds"))
+# crossPreds<-crossPreds$tidyPreds[[1]]
+crossPreds<-read.csv(here::here("output","genomicMatePredictions_2021Aug10.csv"), stringsAsFactors = F, header = T)
+
+forplot<-crossPreds %>% 
+  filter(Trait=="SELIND") %>% 
+  select(sireID,damID,CrossGroup,predOf,predMean,predSD)
+
+cross_group_order<-crossPreds %>% 
+  filter(Trait=="SELIND") %>% 
+  distinct(sireGroup,damGroup) %>% 
+  mutate(sireGroup=factor(sireGroup,levels=c("PreGS","TMS13","TMS14","TMS15","TMS16","TMS17","TMS18","TMS19","TMS20")),
+         damGroup=factor(damGroup,levels=c("PreGS","TMS13","TMS14","TMS15","TMS16","TMS17","TMS18","TMS19","TMS20"))) %>% 
+  arrange(desc(sireGroup),desc(damGroup)) %>% 
+  mutate(CrossGroup=paste0(sireGroup,"x",damGroup)) %$% 
+  CrossGroup
+
+forplot %<>% 
+  mutate(CrossGroup=factor(CrossGroup,levels=c(cross_group_order)))
+```
+
+The standard budget for genotyping has been 2500 new clones per year.
+
+Suppose we choose to create 50 families of 50 siblings each, from the 20100 predicted crosses.
+
+The input file has a pre-computed `predUsefulness` variable. I used `stdSelInt=2.062` when making the predictions with the `predictCrosses()` function, which corresponds to selecting the top 5% (or top 5 offspring) from each family. 
+
+Crosses may be of interest for their predicted $UC_{parent}$ (`predOf=="BV"`) and/or $UC_{variety}$ (`predOf=="TGV"`).
+
+Each crossing nursery needs to produce both new exceptional parents *and* elite candidate cultivars. These will not necessarily be the same individuals or come from the same crosses.
+
+```{r, eval=F}
+# forplot %>% 
+#   select(-predMean,-predSD) %>% 
+#   spread(predOf,predUsefulness) %$% 
+#   cor(BV,TGV) 
+# [1] 0.999988
+# The correlation between predUC BV and TGV is extremely high
+
+
+# forplot %>% 
+#   group_by(predOf) %>% 
+#   slice_max(order_by = predUsefulness, n = 50) %>% ungroup() %>% 
+#   distinct(sireID,damID) %>% nrow() # 50
+# Also, the exact same 50 are ranked top predUC
+```
+
+In this case, the same 50 crosses are best for both $UC_{parent}$ (`predOf=="BV"`) and $UC_{variety}$ (`predOf=="TGV"`).
+
+```{r, eval=F}
+#fig.width=10}
+forplot %>% 
+  filter(predOf=="TGV") %>% 
+  #slice_max(order_by = predUsefulness, n = 100) %>% 
+  arrange(desc(predUsefulness)) %>% 
+  mutate(Rank=1:nrow(.)) %>% 
+  ggplot(aes(x = Rank, dist = "norm", 
+             arg1 = predMean, arg2 = predSD, 
+             fill=CrossGroup, color=CrossGroup),
+         alpha=0.5) +
+  stat_dist_pointinterval() +
+  #stat_dist_gradientinterval(n=50) +
+  scale_fill_viridis_d() + scale_color_viridis_d() + 
+  plottheme + theme() + 
+  labs(x = paste0("Cross Rank ",expression(bold("UC"["variety"]~" (TGV)"))),
+       y = "Selection Index GETGV",
+       title = "Predicted distribution (mean and variability) of all crosses")
+```
+This first plot of the mate predictions displays the entire set of predicted crosses, ranked by their selection index $UC^{SI}_{variety}$. This will be more clear in the subsequent plots with fewer families: the x-axis is simply the descending rank of predicted $UC^{SI}_{variety}$ for each cross. The y-axis shows the predicted mean (dot) and distribution quantiles (linerange) based on the predicted mean and standard deviation of each cross. Crosses are color coded according to the "genetic group" of the parents.
+
+```{r, eval=F}
+forplot %>% 
+  filter(predOf=="TGV") %>% 
+  slice_max(order_by = predUsefulness, n = 100) %>% 
+  arrange(desc(predUsefulness)) %>% 
+  mutate(Rank=1:nrow(.)) %>% 
+    ggplot(aes(x = Rank, dist = "norm", 
+               arg1 = predMean, arg2 = predSD, 
+               fill=CrossGroup, color=CrossGroup),
+           alpha=0.75) +
+    stat_dist_gradientinterval(n=100) +
+    scale_fill_viridis_d() + scale_color_viridis_d() + 
+  plottheme + theme(axis.text.x = element_text(face='bold'),
+                    axis.title.x = element_text(face = 'bold')) + 
+  labs(x = expression(bold("Rank on SELIND - UC"["variety"])),
+       y = "Selection Index GETGV",
+       title = "Predicted distribution of the top 100 crosses")
+```
+This next plot shows only the top 100 crosses, ranked based on the $UC^{SI}_{variety}$.
+
+```{r, eval=F}
+forplot %>% 
+  filter(predOf=="TGV") %>% 
+  slice_max(order_by = predUsefulness, n = 10) %>% rmarkdown::paged_table()
+```
+**The best 10 crosses to make:**
+
+
+```{r, eval=F}
+forplot %>% 
+  filter(predOf=="TGV") %>% 
+  arrange(desc(predUsefulness)) %>% 
+  mutate(Rank=1:nrow(.)) %>% 
+  filter(grepl("TMS20|TMS19",CrossGroup)) %>% 
+  relocate(Rank,.before = "predMean") %>% 
+  slice(1:10) %>% 
+  rmarkdown::paged_table()
+```
+
+```{r, eval=F}
+#fig.width=12}
+forplot %>% 
+  filter(predOf=="TGV") %>% 
+  slice_max(order_by = predUsefulness, n = 50) %>% 
+  arrange(desc(predUsefulness)) %>% 
+  mutate(Rank=1:nrow(.)) %>% 
+  ggplot(aes(x = Rank, dist = "norm", 
+             arg1 = predMean, arg2 = predSD, 
+             fill = CrossGroup,
+             label = CrossGroup)) +
+  stat_dist_gradientinterval(n=100,side='top',position = "dodgejust",
+                         aes(fill = stat(y < (arg1+arg2*qnorm(0.95))))) +
+  stat_dist_dotsinterval(n=50,side='both',position = "dodgejust",
+                         aes(fill = stat(y < (arg1+arg2*qnorm(0.95))))) +
+  scale_fill_viridis_d() + scale_color_viridis_d() + 
+  plottheme + theme(axis.text.x = element_text(face='bold'),
+                    axis.title.x = element_text(face = 'bold'),
+                    legend.position = 'none') + 
+  labs(x = expression(bold("Rank on SELIND - UC"["variety"])),
+       y = "Selection Index GETGV",
+       title = "Predicted distribution of the top 50 crosses")
+```
+In this plot, the area under the top 5% of each crosses predicted distribution is filled in purple The mean of individuals from under the highlighted area is the $UC_{variety}$. There are also 50 dots for each cross illustrating the hypothetical outcome of creating 50 progeny.
+
+```{r, eval=F}
+#fig.width=10}
+forplot %>% 
+  filter(predOf=="TGV") %>% 
+  slice_max(order_by = predUsefulness, n = 5) %>% 
+  arrange(desc(predUsefulness)) %>% 
+  mutate(Rank=1:nrow(.)) %>% 
+  ggplot(aes(y = Rank, dist = "norm", 
+             arg1 = predMean, arg2 = predSD, 
+             label = paste0(sireID,"\n x ",damID)),
+         alpha=0.5) +
+  stat_dist_dotsinterval(n=50,side='top',position = "dodgejust",scale=0.85,
+                         aes(fill = stat(x < (arg1+arg2*qnorm(0.95))))) +
+  stat_dist_halfeye(position = "dodgejust",scale=1.25, alpha=0.5,
+                    aes(fill = stat(x < (arg1+arg2*qnorm(0.95))))) +
+  geom_label(aes(x=predMean),size=3) + 
+  scale_fill_viridis_d() + scale_color_viridis_d() + 
+  plottheme + theme(axis.text.x = element_text(face='bold'),
+                    axis.title.x = element_text(face = 'bold'),
+                    legend.position = 'none') + 
+  labs(y = expression(bold("Rank on SELIND - UC"["variety"])),
+       x = "Selection Index GETGV",
+       title = "Predicted distribution of the top 5 crosses")
+```
+Or for more clarity, just the top 5 crosses:
+
+# Selection Criteria and Recommendations
+
+**Table of Top 50 Crosses:** 2 rows for each cross, one for `predOf=="BV"` one for `predOf=="TGV"`.
+
+-   [**Download the CSV for the top 50 crosses and their selection index means, SDs and UC here**](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/output/top50crosses.csv) or
+-   [**Download the complete CSV of ALL genomic mate predictions here**](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/output/genomicMatePredictions_2021Aug10.csv): for all crosses and both SELIND and component trait predictions.
+
+```{r, eval=F}
+#
+top50crosses<-forplot %>% 
+  group_by(predOf) %>% 
+  slice_max(order_by = predUsefulness, n = 50) %>% 
+  ungroup()
+top50crosses %>% 
+  write.csv(.,file = here::here("output","top50crosses.csv"), row.names = F)
+top50crosses %>% 
+  rmarkdown::paged_table()
+```
 
