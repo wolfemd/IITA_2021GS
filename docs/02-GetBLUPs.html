@@ -14,7 +14,7 @@
 
 <title>Get BLUPs combining all trial data</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -414,12 +414,27 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">implementGMSinCassava</a>
+      <a class="navbar-brand" href="index.html">IITA_2021GS</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
   <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Imputation (DCas21_6038)
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="convertDCas21_6038_ToVCF.html">Conversion DArT report DCas21_6038 to VCF</a>
+    </li>
+    <li>
+      <a href="ImputeDCas21_6038.html">Impute DCas21_6038</a>
+    </li>
+  </ul>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -469,7 +484,7 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/wolfemd/implementGMSinCassava">
+  <a href="https://github.com/wolfemd/IITA_2021GS">
     <span class="fa fa-github"></span>
      
     Source code
@@ -486,7 +501,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Get BLUPs combining all trial data</h1>
 <h4 class="author">Marnin Wolfe</h4>
-<h4 class="date">2021-May-03</h4>
+<h4 class="date">2021-Aug-09</h4>
 
 </div>
 
@@ -511,13 +526,13 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-07-14
+<strong>Last updated:</strong> 2021-08-11
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>implementGMSinCassava/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>IITA_2021GS/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
@@ -602,16 +617,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree2953ee69dd0359ef4248148f5cfe318ffa6078e8targetblank2953ee6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/implementGMSinCassava/tree/2953ee69dd0359ef4248148f5cfe318ffa6078e8" target="_blank">2953ee6</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatreee4df79f49f8c6e7bd1d5c33df830bbfdd4419df9targetblanke4df79fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/implementGMSinCassava/tree/e4df79f49f8c6e7bd1d5c33df830bbfdd4419df9" target="_blank">e4df79f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatree2953ee69dd0359ef4248148f5cfe318ffa6078e8targetblank2953ee6a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdimplementGMSinCassavatreee4df79f49f8c6e7bd1d5c33df830bbfdd4419df9targetblanke4df79fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/implementGMSinCassava/tree/2953ee69dd0359ef4248148f5cfe318ffa6078e8" target="_blank">2953ee6</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/implementGMSinCassava/tree/e4df79f49f8c6e7bd1d5c33df830bbfdd4419df9" target="_blank">e4df79f</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -621,76 +636,219 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/accuracies.png
-    Ignored:    analysis/fig2.png
-    Ignored:    analysis/fig3.png
-    Ignored:    analysis/fig4.png
+    Ignored:    analysis/.DS_Store
     Ignored:    code/.DS_Store
     Ignored:    data/.DS_Store
+    Ignored:    output/.DS_Store
 
 Untracked files:
-    Untracked:  accuracies.png
-    Untracked:  analysis/docs/
-    Untracked:  analysis/speedUpPredCrossVar.Rmd
-    Untracked:  code/AlphaAssign-Python/
-    Untracked:  code/calcGameticLD.cpp
-    Untracked:  code/col_sums.cpp
-    Untracked:  code/convertDart2vcf.R
-    Untracked:  code/helloworld.cpp
-    Untracked:  code/imputationFunctions.R
-    Untracked:  code/matmult.cpp
-    Untracked:  code/misc.cpp
-    Untracked:  code/test.cpp
-    Untracked:  data/CassavaGeneticMap/
+    Untracked:  IITA_2021GS.Rproj
+    Untracked:  data/Accessions_IITA_LikelyInField_IbaIknMokUbj_2020to2021.txt
+    Untracked:  data/DatabaseDownload_2021Aug08/
     Untracked:  data/DatabaseDownload_2021May04/
     Untracked:  data/GBSdataMasterList_31818.csv
     Untracked:  data/IITA_GBStoPhenoMaster_33018.csv
     Untracked:  data/NRCRI_GBStoPhenoMaster_40318.csv
     Untracked:  data/PedigreeGeneticGainCycleTime_aafolabi_01122020.xls
-    Untracked:  data/blups_forCrossVal.rds
+    Untracked:  data/Report-DCas21-6038/
+    Untracked:  data/accessions_possibly_infield_2021Aug10.rds
+    Untracked:  data/blups_forGP.rds
     Untracked:  data/chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam
-    Untracked:  data/dosages_IITA_filtered_2021May13.rds
-    Untracked:  data/genmap_2021May13.rds
-    Untracked:  data/haps_IITA_filtered_2021May13.rds
-    Untracked:  data/recombFreqMat_1minus2c_2021May13.rds
-    Untracked:  fig2.png
-    Untracked:  fig3.png
-    Untracked:  figure/
-    Untracked:  output/IITA_CleanedTrialData_2021May10.rds
-    Untracked:  output/IITA_ExptDesignsDetected_2021May10.rds
-    Untracked:  output/IITA_blupsForModelTraining_twostage_asreml_2021May10.rds
+    Untracked:  data/dosages_IITA_2021Aug09.rds
+    Untracked:  data/haps_IITA_2021Aug09.rds
+    Untracked:  data/recombFreqMat_1minus2c_2021Aug02.qs
+    Untracked:  data/snpsets.rds
+    Untracked:  output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.bed
+    Untracked:  output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.bim
+    Untracked:  output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.fam
+    Untracked:  output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.hap.gz
+    Untracked:  output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.log
+    Untracked:  output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.nosex
+    Untracked:  output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.sample
+    Untracked:  output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/BeagleLogs/
+    Untracked:  output/CrossesToPredict_2021Aug10.rds
+    Untracked:  output/IITA_CleanedTrialData_2021Aug08.rds
+    Untracked:  output/IITA_ExptDesignsDetected_2021Aug08.rds
+    Untracked:  output/IITA_blupsForModelTraining_twostage_asreml_2021Aug09.rds
     Untracked:  output/IITA_trials_NOT_identifiable.csv
-    Untracked:  output/crossValPredsA.rds
-    Untracked:  output/crossValPredsAD.rds
-    Untracked:  output/cvAD_5rep5fold_markerEffects.rds
-    Untracked:  output/cvAD_5rep5fold_meanPredAccuracy.rds
-    Untracked:  output/cvAD_5rep5fold_parentfolds.rds
-    Untracked:  output/cvAD_5rep5fold_predMeans.rds
-    Untracked:  output/cvAD_5rep5fold_predVars.rds
-    Untracked:  output/cvAD_5rep5fold_varPredAccuracy.rds
-    Untracked:  output/cvDirDom_5rep5fold_markerEffects.rds
-    Untracked:  output/cvDirDom_5rep5fold_meanPredAccuracy.rds
-    Untracked:  output/cvDirDom_5rep5fold_parentfolds.rds
-    Untracked:  output/cvDirDom_5rep5fold_predMeans.rds
-    Untracked:  output/cvDirDom_5rep5fold_predVars.rds
-    Untracked:  output/cvDirDom_5rep5fold_varPredAccuracy.rds
-    Untracked:  output/cvMeanPredAccuracyA.rds
-    Untracked:  output/cvMeanPredAccuracyAD.rds
-    Untracked:  output/cvPredMeansA.rds
-    Untracked:  output/cvPredMeansAD.rds
-    Untracked:  output/cvVarPredAccuracyA.rds
-    Untracked:  output/cvVarPredAccuracyAD.rds
-    Untracked:  output/genomicPredictions_ModelAD.rds
-    Untracked:  output/genomicPredictions_ModelDirDom.rds
-    Untracked:  output/kinship_A_IITA_2021May13.rds
-    Untracked:  output/kinship_D_IITA_2021May13.rds
-    Untracked:  output/markEffsTest.rds
-    Untracked:  output/markerEffects.rds
-    Untracked:  output/markerEffectsA.rds
-    Untracked:  output/markerEffectsAD.rds
+    Untracked:  output/chr10_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr10_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr10_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr10_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr10_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr10_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr10_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr10_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr10_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr11_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr11_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr11_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr11_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr11_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr11_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr11_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr11_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr11_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr12_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr12_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr12_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr12_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr12_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr12_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr12_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr12_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr12_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr13_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr13_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr13_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr13_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr13_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr13_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr13_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr13_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr13_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr14_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr14_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr14_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr14_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr14_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr14_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr14_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr14_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr14_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr15_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr15_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr15_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr15_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr15_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr15_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr15_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr15_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr15_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr16_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr16_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr16_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr16_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr16_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr16_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr16_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr16_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr16_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr17_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr17_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr17_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr17_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr17_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr17_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr17_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr17_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr17_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr18_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr18_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr18_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr18_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr18_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr18_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr18_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr18_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr18_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr1_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr1_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr1_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr1_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr1_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr1_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr1_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr1_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr1_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr2_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr2_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr2_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr2_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr2_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr2_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr2_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr2_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr2_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr3_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr3_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr3_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr3_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr3_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr3_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr3_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr3_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr3_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr4_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr4_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr4_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr4_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr4_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr4_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr4_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr4_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr4_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr5_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr5_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr5_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr5_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr5_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr5_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr5_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr5_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr5_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr6_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr6_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr6_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr6_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr6_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr6_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr6_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr6_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr6_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr7_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr7_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr7_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr7_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr7_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr7_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr7_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr7_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr7_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr8_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr8_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr8_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr8_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr8_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr8_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr8_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr8_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr8_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/chr9_DCas21_6038_WA_REFimputed.INFO
+    Untracked:  output/chr9_DCas21_6038_WA_REFimputed.hwe
+    Untracked:  output/chr9_DCas21_6038_WA_REFimputed.log
+    Untracked:  output/chr9_DCas21_6038_WA_REFimputed.sitesPassing
+    Untracked:  output/chr9_DCas21_6038_WA_REFimputed.vcf.gz
+    Untracked:  output/chr9_DCas21_6038_WA_REFimputedAndFiltered.vcf.gz
+    Untracked:  output/chr9_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz.vcf.gz
+    Untracked:  output/chr9_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz
+    Untracked:  output/chr9_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz.tbi
+    Untracked:  output/genomicMatePredictions_full_set_2021Aug10.rds
+    Untracked:  output/genomicPredictions_full_set_2021Aug09.csv
+    Untracked:  output/genomicPredictions_full_set_2021Aug09.rds
+    Untracked:  output/genomicPredictions_medium_set_2021Aug09.rds
+    Untracked:  output/genomicPredictions_reduced_set_2021Aug09.rds
+    Untracked:  output/kinship_A_IITA_2021Aug09.rds
+    Untracked:  output/kinship_A_MediumSNPset_IITA_2021Aug09.rds
+    Untracked:  output/kinship_A_ReducedSNPset_IITA_2021Aug09.rds
+    Untracked:  output/kinship_Dgeno_IITA_2021Aug09.rds
+    Untracked:  output/kinship_Dgeno_MediumSNPset_IITA_2021Aug09.rds
+    Untracked:  output/kinship_Dgeno_ReducedSNPset_IITA_2021Aug09.rds
     Untracked:  output/maxNOHAV_byStudy.csv
-    Untracked:  output/obsCrossMeansAndVars.rds
-    Untracked:  output/parentfolds.rds
+    Untracked:  output/parentWiseCV_medium_set_CrossPredAccuracy.rds
+    Untracked:  output/parentWiseCV_reduced_set_CrossPredAccuracy.rds
+    Untracked:  output/parentsToPredictCrosses_2021Aug10.rds
     Untracked:  output/ped2check_genome.rds
     Untracked:  output/ped2genos.txt
     Untracked:  output/pednames2keep.txt
@@ -698,15 +856,37 @@ Untracked files:
     Untracked:  output/pednames_Prune100_25_pt25.nosex
     Untracked:  output/pednames_Prune100_25_pt25.prune.in
     Untracked:  output/pednames_Prune100_25_pt25.prune.out
-    Untracked:  output/potential_dams.txt
-    Untracked:  output/potential_sires.txt
-    Untracked:  output/predVarTest.rds
-    Untracked:  output/samples2keep_IITA_2021May13.txt
+    Untracked:  output/samples2keep_IITA_2021Aug09.txt
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt6.log
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt6.nosex
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt6.prune.in
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt6.prune.out
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt8.log
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt8.nosex
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt8.prune.in
+    Untracked:  output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt8.prune.out
     Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.log
     Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.nosex
     Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.in
     Untracked:  output/samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.out
+    Untracked:  output/standardCV_full_set_ClonePredAccuracy.rds
+    Untracked:  output/standardCV_medium_set_ClonePredAccuracy.rds
+    Untracked:  output/standardCV_reduced_set_ClonePredAccuracy.rds
     Untracked:  output/verified_ped.txt
+
+Unstaged changes:
+    Modified:   analysis/07-Results.Rmd
+    Deleted:    analysis/inputsForSimulation.Rmd
+    Deleted:    code/README.md
+    Deleted:    code/gmsFunctions.R
+    Deleted:    code/gsFunctions.R
+    Deleted:    code/parentWiseCrossVal.R
+    Deleted:    code/predCrossVar.R
+    Deleted:    implementGMSinCassava.Rproj
+    Deleted:    output/README.md
+    Deleted:    output/cvAD_5rep5fold_predAccuracy.rds
+    Deleted:    output/cvDirDom_5rep5fold_predAccuracy.rds
+    Deleted:    output/estimateSelectionError.rds
 
 </code></pre>
 <p>
@@ -745,6 +925,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/implementGMSinCassava/blob/e4df79f49f8c6e7bd1d5c33df830bbfdd4419df9/analysis/02-GetBLUPs.Rmd" target="_blank">e4df79f</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-11
+</td>
+<td>
+Completed IITA_2021GS pipeline including imputation and genomic prediction. Last bit of cross-validation and cross-prediction finishes in 24 hrs.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/implementGMSinCassava/934141c48eff754aa674925be5357d0a2b8be7d3/docs/02-GetBLUPs.html" target="_blank">934141c</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -817,130 +1031,172 @@ Initial build of the entire page upon completion of all
 <li>Genomic prediction with drg-BLUPs from multi-trial analysis as input.</li>
 </ol>
 <p><strong>Work below represents Stage 1 of the Two-stage procedure.</strong></p>
+<p>To fit the mixed-model I used last year, I am again resorting to <code>asreml</code>. I fit random effects for rep and block only where complete and incomplete blocks, respectively are indicated in the trial design variables. <code>sommer</code> should be able to fit the same model via the <code>at()</code> function, <em>but</em> I am having trouble with it’s memory intnsity <em>and</em> <code>sommer</code> is much slower even without a dense covariance (i.e. a kinship), compared to <code>lme4::lmer()</code> or <code>asreml()</code>.</p>
+<p>To use <code>asreml</code> I require to access the license available only on <code>cbsurobbins.biohpc.cornell.edu</code>.</p>
+<p>This is the only step like this in the pipeline.</p>
+<p><code>cbsurobbins</code> is using a SLURM job scheduler now. According to instructions, start an interactive <code>bash</code> shell with requested amount of recources, as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span><span class="kw">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/IITA_2021GS/<span class="kw">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">-n</span> 8 <span class="at">--mem</span><span class="op">=</span>60G <span class="at">--time</span><span class="op">=</span>06:00:00<span class="kw">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># salloc: Granted job allocation 833</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># salloc: Waiting for resource configuration</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># salloc: Nodes cbsurobbins are ready for job</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span><span class="kw">;</span></span></code></pre></div>
 <div id="set-up-training-datasets" class="section level2">
 <h2>Set-up training datasets</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># activate multithread OpenBLAS for fast matrix algebra</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OMP_NUM_THREADS=</span>56</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(magrittr);</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;code&quot;</span>,<span class="st">&quot;gsFunctions.R&quot;</span>))</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;IITA_ExptDesignsDetected_2021May10.rds&quot;</span>))</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>traits<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;MCMDS&quot;</span>,<span class="st">&quot;DM&quot;</span>,<span class="st">&quot;PLTHT&quot;</span>,<span class="st">&quot;BRNHT1&quot;</span>,<span class="st">&quot;BRLVLS&quot;</span>,<span class="st">&quot;HI&quot;</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;logDYLD&quot;</span>, <span class="co"># &lt;-- logDYLD now included. </span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;logFYLD&quot;</span>,<span class="st">&quot;logTOPYLD&quot;</span>,<span class="st">&quot;logRTNO&quot;</span>,<span class="st">&quot;TCHART&quot;</span>,<span class="st">&quot;LCHROMO&quot;</span>,<span class="st">&quot;ACHROMO&quot;</span>,<span class="st">&quot;BCHROMO&quot;</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># **Nest by trait.** Need to restructure the data from per-trial by regrouping by trait. </span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">nestDesignsDetectedByTraits</span>(dbdata,traits)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(magrittr);</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(genomicMateSelectR)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;IITA_ExptDesignsDetected_2021Aug08.rds&quot;</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>traits<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;MCMDS&quot;</span>,<span class="st">&quot;DM&quot;</span>,<span class="st">&quot;PLTHT&quot;</span>,<span class="st">&quot;BRNHT1&quot;</span>,<span class="st">&quot;BRLVLS&quot;</span>,<span class="st">&quot;HI&quot;</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;logDYLD&quot;</span>, <span class="co"># &lt;-- logDYLD now included. </span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;logFYLD&quot;</span>,<span class="st">&quot;logTOPYLD&quot;</span>,<span class="st">&quot;logRTNO&quot;</span>,<span class="st">&quot;TCHART&quot;</span>,<span class="st">&quot;LCHROMO&quot;</span>,<span class="st">&quot;ACHROMO&quot;</span>,<span class="st">&quot;BCHROMO&quot;</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># **Nest by trait.** Need to restructure the data from per-trial by regrouping by trait. </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">nestDesignsDetectedByTraits</span>(dbdata,traits)</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">N_blups=</span><span class="fu">map_dbl</span>(MultiTrialTraitData,nrow)) <span class="sc">%&gt;%</span> rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Trait"],"name":[1],"type":["chr"],"align":["left"]},{"label":["MultiTrialTraitData"],"name":[2],"type":["list"],"align":["right"]},{"label":["N_blups"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"MCMDS","2":"<tibble[,17]>","3":"206148"},{"1":"DM","2":"<tibble[,17]>","3":"149450"},{"1":"logDYLD","2":"<tibble[,17]>","3":"141903"},{"1":"logFYLD","2":"<tibble[,17]>","3":"196336"},{"1":"logRTNO","2":"<tibble[,17]>","3":"199303"},{"1":"HI","2":"<tibble[,17]>","3":"160846"},{"1":"logTOPYLD","2":"<tibble[,17]>","3":"163942"},{"1":"TCHART","2":"<tibble[,17]>","3":"102708"},{"1":"PLTHT","2":"<tibble[,17]>","3":"26127"},{"1":"BRNHT1","2":"<tibble[,17]>","3":"39999"},{"1":"BRLVLS","2":"<tibble[,17]>","3":"22646"},{"1":"LCHROMO","2":"<tibble[,17]>","3":"37100"},{"1":"ACHROMO","2":"<tibble[,17]>","3":"37097"},{"1":"BCHROMO","2":"<tibble[,17]>","3":"37102"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["Trait"],"name":[1],"type":["chr"],"align":["left"]},{"label":["MultiTrialTraitData"],"name":[2],"type":["list"],"align":["right"]},{"label":["N_blups"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"MCMDS","2":"<tibble[,17]>","3":"369844"},{"1":"DM","2":"<tibble[,17]>","3":"268659"},{"1":"logDYLD","2":"<tibble[,17]>","3":"256452"},{"1":"logFYLD","2":"<tibble[,17]>","3":"337473"},{"1":"logRTNO","2":"<tibble[,17]>","3":"341781"},{"1":"HI","2":"<tibble[,17]>","3":"283560"},{"1":"logTOPYLD","2":"<tibble[,17]>","3":"288129"},{"1":"TCHART","2":"<tibble[,17]>","3":"199394"},{"1":"PLTHT","2":"<tibble[,17]>","3":"62157"},{"1":"BRNHT1","2":"<tibble[,17]>","3":"81038"},{"1":"BRLVLS","2":"<tibble[,17]>","3":"55687"},{"1":"LCHROMO","2":"<tibble[,17]>","3":"92536"},{"1":"ACHROMO","2":"<tibble[,17]>","3":"92533"},{"1":"BCHROMO","2":"<tibble[,17]>","3":"92538"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>To fit the mixed-model I used last year, I am again resorting to <code>asreml</code>. I fit random effects for rep and block only where complete and incomplete blocks, respectively are indicated in the trial design variables. <code>sommer</code> should be able to fit the same model via the <code>at()</code> function, <em>but</em> I am having trouble with it <em>and</em> <code>sommer</code> is much slower even without a dense covariance (i.e. a kinship), compared to <code>lme4::lmer()</code> or <code>asreml()</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&lt;&gt;%</span> </span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&lt;&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fixedFormula=</span><span class="fu">ifelse</span>(Trait <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;logDYLD&quot;</span>,<span class="st">&quot;logFYLD&quot;</span>,<span class="st">&quot;logRTNO&quot;</span>,<span class="st">&quot;logTOPYLD&quot;</span>),</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;Value ~ yearInLoc + PropNOHAV&quot;</span>,<span class="st">&quot;Value ~ yearInLoc&quot;</span>),</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">randFormula=</span><span class="fu">paste0</span>(<span class="st">&quot;~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,&#39;Yes&#39;):repInTrial &quot;</span>,</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                            <span class="st">&quot;+ at(IncompleteBlocks,&#39;Yes&#39;):blockInRep&quot;</span>))</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&gt;%</span> </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Nobs=</span><span class="fu">map_dbl</span>(MultiTrialTraitData,nrow)) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Trait,Nobs,fixedFormula,randFormula) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Nobs=</span><span class="fu">map_dbl</span>(MultiTrialTraitData,nrow)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Trait,Nobs,fixedFormula,randFormula) <span class="sc">%&gt;%</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Trait"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Nobs"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["fixedFormula"],"name":[3],"type":["chr"],"align":["left"]},{"label":["randFormula"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"MCMDS","2":"206148","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"DM","2":"149450","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"logDYLD","2":"141903","3":"Value ~ yearInLoc + PropNOHAV","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"logFYLD","2":"196336","3":"Value ~ yearInLoc + PropNOHAV","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"logRTNO","2":"199303","3":"Value ~ yearInLoc + PropNOHAV","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"HI","2":"160846","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"logTOPYLD","2":"163942","3":"Value ~ yearInLoc + PropNOHAV","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"TCHART","2":"102708","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"PLTHT","2":"26127","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"BRNHT1","2":"39999","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"BRLVLS","2":"22646","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"LCHROMO","2":"37100","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"ACHROMO","2":"37097","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"BCHROMO","2":"37102","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["Trait"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Nobs"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["fixedFormula"],"name":[3],"type":["chr"],"align":["left"]},{"label":["randFormula"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"MCMDS","2":"369844","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"DM","2":"268659","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"logDYLD","2":"256452","3":"Value ~ yearInLoc + PropNOHAV","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"logFYLD","2":"337473","3":"Value ~ yearInLoc + PropNOHAV","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"logRTNO","2":"341781","3":"Value ~ yearInLoc + PropNOHAV","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"HI","2":"283560","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"logTOPYLD","2":"288129","3":"Value ~ yearInLoc + PropNOHAV","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"TCHART","2":"199394","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"PLTHT","2":"62157","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"BRNHT1","2":"81038","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"BRLVLS","2":"55687","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"LCHROMO","2":"92536","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"ACHROMO","2":"92533","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"},{"1":"BCHROMO","2":"92538","3":"Value ~ yearInLoc","4":"~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial + at(IncompleteBlocks,'Yes'):blockInRep"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># randFormula&lt;-paste0(&quot;~vs(GID) + vs(trialInLocYr) + vs(at(CompleteBlocks,&#39;Yes&#39;),repInTrial) + vs(at(IncompleteBlocks,&#39;Yes&#39;),blockInRep)&quot;)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># library(sommer)</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># fit &lt;- mmer(fixed = Value ~ 1 + yearInLoc,</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#             random = as.formula(randFormula),</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#             data=trainingdata,</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#             getPEV=TRUE)</span></span></code></pre></div>
 </div>
 <div id="function-to-run-asreml" class="section level2">
 <h2>Function to run asreml</h2>
 <p>Includes rounds of outlier removal and re-fitting.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fitASfunc<span class="ot">&lt;-</span><span class="cf">function</span>(fixedFormula,randFormula,MultiTrialTraitData,...){</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># test arguments for function</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># MultiTrialTraitData&lt;-dbdata$MultiTrialTraitData[[7]]</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># #Trait&lt;-dbdata$Trait[[3]]</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fixedFormula&lt;-dbdata$fixedFormula[[7]]</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># randFormula&lt;-dbdata$randFormula[[7]]</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># test&lt;-fitASfunc(fixedFormula,randFormula,MultiTrialTraitData)</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(asreml); </span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  fixedFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(fixedFormula)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  randFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(randFormula)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit asreml </span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">random =</span> randFormula,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> MultiTrialTraitData, </span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">maxiter =</span> <span class="dv">40</span>, <span class="at">workspace=</span><span class="fl">800e6</span>, <span class="at">na.method.X =</span> <span class="st">&quot;omit&quot;</span>)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="do">#### extract residuals - Round 1</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  outliers1<span class="ot">&lt;-</span><span class="fu">which</span>(<span class="fu">abs</span>(<span class="fu">scale</span>(out<span class="sc">$</span>residuals))<span class="sc">&gt;</span><span class="fl">3.3</span>)</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(outliers1)<span class="sc">&gt;</span><span class="dv">0</span>){</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    x<span class="ot">&lt;-</span>MultiTrialTraitData[<span class="sc">-</span>outliers1,]</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># re-fit</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> randFormula,</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> x, </span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>                <span class="at">maxiter =</span> <span class="dv">40</span>, <span class="at">workspace=</span><span class="fl">800e6</span>, <span class="at">na.method.X =</span> <span class="st">&quot;omit&quot;</span>)</span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="do">#### extract residuals - Round 2</span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    outliers2<span class="ot">&lt;-</span><span class="fu">which</span>(<span class="fu">abs</span>(<span class="fu">scale</span>(out<span class="sc">$</span>residuals))<span class="sc">&gt;</span><span class="fl">3.3</span>)</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(outliers2)<span class="sc">&gt;</span><span class="dv">0</span>){</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>      <span class="do">#### remove outliers</span></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>      x<span class="ot">&lt;-</span>x[<span class="sc">-</span>outliers2,]</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>      <span class="co"># final re-fit</span></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>      out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> randFormula,</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> x, <span class="at">maxiter =</span> <span class="dv">40</span>,<span class="at">workspace=</span><span class="fl">800e6</span>, <span class="at">na.method.X =</span> <span class="st">&quot;omit&quot;</span>)</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(outliers1)<span class="sc">==</span><span class="dv">0</span>){ outliers1<span class="ot">&lt;-</span><span class="cn">NULL</span> }</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(outliers2)<span class="sc">==</span><span class="dv">0</span>){ outliers2<span class="ot">&lt;-</span><span class="cn">NULL</span> }</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  ll<span class="ot">&lt;-</span><span class="fu">summary</span>(out,<span class="at">all=</span>T)<span class="sc">$</span>loglik</span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  varcomp<span class="ot">&lt;-</span><span class="fu">summary</span>(out,<span class="at">all=</span>T)<span class="sc">$</span>varcomp</span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>  Vg<span class="ot">&lt;-</span>varcomp[<span class="st">&quot;GID!GID.var&quot;</span>,<span class="st">&quot;component&quot;</span>]</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>  Ve<span class="ot">&lt;-</span>varcomp[<span class="st">&quot;R!variance&quot;</span>,<span class="st">&quot;component&quot;</span>]</span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  H2<span class="ot">=</span>Vg<span class="sc">/</span>(Vg<span class="sc">+</span>Ve)</span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>  blups<span class="ot">&lt;-</span><span class="fu">summary</span>(out,<span class="at">all=</span>T)<span class="sc">$</span>coef.random <span class="sc">%&gt;%</span></span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    as.data.frame <span class="sc">%&gt;%</span></span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;GID&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(GID,solution,<span class="st">`</span><span class="at">std error</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;GID&quot;</span>,GID)) <span class="sc">%&gt;%</span></span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">BLUP=</span>solution) <span class="sc">%&gt;%</span></span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">GID=</span><span class="fu">gsub</span>(<span class="st">&quot;GID_&quot;</span>,<span class="st">&quot;&quot;</span>,GID),</span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>           <span class="at">PEV=</span><span class="st">`</span><span class="at">std error</span><span class="st">`</span><span class="sc">^</span><span class="dv">2</span>, <span class="co"># asreml specific</span></span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>           <span class="at">REL=</span><span class="dv">1</span><span class="sc">-</span>(PEV<span class="sc">/</span>Vg), <span class="co"># Reliability</span></span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>           <span class="at">drgBLUP=</span>BLUP<span class="sc">/</span>REL, <span class="co"># deregressed BLUP</span></span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>           <span class="at">WT=</span>(<span class="dv">1</span><span class="sc">-</span>H2)<span class="sc">/</span>((<span class="fl">0.1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">-</span>REL)<span class="sc">/</span>REL)<span class="sc">*</span>H2)) <span class="co"># weight for use in Stage 2</span></span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>  out<span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">loglik=</span>ll,Vg,Ve,H2,</span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>              <span class="at">blups=</span><span class="fu">list</span>(blups),</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>              <span class="at">varcomp=</span><span class="fu">list</span>(varcomp),</span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>              <span class="at">outliers1=</span><span class="fu">list</span>(outliers1),</span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>              <span class="at">outliers2=</span><span class="fu">list</span>(outliers2))</span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out) }</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fitASfunc<span class="ot">&lt;-</span><span class="cf">function</span>(fixedFormula,randFormula,MultiTrialTraitData,...){</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># test arguments for function</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># MultiTrialTraitData&lt;-dbdata$MultiTrialTraitData[[7]]</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># #Trait&lt;-dbdata$Trait[[7]]</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fixedFormula&lt;-dbdata$fixedFormula[[7]]</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># randFormula&lt;-dbdata$randFormula[[7]]</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#test&lt;-fitASfunc(fixedFormula,randFormula,MultiTrialTraitData)</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  MultiTrialTraitData <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(GID,yearInLoc,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                    CompleteBlocks,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                    IncompleteBlocks,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                    trialInLocYr,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                    repInTrial,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>                    blockInRep),as.factor)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    droplevels</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(asreml); </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  fixedFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(fixedFormula)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  randFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(randFormula)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit asreml </span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>              <span class="at">random =</span> randFormula,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> MultiTrialTraitData, </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>              <span class="at">maxiter =</span> <span class="dv">40</span>, <span class="at">workspace=</span><span class="fl">1000e6</span>, </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>              <span class="at">na.method.X=</span><span class="st">&quot;omit&quot;</span>)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="do">#### extract residuals - Round 1</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  outliers1<span class="ot">&lt;-</span><span class="fu">which</span>(<span class="fu">abs</span>(<span class="fu">scale</span>(out<span class="sc">$</span>residuals))<span class="sc">&gt;</span><span class="fl">3.3</span>)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(outliers1)<span class="sc">&gt;</span><span class="dv">0</span>){</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    x<span class="ot">&lt;-</span>MultiTrialTraitData[<span class="sc">-</span>outliers1,]</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># re-fit</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> randFormula,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> x, </span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>                <span class="at">maxiter =</span> <span class="dv">40</span>, <span class="at">workspace=</span><span class="fl">1000e6</span>, </span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>                <span class="at">na.method.X=</span><span class="st">&quot;omit&quot;</span>)</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    <span class="do">#### extract residuals - Round 2</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    outliers2<span class="ot">&lt;-</span><span class="fu">which</span>(<span class="fu">abs</span>(<span class="fu">scale</span>(out<span class="sc">$</span>residuals))<span class="sc">&gt;</span><span class="fl">3.3</span>)</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(outliers2)<span class="sc">&gt;</span><span class="dv">0</span>){</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>      <span class="do">#### remove outliers</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>      x<span class="ot">&lt;-</span>x[<span class="sc">-</span>outliers2,]</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>      <span class="co"># final re-fit</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>      out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> randFormula,</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> x, <span class="at">maxiter =</span> <span class="dv">40</span>,<span class="at">workspace=</span><span class="fl">1000e6</span>, </span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.method.X=</span><span class="st">&quot;omit&quot;</span>)</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(outliers1)<span class="sc">==</span><span class="dv">0</span>){ outliers1<span class="ot">&lt;-</span><span class="cn">NULL</span> }</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(outliers2)<span class="sc">==</span><span class="dv">0</span>){ outliers2<span class="ot">&lt;-</span><span class="cn">NULL</span> }</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  ll<span class="ot">&lt;-</span><span class="fu">summary</span>(out,<span class="at">all=</span>T)<span class="sc">$</span>loglik</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>  varcomp<span class="ot">&lt;-</span><span class="fu">summary</span>(out,<span class="at">all=</span>T)<span class="sc">$</span>varcomp</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  Vg<span class="ot">&lt;-</span>varcomp[<span class="st">&quot;GID!GID.var&quot;</span>,<span class="st">&quot;component&quot;</span>]</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>  Ve<span class="ot">&lt;-</span>varcomp[<span class="st">&quot;R!variance&quot;</span>,<span class="st">&quot;component&quot;</span>]</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>  H2<span class="ot">=</span>Vg<span class="sc">/</span>(Vg<span class="sc">+</span>Ve)</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  blups<span class="ot">&lt;-</span><span class="fu">summary</span>(out,<span class="at">all=</span>T)<span class="sc">$</span>coef.random <span class="sc">%&gt;%</span></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>    as.data.frame <span class="sc">%&gt;%</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;GID&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(GID,solution,<span class="st">`</span><span class="at">std error</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;GID&quot;</span>,GID)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">BLUP=</span>solution) <span class="sc">%&gt;%</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">GID=</span><span class="fu">gsub</span>(<span class="st">&quot;GID_&quot;</span>,<span class="st">&quot;&quot;</span>,GID),</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>           <span class="at">PEV=</span><span class="st">`</span><span class="at">std error</span><span class="st">`</span><span class="sc">^</span><span class="dv">2</span>, <span class="co"># asreml specific</span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>           <span class="at">REL=</span><span class="dv">1</span><span class="sc">-</span>(PEV<span class="sc">/</span>Vg), <span class="co"># Reliability</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>           <span class="at">drgBLUP=</span>BLUP<span class="sc">/</span>REL, <span class="co"># deregressed BLUP</span></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>           <span class="at">WT=</span>(<span class="dv">1</span><span class="sc">-</span>H2)<span class="sc">/</span>((<span class="fl">0.1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">-</span>REL)<span class="sc">/</span>REL)<span class="sc">*</span>H2)) <span class="co"># weight for use in Stage 2</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>  out<span class="ot">&lt;-</span><span class="fu">tibble</span>(<span class="at">loglik=</span>ll,Vg,Ve,H2,</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>              <span class="at">blups=</span><span class="fu">list</span>(blups),</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>              <span class="at">varcomp=</span><span class="fu">list</span>(varcomp),</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>              <span class="at">outliers1=</span><span class="fu">list</span>(outliers1),</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>              <span class="at">outliers2=</span><span class="fu">list</span>(outliers2))</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gc</span>()</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out) }</span></code></pre></div>
 </div>
 <div id="run-asreml" class="section level2">
 <h2>Run asreml</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(furrr); <span class="fu">options</span>(<span class="at">mc.cores=</span><span class="dv">14</span>); <span class="fu">plan</span>(multiprocess)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(asreml)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&lt;&gt;%</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitAS=</span><span class="fu">future_pmap</span>(.,fitASfunc))</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>fixedFormula,<span class="sc">-</span>randFormula,<span class="sc">-</span>MultiTrialTraitData) <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(fitAS)</span></code></pre></div>
+<p>Ran in small chunks. Still learning SLURM scheduler used on server.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(asreml)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(furrr); <span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">4</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">future.globals.maxSize=</span><span class="sc">+</span><span class="cn">Inf</span>); <span class="fu">options</span>(<span class="at">future.rng.onMisuse=</span><span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>test<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitAS=</span><span class="fu">future_pmap</span>(.,fitASfunc))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(test,<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;test_2021Aug09.rds&quot;</span>))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(test); <span class="fu">gc</span>()</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(furrr); <span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">5</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">future.globals.maxSize=</span><span class="sc">+</span><span class="cn">Inf</span>); <span class="fu">options</span>(<span class="at">future.rng.onMisuse=</span><span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>test1<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">9</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitAS=</span><span class="fu">future_pmap</span>(.,fitASfunc))</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(test1,<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;test1_2021Aug09.rds&quot;</span>))</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(test1); <span class="fu">gc</span>();</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(furrr); <span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">5</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">future.globals.maxSize=</span><span class="sc">+</span><span class="cn">Inf</span>); <span class="fu">options</span>(<span class="at">future.rng.onMisuse=</span><span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>test2<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">14</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitAS=</span><span class="fu">future_pmap</span>(.,fitASfunc))</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(test2,<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;test2_2021Aug09.rds&quot;</span>))</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;test_2021Aug09.rds&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;test1_2021Aug09.rds&quot;</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;test2_2021Aug09.rds&quot;</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>fixedFormula,<span class="sc">-</span>randFormula,<span class="sc">-</span>MultiTrialTraitData)</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(fitAS)</span></code></pre></div>
 </div>
 <div id="output-file" class="section level2">
 <h2>Output file</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(dbdata,<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;IITA_blupsForModelTraining_twostage_asreml_2021May10.rds&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(dbdata,<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;IITA_blupsForModelTraining_twostage_asreml_2021Aug09.rds&quot;</span>))</span></code></pre></div>
 </div>
 </div>
 <div id="results" class="section level1">
@@ -952,6 +1208,46 @@ Initial build of the entire page upon completion of all
 <ol start="3" style="list-style-type: decimal">
 <li><a href="03-validatePedigree.html">Validate the pedigree obtained from cassavabase</a>: Before setting up a cross-validation scheme for predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.</li>
 </ol>
+</div>
+<div id="sommer-version-attempt" class="section level1">
+<h1>sommer version attempt</h1>
+<p>Set-up the singularity shell and R environment</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) start a screen shell </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span><span class="kw">;</span> <span class="co"># or screen -r if re-attaching...</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) start the singularity Linux shell inside that</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#singularity shell /workdir/$USER/rocker.sif; </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> pull rocker.sif docker://rocker/tidyverse:latest<span class="kw">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> shell ~/rocker.sif<span class="kw">;</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#singularity shell ~/rocker2.sif; </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Project directory, so R will use as working dir.</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /home/mw489/IITA_2021GS/<span class="kw">;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Start R</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># libPath&lt;-&quot;/home/mw489/R/x86_64-pc-linux-gnu-library/4.1&quot;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># withr::with_libpaths(new=libPath, devtools::install_github(&quot;wolfemd/genomicMateSelectR&quot;, ref = &#39;master&#39;))</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># library(tidyverse); library(magrittr);</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># library(genomicMateSelectR)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dbdata&lt;-readRDS(here::here(&quot;output&quot;,&quot;IITA_ExptDesignsDetected_2021Aug08.rds&quot;))</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># traits&lt;-c(&quot;MCMDS&quot;,&quot;DM&quot;,&quot;PLTHT&quot;,&quot;BRNHT1&quot;,&quot;BRLVLS&quot;,&quot;HI&quot;,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#           &quot;logDYLD&quot;, # &lt;-- logDYLD now included. </span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#           &quot;logFYLD&quot;,&quot;logTOPYLD&quot;,&quot;logRTNO&quot;,&quot;TCHART&quot;,&quot;LCHROMO&quot;,&quot;ACHROMO&quot;,&quot;BCHROMO&quot;)</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># # **Nest by trait.** Need to restructure the data from per-trial by regrouping by trait. </span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># dbdata&lt;-nestDesignsDetectedByTraits(dbdata,traits)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># RhpcBLASctl::blas_set_num_threads(56)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># MultiTrialTraitData&lt;-dbdata$MultiTrialTraitData[[2]]</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># fixedFormula&lt;-&quot;Value ~ yearInLoc&quot;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># randFormula&lt;-paste0(&quot;~vs(GID) + vs(trialInLocYr) + vs(at(CompleteBlocks,&#39;Yes&#39;),repInTrial) + vs(at(IncompleteBlocks,&#39;Yes&#39;),blockInRep)&quot;)</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># library(sommer)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fit &lt;- sommer::mmer(fixed = as.formula(fixedFormula),</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                     random = as.formula(randFormula),</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                     weights = WT,</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                     data=MultiTrialTraitData,</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#                     date.warning = F,</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#                     getPEV = F)</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># MultiTrialTraitData %&gt;% distinct(GID)</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Error: cannot allocate vector of size 537.8 Gb</span></span></code></pre></div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -959,7 +1255,7 @@ Initial build of the entire page upon completion of all
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
 <pre><code>R version 4.1.0 (2021-05-18)
 Platform: x86_64-apple-darwin17.0 (64-bit)
 Running under: macOS Big Sur 10.16
@@ -975,26 +1271,27 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] magrittr_2.0.1  forcats_0.5.1   stringr_1.4.0   dplyr_1.0.7    
- [5] purrr_0.3.4     readr_1.4.0     tidyr_1.1.3     tibble_3.1.2   
- [9] ggplot2_3.3.5   tidyverse_1.3.1 workflowr_1.6.2
+ [1] genomicMateSelectR_0.2.0 magrittr_2.0.1           forcats_0.5.1           
+ [4] stringr_1.4.0            dplyr_1.0.7              purrr_0.3.4             
+ [7] readr_2.0.0              tidyr_1.1.3              tibble_3.1.3            
+[10] ggplot2_3.3.5            tidyverse_1.3.1          workflowr_1.6.2         
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.1.1  xfun_0.24         bslib_0.2.5.1     haven_2.4.1      
- [5] colorspace_2.0-2  vctrs_0.3.8       generics_0.1.0    htmltools_0.5.1.1
- [9] yaml_2.2.1        utf8_1.2.1        rlang_0.4.11      jquerylib_0.1.4  
-[13] later_1.2.0       pillar_1.6.1      withr_2.4.2       glue_1.4.2       
-[17] DBI_1.1.1         dbplyr_2.1.1      readxl_1.3.1      modelr_0.1.8     
-[21] lifecycle_1.0.0   cellranger_1.1.0  munsell_0.5.0     gtable_0.3.0     
-[25] rvest_1.0.0       evaluate_0.14     knitr_1.33        httpuv_1.6.1     
-[29] fansi_0.5.0       broom_0.7.8       Rcpp_1.0.7        promises_1.2.0.1 
-[33] backports_1.2.1   scales_1.1.1      jsonlite_1.7.2    fs_1.5.0         
-[37] hms_1.1.0         digest_0.6.27     stringi_1.6.2     rprojroot_2.0.2  
-[41] grid_4.1.0        here_1.0.1        cli_3.0.0         tools_4.1.0      
-[45] sass_0.4.0        crayon_1.4.1      whisker_0.4       pkgconfig_2.0.3  
-[49] ellipsis_0.3.2    xml2_1.3.2        reprex_2.0.0      lubridate_1.7.10 
-[53] rstudioapi_0.13   assertthat_0.2.1  rmarkdown_2.9     httr_1.4.2       
-[57] R6_2.5.0          git2r_0.28.0      compiler_4.1.0   </code></pre>
+ [1] Rcpp_1.0.7        lubridate_1.7.10  here_1.0.1        assertthat_0.2.1 
+ [5] rprojroot_2.0.2   digest_0.6.27     utf8_1.2.2        R6_2.5.0         
+ [9] cellranger_1.1.0  backports_1.2.1   reprex_2.0.1      evaluate_0.14    
+[13] httr_1.4.2        pillar_1.6.2      rlang_0.4.11      readxl_1.3.1     
+[17] rstudioapi_0.13   whisker_0.4       jquerylib_0.1.4   rmarkdown_2.10   
+[21] munsell_0.5.0     broom_0.7.9       compiler_4.1.0    httpuv_1.6.1     
+[25] modelr_0.1.8      xfun_0.25         pkgconfig_2.0.3   htmltools_0.5.1.1
+[29] tidyselect_1.1.1  fansi_0.5.0       crayon_1.4.1      tzdb_0.1.2       
+[33] dbplyr_2.1.1      withr_2.4.2       later_1.2.0       grid_4.1.0       
+[37] jsonlite_1.7.2    gtable_0.3.0      lifecycle_1.0.0   DBI_1.1.1        
+[41] git2r_0.28.0      scales_1.1.1      cli_3.0.1         stringi_1.7.3    
+[45] fs_1.5.0          promises_1.2.0.1  xml2_1.3.2        bslib_0.2.5.1    
+[49] ellipsis_0.3.2    generics_0.1.0    vctrs_0.3.8       tools_4.1.0      
+[53] glue_1.4.2        hms_1.1.0         yaml_2.2.1        colorspace_2.0-2 
+[57] rvest_1.0.1       knitr_1.33        haven_2.4.3       sass_0.4.0       </code></pre>
 </div>
 </div>
 
