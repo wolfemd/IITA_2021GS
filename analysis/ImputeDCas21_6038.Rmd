@@ -132,17 +132,17 @@ cd /workdir/mw489/IITA_2021GS/
 R;
 ```
 
-
 ```{r, eval=F}
 require(furrr); plan(multisession, workers = 18)
 # 1. Subset RefPanel to sites remaining after post-impute filter of DCas21_6038
-future_map(1:18,~system(paste0("vcftools --gzvcf ","/workdir/mw489/IITA_2021GS/data/chr",
-                              .,"_RefPanelAndGSprogeny_ReadyForGP_72719.vcf.gz"," ",
-                              "--positions ","/workdir/mw489/IITA_2021GS/data/chr",.,
-                              "_DCas21_6038_WA_REFimputed.sitesPassing"," ",
-                              "--recode --stdout | bgzip -c -@ 24 > ",
-                              "/workdir/mw489/IITA_2021GS/output/chr",.,
-                              "_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz")))
+future_map(1:18,~system(paste0("vcftools --gzvcf ",
+                               "/workdir/mw489/IITA_2021GS/data/chr",
+                               .,"_RefPanelAndGSprogeny_ReadyForGP_72719.vcf.gz"," ",
+                               "--positions ","/workdir/mw489/IITA_2021GS/output/chr",.,
+                               "_DCas21_6038_WA_REFimputed.sitesPassing"," ",
+                               "--recode --stdout | bgzip -c -@ 24 > ",
+                               "/workdir/mw489/IITA_2021GS/output/chr",.,
+                               "_RefPanelAndGSprogeny72719_SubsetAndReadyToMerge.vcf.gz")))
 plan(sequential)
 
 # 2. Merge RefPanel and DCas21_6038
@@ -168,6 +168,13 @@ system(paste0("bcftools concat ",
               paste0(inPath,"chr",1:18,
                      "_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz",
                      collapse = " ")))
+
+## Convert to binary blink (bed/bim/fam)
+vcfName<-"AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08"
+system(paste0("export PATH=/programs/plink-1.9-x86_64-beta3.30:$PATH;",
+              "plink --vcf ",inPath,vcfName,".vcf.gz ",
+              "--make-bed --const-fid --keep-allele-order ",
+              "--out ",outPath,vcfName))
 ```
 
 ```{bash, eval=F}

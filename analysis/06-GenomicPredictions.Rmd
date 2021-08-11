@@ -27,40 +27,34 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F,
 
 # Genomic prediction of clone GEBV/GETGV
 
-Operate R within a singularity Linux shell within a screen shell.
-
-```{bash set-up R environment, eval=F}
+```{bash Renv, eval=F}
 # 1) start a screen shell 
 screen; # or screen -r if re-attaching...
 # 2) start the singularity Linux shell inside that
-singularity shell /workdir/$USER/rocker.sif; 
+singularity shell ~/rocker2.sif; 
 # Project directory, so R will use as working dir.
-cd /home/mw489/implementGMSinCassava/;
+cd /home/mw489/IITA_2021GS/;
 # 3) Start R
 R
 ```
 
 Load input data
-```{r load input data for GP, eval=F}
-require(tidyverse); require(magrittr); 
-# 5 threads per Rsession for matrix math (openblas)
-RhpcBLASctl::blas_set_num_threads(5)
-# GENOMIC MATE SELECTION FUNCTIONS
-source(here::here("code","gmsFunctions.R")) 
-source(here::here("code","predCrossVar.R")) 
 
-# GENOMIC RELATIONSHIP MATRICES (GRMS)
-grms<-list(A=readRDS(file=here::here("output","kinship_A_IITA_2021May13.rds")),
-           D=readRDS(file=here::here("output","kinship_domGenotypic_IITA_2021July5.rds")))
-
-# DOSAGE MATRIX
-dosages<-readRDS(file=here::here("data",
-                                 "dosages_IITA_filtered_2021May13.rds"))
+```{r inputs for GP}
+# NEEDED LIBRARIES
+require(tidyverse); require(magrittr); library(qs)
+library(genomicMateSelectR)
 
 # BLUPs
-blups<-readRDS(file=here::here("data","blups_forCrossVal.rds")) %>% 
+blups<-readRDS(file=here::here("data","blups_forGP.rds")) %>% 
   dplyr::select(-varcomp) %>% 
-  rename(TrainingData=blups) # for compatibility with downstream functions
+  rename(TrainingData=blups) # for compatibility with runCrossVal() function 
+
+# DOSAGE MATRIX (UNFILTERED)
+dosages<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
+
+# SNP SETS TO ANALYZE
+snpsets<-readRDS(file = here::here("data","snpsets.rds"))
 
 # SELECTION INDEX WEIGHTS
 ## from IYR+IK
@@ -75,71 +69,97 @@ SIwts<-c(logFYLD=20,
          PLTHT=10) 
 ```
 
-Run the "AD" and "DirDom" modelTypes built into `runGenomicPredictions()`. 
+Run the "DirDom" modelTypes built into `runGenomicPredictions()`. Output will contain both GBLUPs for selection of clones _and_ SNP effects to use as input for prediction of cross usefulness and subsequent mate selection. 
 
-Output contains both GBLUPs for selection of indivuals _and_ SNP effects to use as input for prediction of cross usefulness and subsequent mate selection.
+Get effects for: **full_set** (~31K SNPs), **medium_set** (~13K, LD-pruned) and **reduced_set** (~9K SNPs, LD-pruned).
 
-```{r run genomic predictions}
-start<-proc.time()[3]
-gpreds_ad<-runGenomicPredictions(modelType="AD",selInd=TRUE, SIwts=SIwts,
-                                 getMarkEffs=TRUE,
-                                 returnPEV=FALSE,
-                                 blups=blups,grms=grms,dosages=dosages,
-                                 ncores=20,nBLASthreads=5)
-runtime<-proc.time()[3]-start; runtime/60
-saveRDS(gpreds_ad,file = here::here("output","genomicPredictions_ModelAD.rds"))
+```{r GP analysis chunks}
+# cbsulm30 - 112 cores, 512 GB RAM - 2021 Aug 10 - 8:40am 
+snpSet<-"full_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_IITA_2021Aug09.rds")))
+# [1] "Time elapsed: 24.066 mins"
 
-gpreds_dirdom<-runGenomicPredictions(modelType="DirDom",selInd=TRUE, SIwts=SIwts,
-                                     getMarkEffs=TRUE,
-                                     returnPEV=FALSE,
-                                     blups=blups,grms=grms,dosages=dosages,
-                                     ncores=20,nBLASthreads=5)
-runtime<-proc.time()[3]-start; runtime/60
-saveRDS(gpreds_dirdom,file = here::here("output","genomicPredictions_ModelDirDom.rds"))
+# cbsulm30 - 112 cores, 512 GB RAM - 2021 Aug 10 - 8:40am
+snpSet<-"reduced_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_ReducedSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_ReducedSNPset_IITA_2021Aug09.rds")))
+# [1] "Time elapsed: 22.431 mins"
+
+# cbsulm20 - 88 cores, 512 GB RAM - 2021 Aug 10 - 2:50pm
+snpSet<-"medium_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_MediumSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_MediumSNPset_IITA_2021Aug09.rds")))
+# [1] "Time elapsed: 13.299 mins"
+
+```
+```{r run GP for each snpset}
+snps2keep<-snpsets %>% 
+  filter(Set==snpSet) %>% 
+  select(snps2keep) %>% 
+  unnest(snps2keep)
+
+dosages<-dosages[,snps2keep$FULL_SNP_ID]
+rm(snpsets); gc()
+
+starttime<-proc.time()[3]
+gpreds<-runGenomicPredictions(modelType="DirDom",selInd=TRUE, SIwts=SIwts,
+                              getMarkEffs=TRUE,
+                              returnPEV=FALSE,
+                              blups=blups,grms=grms,dosages=dosages,
+                              ncores=11,nBLASthreads=5)
+saveRDS(gpreds,
+        file = here::here("output",
+                          paste0("genomicPredictions_",snpSet,"_2021Aug09.rds")))
+endtime<-proc.time()[3]; print(paste0("Time elapsed: ",
+                                      round((endtime-starttime)/60,3)," mins"))
 
 ```
 
-# Genomic mate predictions: cross usefulness
+# Genomic prediction of cross usefulness
 
-1. Use GBLUPs on SELIND to choose some to fraction of the clones.
+1. Use GBLUPs on SELIND to choose top fraction of the clones. **Cross-reference with 'accessions_infield' list**.
 2. For those selected parents, predict the SELIND usefulness for all pairwise matings.
 
-```{bash, eval=F}
+```{bash Renv for crossPreds, eval=F}
 # 1) start a screen shell 
 screen; # or screen -r if re-attaching...
 # 2) start the singularity Linux shell inside that
-#singularity shell /workdir/$USER/rocker.sif; 
 singularity shell ~/rocker2.sif; 
 # Project directory, so R will use as working dir.
-cd /home/mw489/implementGMSinCassava/;
+cd /home/mw489/IITA_2021GS/;
 # 3) Start R
 R
 ```
 
-### Load input data
-```{r load inputs for predictCrosses, eval=F}
-require(tidyverse); require(magrittr); 
-# 5 threads per Rsession for matrix math (openblas)
-#RhpcBLASctl::blas_set_num_threads(5)
-# GENOMIC MATE SELECTION FUNCTIONS
-source(here::here("code","gmsFunctions.R")) 
-source(here::here("code","predCrossVar.R")) 
 
-# DOSAGE MATRIX
-dosages<-readRDS(file=here::here("data",
-                                 "dosages_IITA_filtered_2021May13.rds"))
+```{r crossPred input}
+# NEEDED LIBRARIES
+require(tidyverse); require(magrittr); library(qs)
+library(genomicMateSelectR)
 
-# RECOMBINATION FREQUENCY MATRIX
-recombFreqMat<-readRDS(file=here::here("data",
-                                       "recombFreqMat_1minus2c_2021May13.rds"))
-# HAPLOTYPE MATRIX
+# BLUPs
+blups<-readRDS(file=here::here("data","blups_forGP.rds")) %>% 
+  dplyr::select(-varcomp)
+
+# DOSAGE MATRIX (UNFILTERED)
+dosages<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
+
+# RECOMBINATION FREQUENCY MATRIX (UNFILTERED)
+recombFreqMat<-qread(file=here::here("data",
+                                     "recombFreqMat_1minus2c_2021Aug02.qs"))
+
+# HAPLOTYPE MATRIX (UNFILTERED)
 ## keep only haplos for parents-in-the-pedigree
 ## those which will be used in prediction, saves memory
-haploMat<-readRDS(file=here::here("data","haps_IITA_filtered_2021May13.rds"))
+haploMat<-readRDS(file=here::here("data","haps_IITA_2021Aug09.rds"))
 parents<-union(ped$sireID,ped$damID) 
 parenthaps<-sort(c(paste0(parents,"_HapA"),
                    paste0(parents,"_HapB")))
-haploMat<-haploMat[parenthaps,colnames(recombFreqMat)]
+haploMat<-haploMat[parenthaps,]
+
+# SNP SETS TO ANALYZE
+snpsets<-readRDS(file = here::here("data","snpsets.rds"))
 
 # SELECTION INDEX WEIGHTS
 ## from IYR+IK
@@ -153,455 +173,198 @@ SIwts<-c(logFYLD=20,
          logTOPYLD=15,
          PLTHT=10) 
 
-# SNP EFFECTS - FROM PREVIOUS STEP 
-### Two models AD and DirDom
-gpreds_ad<-readRDS(file = here::here("output","genomicPredictions_ModelAD.rds"))
-gpreds_dirdom<-readRDS(file = here::here("output","genomicPredictions_ModelDirDom.rds"))
-### Cor between SELIND GEBV and GETGV between models?
-# left_join(gpreds_ad$gblups[[1]] %>% select(GID,predOf,SELIND) %>% rename(SELINDad=SELIND),
-#           gpreds_dirdom$gblups[[1]] %>% select(GID,predOf,SELIND) %>% rename(SELINDdirdom=SELIND)) %>% 
-#   group_by(predOf) %>% summarize(SELIND_corModels=cor(SELINDad,SELINDdirdom))
-# predOf SELIND_corModels
-# GEBV	0.9890091			
-# GETGV	0.9373170	
+# LIST OF ACCESSIONS LIKELY IN THE FIELD
+accessions_infield<-readRDS(here::here("data",
+                                       "accessions_possibly_infield_2021Aug10.rds"))
 
-# SELECTION OF CROSSES-TO-BE-PREDICTED
-nParentsToSelect<-100
-union_bestGEBVandGETGVdirdom<-union(gpreds_dirdom$gblups[[1]] %>% 
-                                         filter(predOf=="GEBV") %>% 
-                                         arrange(desc(SELIND)) %>% 
-                                         slice(1:nParentsToSelect) %$% GID,
-                                       gpreds_dirdom$gblups[[1]] %>% 
-                                         filter(predOf=="GETGV") %>% 
-                                         arrange(desc(SELIND)) %>% 
-                                         slice(1:nParentsToSelect) %$% GID)
-union_bestGEBVandGETGVad<-union(gpreds_ad$gblups[[1]] %>% 
-                                         filter(predOf=="GEBV") %>% 
-                                         arrange(desc(SELIND)) %>% 
-                                         slice(1:nParentsToSelect) %$% GID,
-                                       gpreds_ad$gblups[[1]] %>% 
-                                         filter(predOf=="GETGV") %>% 
-                                         arrange(desc(SELIND)) %>% 
-                                         slice(1:nParentsToSelect) %$% GID)
-union_bestGEBVandGETGV<-union(union_bestGEBVandGETGVdirdom,
-                              union_bestGEBVandGETGVad)
+```
+
+```{r cor of GBLUPs among snpsets, eval=F}
+# gpreds_full<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds"))
+# gpreds_medium<-readRDS(file = here::here("output","genomicPredictions_medium_set_2021Aug09.rds"))
+# gpreds_reduced<-readRDS(file = here::here("output","genomicPredictions_reduced_set_2021Aug09.rds"))
+### Quick check that GBLUPs from full and medium_set are strongly correlated
+### This will be an additional assurance that similar cross variances
+### will be predicted by the reduced SNP model
+
+### Cor between SELIND GEBV and GETGV between full_set and reduced_set of SNPs?
+# left_join(gpreds_full$gblups[[1]] %>% select(GID,predOf,SELIND) %>% rename(SELIND_full=SELIND),
+#           gpreds_reduced$gblups[[1]] %>% select(GID,predOf,SELIND) %>% rename(SELIND_reduced=SELIND)) %>%
+#   group_by(predOf) %>% 
+#   summarize(SELIND_corModels=cor(SELIND_full,SELIND_reduced))
+# predOf  SELIND_corModels
+# GEBV	0.0363334			
+# GETGV	0.7809016	
+## TERRIBLE!! :(
+
+### Cor between SELIND GEBV and GETGV between full_set and medium_set of SNPs?
+# left_join(gpreds_full$gblups[[1]] %>% select(GID,predOf,SELIND) %>% rename(SELIND_full=SELIND),
+#           gpreds_medium$gblups[[1]] %>% select(GID,predOf,SELIND) %>% rename(SELIND_medium=SELIND)) %>%
+#   group_by(predOf) %>% 
+#   summarize(SELIND_corModels=cor(SELIND_full,SELIND_medium))
+# predOf  SELIND_corModels
+# GEBV	0.9901325			
+# GETGV	0.9887326
+## EXCELLENT!! :)
+```
+
+Choose the best parents for which to predict crosses. Use the GBLUPs from the **full_set** of SNPs.
+
+Take the union of the top 300 clones on the SELIND in terms of GEBV and of GETGV. Probably they will be a very similar list.
+
+```{r select best parents for crossPreds, eval=F}
+# SELECT THE BEST PARENTS AS CROSSES-TO-BE-PREDICTED
+nParentsToSelect<-300
+gpreds_full<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds"))
+union_bestGEBVandGETGV<-union(gpreds_full$gblups[[1]] %>% 
+                                filter(predOf=="GEBV") %>% 
+                                arrange(desc(SELIND)) %>% 
+                                slice(1:nParentsToSelect) %$% GID,
+                              gpreds_full$gblups[[1]] %>% 
+                                filter(predOf=="GETGV") %>% 
+                                arrange(desc(SELIND)) %>% 
+                                slice(1:nParentsToSelect) %$% GID)
+rm(gpreds_full); 
 length(union_bestGEBVandGETGV) 
-# [1] 121 parents in top nParentsToSelect on SELIND for GEBV/GETGV - DirDom/AD model.
+# [1] 365 parents in top nParentsToSelect on SELIND for GEBV/GETGV 
 
-CrossesToPredict<-crosses2predict(union_bestGEBVandGETGV)
+# KEEP ONLY CANDIDATE PARENTS EXPECTED TO BE IN THE FIELD
+table(union_bestGEBVandGETGV %in% accessions_infield$FullSampleName)
+# FALSE  TRUE 
+#   165   200
+parentsToPredictCrosses<-union_bestGEBVandGETGV %>% 
+  .[. %in% accessions_infield$FullSampleName]
+CrossesToPredict<-crosses2predict(parentsToPredictCrosses)
 nrow(CrossesToPredict)
-# [1] 7381 
+# [1] 20100 possible crosses of 200 parents
+
+saveRDS(parentsToPredictCrosses,
+        file = here::here("output",
+                          "parentsToPredictCrosses_2021Aug10.rds"))
+saveRDS(CrossesToPredict,
+        file = here::here("output",
+                          "CrossesToPredict_2021Aug10.rds"))
 ```
 
-Run the "AD" and "DirDom" modelTypes.  
+Predict all pairwise crosses of those 200 parents.
 
-### Testing
-```{r debug inputs}
-# modelType="DirDom";
-# stdSelInt = 2.67; 
-# selInd=TRUE;
-# set.seed(111);
-# SIwts=SIwts[sample(1:length(SIwts),3,replace = F)];
-# 
-# # predict first 3 crosses only for speed
-# CrossesToPredict=CrossesToPredict %>% slice(1:3);
-# 
-# # sample 1000 SNPs to make preds go faster
-# set.seed(22222)
-# snps2keep<-sample(colnames(dosages),size = 1000,replace = F)
-# 
-# dosages=dosages[,snps2keep];
-# haploMat=haploMat[,snps2keep];
-# recombFreqMat=recombFreqMat[snps2keep,snps2keep];
-# ncores=15;nBLASthreads=5
-# 
-# # model DirDom
-# snpeffs=gpreds_dirdom$genomicPredOut[[1]];
-# snpeffs %<>% 
-#   filter(Trait %in% names(SIwts)) %>% 
-#   mutate(across(contains("snpeff"),~map(.,~.[snps2keep,,drop=F])))
-```
-```{r debugged version of predictCrosses}
-# predictCrosses<-function(modelType,
-#                          stdSelInt = 2.67,
-#                          selInd,SIwts = NULL,
-#                          CrossesToPredict,
-#                          snpeffs,dosages,
-#                          haploMat,recombFreqMat,
-#                          ncores=1,nBLASthreads=NULL){
-#   ## Format SNP effect matrices ~~~~~~~~~~~~~~~~~~~~~~~~
-# 
-#   AlleleSubEffectList<-snpeffs$allelesubsnpeff %>%
-#     `names<-`(.,snpeffs$Trait) %>%
-#     map(.,~t(.))
-# 
-#   if(modelType=="AD"){
-#     # DomDevEffects for model "AD" to predict VarTGV = VarBV + VarDD
-#     DomDevEffectList=snpeffs$domdevsnpeff %>%
-#       `names<-`(.,snpeffs$Trait) %>%
-#       map(.,~t(.)) }
-# 
-#   if(modelType=="DirDom"){
-#     # AddEffectList + DomEffectList --> VarTGV; AlleleSubEffectList --> VarBV;
-#     AddEffectList<-snpeffs$addsnpeff %>%
-#       `names<-`(.,snpeffs$Trait) %>%
-#       map(.,~t(.))
-#     DomEffectList<-snpeffs$domsnpeff %>%
-#       `names<-`(.,snpeffs$Trait) %>%
-#       map(.,~t(.)) }
-# 
-#   ## Predict cross variances ~~~~~~~~~~~~~~~~~~~~~~~~
-#   print("Predicting cross variance parameters")
-#   if(modelType=="A"){
-#     predictedvars<-predCrossVars(CrossesToPredict=CrossesToPredict,
-#                                  AddEffectList=AlleleSubEffectList,
-#                                  modelType="A",
-#                                  haploMat=haploMat,
-#                                  recombFreqMat=recombFreqMat,
-#                                  ncores=ncores,nBLASthreads=nBLASthreads) %>%
-#       unnest(predVars) %>%
-#       mutate(predOf="VarBV") }
-#   if(modelType=="AD"){
-#     predictedvars<-predCrossVars(CrossesToPredict=CrossesToPredict,
-#                                  AddEffectList=AlleleSubEffectList,
-#                                  DomEffectList=DomDevEffectList,
-#                                  modelType="AD",
-#                                  haploMat=haploMat,
-#                                  recombFreqMat=recombFreqMat,
-#                                  ncores=ncores,nBLASthreads=nBLASthreads)
-#     predictedvars %<>%
-#       unnest(predVars) %>%
-#       mutate(predOf=ifelse(predOf=="VarA","VarBV","VarDD"))
-#   }
-#   if(modelType=="DirDom"){
-#     predictedvarTGV<-predCrossVars(CrossesToPredict=CrossesToPredict,
-#                                    AddEffectList=AddEffectList,
-#                                    DomEffectList=DomEffectList,
-#                                    modelType="AD", # no "DirDom" model in predCrossVars() nor is it needed
-#                                    haploMat=haploMat,
-#                                    recombFreqMat=recombFreqMat,
-#                                    ncores=ncores,nBLASthreads=nBLASthreads)
-#     predictedvarBV<-predCrossVars(CrossesToPredict=CrossesToPredict,
-#                              AddEffectList=AlleleSubEffectList,
-#                              DomEffectList=NULL,
-#                              modelType="A", # no "DirDom" model in predCrossVars() nor is it needed
-#                              haploMat=haploMat,
-#                              recombFreqMat=recombFreqMat,
-#                              ncores=ncores,nBLASthreads=nBLASthreads)
-#     predictedvars<-predictedvarBV %>%
-#       unnest(predVars) %>%
-#       mutate(predOf="VarBV") %>%
-#       bind_rows(predictedvarTGV %>%
-#                   unnest(predVars)) }
-# 
-#   ## Predict cross means ~~~~~~~~~~~~~~~~~~~~~~~~
-#   print("Predicting cross means")
-#   ### predict MeanBVs
-#   predictedmeans<-predCrossMeans(AddEffectList=AlleleSubEffectList,
-#                                  CrossesToPredict=CrossesToPredict,
-#                                  doseMat=dosages,
-#                                  ncores=ncores,
-#                                  nBLASthreads=nBLASthreads,
-#                                  predType="BV")
-#   if(modelType=="AD"){
-#     ### DO NOT predict MeanTGV ~but~ duplicate MeanBV as MeanTGV prediction
-#     ### there IS predVarTGV for this model, output predUC-TGV (i.e. UC_variety)
-#     predictedmeans %<>%
-#       bind_rows(predictedmeans %>% mutate(predOf="TGV")) }
-# 
-#   if(modelType=="DirDom"){
-#     ### predict MeanTGVs
-#     ####  Prediction of MeanTGV is only available for the DirDom model
-#     #### or a model with "genotypic" additive-dominance SNP effects
-#     #### As implemented, modelType="AD" is the "classical" partition (BVs+ DomDevs)
-#     predictedmeans %<>%
-#       bind_rows(predCrossMeans(AddEffectList=AddEffectList,
-#                                DomEffectList=DomEffectList,
-#                                CrossesToPredict=CrossesToPredict,
-#                                doseMat=dosages,
-#                                ncores=ncores,
-#                                nBLASthreads=nBLASthreads,
-#                                predType="TGV"))
-#   }
-# 
-#   ## SIMPLIFIED, TIDY, CROSS-WISE OUTPUT ~~~~~~~~~~~~~~~~~~~~~~~~
-#   # store raw mean and var preds
-#   rawPreds<-list(predMeans=list(predictedmeans),
-#                  predVars=list(predictedvars))
-# 
-#   ## tidy pred. means ~~~~~~
-#   predictedmeans %<>%
-#     mutate(predOf=gsub("Mean","",predOf),
-#            Trait2=Trait) %>% # to match with variance pred. output
-#     rename(Trait1=Trait) %>% # to match with variance pred. output
-#     select(sireID,damID,predOf,Trait1,Trait2,predMean)
-# 
-#   ## tidy pred. vars ~~~~~~
-#   predictedvars %<>%
-#     select(sireID,damID,Nsegsnps,predOf,Trait1,Trait2,predVar) %>%
-#     mutate(predOf=gsub("Var","",predOf))
-#   if(modelType=="AD"){
-#     predictedvars %<>%
-#       filter(predOf=="BV") %>%
-#       bind_rows(predictedvars %>%
-#                   pivot_wider(names_from = "predOf",
-#                               values_from = "predVar",
-#                               names_prefix = "predVar") %>%
-#                   mutate(predVar=predVarBV+predVarDD,
-#                          predOf="TGV") %>%
-#                   select(-predVarBV,-predVarDD))
-#   }
-#   if(modelType=="DirDom"){
-#     predictedvars %<>%
-#       filter(predOf=="BV") %>%
-#       bind_rows(predictedvars %>%
-#                   filter(predOf!="BV") %>%
-#                   pivot_wider(names_from = "predOf",
-#                               values_from = "predVar",
-#                               names_prefix = "predVar") %>%
-#                   mutate(predVar=predVarA+predVarD,
-#                          predOf="TGV") %>%
-#                   select(-predVarA,-predVarD))
-#   }
-# 
-#   ## SELECTION INDEX MEANS AND VARIANCES ~~~~~~~~~~~~~~~~~~~~~~~~
-#   #### Compute and add to tidy output, if requested
-#   if(selInd){
-#     print("Computing SELECTION INDEX means and variances.")
-#     traits<-unique(predictedmeans$Trait1)
-#     ## Compute Mean SELIND
-#     predictedmeans %<>%
-#       select(-Trait2) %>%
-#       spread(Trait1,predMean) %>%
-#       select(sireID,damID,predOf,all_of(traits)) %>%
-#       mutate(SELIND=as.numeric((predictedmeans %>%
-#                                   select(-Trait2) %>%
-#                                   spread(Trait1,predMean) %>%
-#                                   select(all_of(names(SIwts))) %>%
-#                                   as.matrix(.))%*%SIwts)) %>%
-#       relocate(SELIND, .after = predOf) %>%
-#       pivot_longer(cols = c(SELIND,all_of(traits)),
-#                    names_to = "Trait1",
-#                    values_to = "predMean") %>%
-#       mutate(Trait2=Trait1) %>%
-#       select(sireID,damID,predOf,Trait1,Trait2,predMean)
-#     ## Compute Var SELIND
-#     require(furrr); plan(multisession, workers = ncores)
-#     options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
-# 
-#     predictedvars %<>%
-#       nest(predVars=c(Trait1,Trait2,predVar)) %>%
-#       ## loop over each rep-fold-predOf-sireIDxdamID
-#       mutate(predVars=future_map(predVars,function(predVars,...){
-# 
-#         gmat<-predVars %>%
-#           pivot_wider(names_from = "Trait2",
-#                       values_from = "predVar") %>%
-#           column_to_rownames(var = "Trait1") %>%
-#           as.matrix
-#         gmat[lower.tri(gmat)]<-t(gmat)[lower.tri(gmat)]
-#         gmat %<>% .[names(SIwts),names(SIwts)]
-#         predSelIndVar<-SIwts%*%gmat%*%SIwts
-#         ## add sel index predictions to component trait
-#         ## var-covar predictions
-# 
-#         predVars<-tibble(Trait1="SELIND",Trait2="SELIND",
-#                          predVar=as.numeric(predSelIndVar)) %>%
-#           bind_rows(predVars)
-#         return(predVars) })) %>%
-#       unnest(predVars)
-#     plan(sequential)
-#   }
-# 
-#   ## USEFULNESS CRITERIA ~~~~~~~~~~~~~~~~~~~~~~~~
-#   tidyPreds<-predictedvars %>%
-#     inner_join(predictedmeans) %>%
-#     rename(Trait=Trait1) %>%
-#     select(sireID,damID,Nsegsnps,predOf,Trait,predMean,predVar) %>%
-#     mutate(predSD=sqrt(predVar),
-#            predUsefulness=predMean+(stdSelInt*predSD))
-# 
-#   predictions<-tibble(tidyPreds=list(tidyPreds),
-#                       rawPreds=list(rawPreds))
-#   return(predictions)
-# }
-``` 
-```{r run tests of both modelTypes}
-# set.seed(111);
-# SIwts=SIwts[sample(1:length(SIwts),3,replace = F)];
-# # predict first 3 crosses only for speed
-# CrossesToPredict=CrossesToPredict %>% slice(1:3);
-# # sample 1000 SNPs to make preds go faster
-# set.seed(22222)
-# snps2keep<-sample(colnames(dosages),size = 1000,replace = F)
-# dosages=dosages[,snps2keep];
-# haploMat=haploMat[,snps2keep];
-# recombFreqMat=recombFreqMat[snps2keep,snps2keep];
-# 
-# # model DirDom
-# snpeffs=gpreds_dirdom$genomicPredOut[[1]];
-# snpeffs %<>%
-#   filter(Trait %in% names(SIwts)) %>%
-#   mutate(across(contains("snpeff"),~map(.,~.[snps2keep,,drop=F])))
-# testpreds_dirdom<-predictCrosses(modelType="DirDom",
-#                                  stdSelInt = 2.67, 
-#                                  selInd=TRUE, SIwts=SIwts,
-#                                  CrossesToPredict=CrossesToPredict,
-#                                  snpeffs=snpeffs,
-#                                  dosages=dosages,
-#                                  haploMat=haploMat,recombFreqMat=recombFreqMat,
-#                                  ncores=15,nBLASthreads=5)
-# 
-# 
-# # model AD
-# snpeffs=gpreds_ad$genomicPredOut[[1]];
-# snpeffs %<>%
-#   filter(Trait %in% names(SIwts)) %>%
-#   mutate(across(contains("snpeff"),~map(.,~.[snps2keep,,drop=F])))
-# testpreds_ad<-predictCrosses(modelType="AD",
-#                              stdSelInt = 2.67, 
-#                              selInd=TRUE, SIwts=SIwts,
-#                              CrossesToPredict=CrossesToPredict,
-#                              snpeffs=snpeffs,
-#                              dosages=dosages,
-#                              haploMat=haploMat,recombFreqMat=recombFreqMat,
-#                              ncores=15,nBLASthreads=5)
+```{r crossPred analysis chunks}
+# cbsulm17 - 112 cores, 512 GB RAM - 2021 Aug 11 - 8:10am
+snpSet<-"full_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_IITA_2021Aug09.rds")))
+predTheMeans<-TRUE; predTheVars<-FALSE
+gpreds<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds")); gc()
+## takes ~2 minutes, predicting means only
+
+# cbsulm17 - 112 cores, 512 GB RAM - 2021 Aug 10 - 8:25am
+snpSet<-"medium_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_MediumSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_MediumSNPset_IITA_2021Aug09.rds")))
+predTheMeans<-TRUE; predTheVars<-TRUE
+gpreds<-readRDS(file = here::here("output","genomicPredictions_medium_set_2021Aug09.rds")); gc()
 
 ```
 
+```{r run crossPreds for each snpset}
+snps2keep<-snpsets %>% 
+  filter(Set==snpSet) %>% 
+  select(snps2keep) %>% 
+  unnest(snps2keep)
 
+dosages<-dosages[,snps2keep$FULL_SNP_ID]
+haploMat<-haploMat[,snps2keep$FULL_SNP_ID]
+recombFreqMat<-recombFreqMat[snps2keep$FULL_SNP_ID,snps2keep$FULL_SNP_ID]
+rm(snpsets); gc()
+snpSet; dim(dosages); predTheMeans; predTheVars
 
-### Full run 
-
-cbsulm15 - July 25 - 7:30pm
-```{r predict UC - top 121 parents - model DirDom}
 start<-proc.time()[3]
-crossPreds_dirdom<-predictCrosses(modelType="DirDom",stdSelInt = 2.67, 
-                                  selInd=TRUE, SIwts=SIwts,
-                                  CrossesToPredict=CrossesToPredict,
-                                  snpeffs=gpreds_dirdom$genomicPredOut[[1]],
-                                  dosages=dosages,
-                                  haploMat=haploMat,recombFreqMat=recombFreqMat,
-                                  ncores=20,nBLASthreads=5)
+crossPreds<-predictCrosses(modelType="DirDom",stdSelInt = 2.0627128, 
+                           selInd=TRUE, SIwts=SIwts,
+                           CrossesToPredict=CrossesToPredict,
+                           snpeffs=gpreds$genomicPredOut[[1]],
+                           dosages=dosages,
+                           haploMat=haploMat,recombFreqMat=recombFreqMat,
+                           ncores=20,nBLASthreads=5,
+                           predTheMeans = predTheMeans,
+                           predTheVars = predTheVars)
 runtime<-proc.time()[3]-start; runtime/60
-saveRDS(crossPreds_dirdom,file = here::here("output","genomicMatePredictions_top121parents_ModelDirDom.rds"))
+saveRDS(crossPreds,file = here::here("output",
+                                     paste0("genomicMatePredictions_",
+                                            snpSet,"_2021Aug10.rds")))
 
 ```
 
-cbsulm17 - July 25 at 7:30pm
-```{r predict UC - top 121 parents - model AD}
-start<-proc.time()[3]
-crossPreds_ad<-predictCrosses(modelType="AD",stdSelInt = 2.67, 
-                              selInd=TRUE, SIwts=SIwts,
-                              CrossesToPredict=CrossesToPredict,
-                              snpeffs=gpreds_ad$genomicPredOut[[1]],
-                              dosages=dosages,
-                              haploMat=haploMat,recombFreqMat=recombFreqMat,
-                              ncores=20,nBLASthreads=5)
-runtime<-proc.time()[3]-start; runtime/60
-saveRDS(crossPreds_ad,file = here::here("output","genomicMatePredictions_top121parents_ModelAD.rds"))
+# Write tidy breeder-friendly predictions to disk
+
+Add genetic groups and cohort identifiers and tidy format
+```{r output tidy csv of gebv/getgv}
+library(tidyverse);
+gpreds<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds")) 
+gpreds$gblups[[1]] %>% 
+  mutate(GeneticGroup=case_when(grepl("2013_|TMS13",GID)~"C1",
+                                grepl("TMS14",GID)~"C2",
+                                grepl("TMS15",GID)~"C3",
+                                grepl("TMS18",GID)~"C4",
+                                grepl("TMS20",GID)~"C5",
+                                grepl("TMS16",GID)~"TMS16",
+                                grepl("TMS17",GID)~"TMS17",
+                                grepl("TMS19",GID)~"TMS19",
+                                !grepl("2013_|TMS13|TMS14|TMS15|TMS16|TMS17|TMS18|TMS19|TMS20",GID)~"PreGS"),
+         #GeneticGroup=factor(GeneticGroup,levels = c("PreGS","C1","C2","C3","C4","C5","TMS16","TMS17","TMS19")),
+         Cohort=case_when(grepl("2013_|TMS13",GID)~"TMS13",
+                          grepl("TMS14",GID)~"TMS14",
+                          grepl("TMS15",GID)~"TMS15",
+                          grepl("TMS16",GID)~"TMS16",
+                          grepl("TMS17",GID)~"TMS17",
+                          grepl("TMS18",GID)~"TMS18",
+                          grepl("TMS19",GID)~"TMS19",
+                          grepl("TMS20",GID)~"TMS20",
+                          !grepl("2013_|TMS13|TMS14|TMS15|TMS16|TMS17|TMS18|TMS19|TMS20",GID)~"PreGS")) %>% 
+  relocate(GeneticGroup,.after = "predOf") %>% 
+  relocate(Cohort,.after = "GeneticGroup") %>% 
+  arrange(predOf,desc(SELIND)) %>% 
+  write.csv(.,file = here::here("output","genomicPredictions_full_set_2021Aug09.csv"),
+            row.names = F)
 ```
 
-# [TO DO] Write predictions to disk
-
-Add genetic groups and tidy format
-
-```{r}
-# unique_gids<-predModelA %>%
-#   dplyr::select(genomicPredOut) %>%
-#   unnest(genomicPredOut) %>%
-#   select(-varcomps) %>%
-#   unnest(gblups) %$%
-#   GID %>%
-#   unique
+```{r output tidy csv of usefulness predictions}
+# crossPreds_dirdom<-readRDS(file = here::here("output","genomicMatePredictions_top121parents_ModelDirDom.rds"))
+# crossPreds_ad<-readRDS(file = here::here("output","genomicMatePredictions_top121parents_ModelAD.rds"))
 # 
-# c1a<-unique_gids %>%
-#   grep("c1a",.,value = T,ignore.case = T) %>%
-#   union(.,unique_gids %>%
-#           grep("^F",.,value = T,ignore.case = T) %>%
-#           grep("c1b",.,value = T,ignore.case = T,invert = T))
-# c1b<-unique_gids%>% grep("c1b",.,value = T,ignore.case = T)
-# c2a<-unique_gids %>%
-#   grep("C2a",.,value = T,ignore.case = T) %>%
-#   grep("NR17",.,value = T,ignore.case = T)
-# c2b<-unique_gids %>%
-#   grep("C2b",.,value = T,ignore.case = T) %>%
-#   .[!. %in% c(c1a,c1b,c2a)]
-# c3a<-unique_gids %>%
-#   grep("C3a",.,value = T,ignore.case = T) %>%
-#   .[!. %in% c(c1a,c1b,c2a,c2b)]
-# c3b<-unique_gids %>%
-#   grep("NR20C3",.,value = T,ignore.case = T) %>%
-#   .[!. %in% c(c1a,c1b,c2a,c2b,c3a)]
-# nrTP<-setdiff(unique_gids,unique(c(c1a,c1b,c2a,c2b,c3a,c3b)))
+# crossPreds_ad$tidyPreds[[1]] %>% 
+#   mutate(sireGroup=case_when(grepl("2013_|TMS13",sireID)~"C1",
+#                              grepl("TMS14",sireID)~"C2",
+#                              grepl("TMS15",sireID)~"C3",
+#                              grepl("TMS18",sireID)~"C4",
+#                              !grepl("2013_|TMS13|TMS14|TMS15|TMS18",sireID)~"PreGS"),
+#          damGroup=case_when(grepl("2013_|TMS13",damID)~"C1",
+#                             grepl("TMS14",damID)~"C2",
+#                             grepl("TMS15",damID)~"C3",
+#                             grepl("TMS18",damID)~"C4",
+#                             !grepl("2013_|TMS13|TMS14|TMS15|TMS18",damID)~"PreGS"),
+#          CrossGroup=paste0(sireGroup,"x",damGroup)) %>% 
+#   relocate(contains("Group"),.before = "Nsegsnps") %>% 
+#   write.csv(.,file = here::here("output","genomicMatePredictions_top121parents_ModelAD.csv"),
+#             row.names = F)
+# 
+# crossPreds_dirdom$tidyPreds[[1]] %>% 
+#   mutate(sireGroup=case_when(grepl("2013_|TMS13",sireID)~"C1",
+#                              grepl("TMS14",sireID)~"C2",
+#                              grepl("TMS15",sireID)~"C3",
+#                              grepl("TMS18",sireID)~"C4",
+#                              !grepl("2013_|TMS13|TMS14|TMS15|TMS18",sireID)~"PreGS"),
+#          damGroup=case_when(grepl("2013_|TMS13",damID)~"C1",
+#                             grepl("TMS14",damID)~"C2",
+#                             grepl("TMS15",damID)~"C3",
+#                             grepl("TMS18",damID)~"C4",
+#                             !grepl("2013_|TMS13|TMS14|TMS15|TMS18",damID)~"PreGS"),
+#          CrossGroup=paste0(sireGroup,"x",damGroup)) %>% 
+#   relocate(contains("Group"),.before = "Nsegsnps") %>% 
+#   write.csv(.,file = here::here("output","genomicMatePredictions_top121parents_ModelDirDom.csv"),
+#             row.names = F)
 ```
 
-Write CSV's
-
-```{r}
-# ## Format and write GEBV
-# predModelA %>% 
-#   select(Trait,genomicPredOut) %>% 
-#   unnest(genomicPredOut) %>% 
-#   select(-varcomps) %>% 
-#   unnest(gblups) %>% 
-#   select(-GETGV,-contains("PEV")) %>%
-#   spread(Trait,GEBV) %>% 
-#   mutate(Group=case_when(GID %in% nrTP ~ "nrTP",
-#                          GID %in% c1a ~ "C1a",
-#                          GID %in% c1b ~ "C1b",
-#                          GID %in% c2a ~ "C2a",
-#                          GID %in% c2b ~ "C2b",
-#                          GID %in% c3a ~ "C3a",
-#                          GID %in% c3b ~ "C3b")) %>% 
-#   select(Group,GID,any_of(traits)) %>% 
-#   arrange(desc(Group)) %>% 
-#   write.csv(., file = here::here("output","GEBV_NRCRI_ModelA_2021May03.csv"), row.names = F)
-# 
-# ## Format and write GETGV
-# predModelADE %>% 
-#   select(Trait,genomicPredOut) %>% 
-#   unnest(genomicPredOut) %>% 
-#   select(-varcomps) %>% 
-#   unnest(gblups) %>% 
-#   select(GID,Trait,GETGV) %>% 
-#   spread(Trait,GETGV) %>% 
-#   mutate(Group=case_when(GID %in% nrTP ~ "nrTP",
-#                          GID %in% c1a ~ "C1a",
-#                          GID %in% c1b ~ "C1b",
-#                          GID %in% c2a ~ "C2a",
-#                          GID %in% c2b ~ "C2b",
-#                          GID %in% c3a ~ "C3a",
-#                          GID %in% c3b ~ "C3b")) %>% 
-#   select(Group,GID,any_of(traits)) %>% 
-#   arrange(desc(Group)) %>% 
-#   write.csv(., file = here::here("output","GETGV_NRCRI_ModelADE_2021May03.csv"), row.names = F)
-# 
-# ### Make a unified "tidy" long-form: 
-# predModelA %>% 
-#   select(Trait,genomicPredOut) %>% 
-#   unnest(genomicPredOut) %>% 
-#   select(-varcomps) %>% 
-#   unnest(gblups) %>% 
-#   select(-GETGV) %>% 
-#   full_join(predModelADE %>% 
-#               select(Trait,genomicPredOut) %>% 
-#               unnest(genomicPredOut) %>% 
-#               select(-varcomps) %>% 
-#               unnest(gblups) %>% 
-#               rename(GEBV_modelADE=GEBV,
-#                      PEV_modelADE=PEVa) %>% 
-#               select(-genomicPredOut)) %>% 
-#   mutate(Group=case_when(GID %in% nrTP ~ "nrTP",
-#                          GID %in% c1a ~ "C1a",
-#                          GID %in% c1b ~ "C1b",
-#                          GID %in% c2a ~ "C2a",
-#                          GID %in% c2b ~ "C2b",
-#                          GID %in% c3a ~ "C3a",
-#                          GID %in% c3b ~ "C3b")) %>% 
-#   relocate(Group,.before = GID) %>% 
-#   write.csv(., file = here::here("output","genomicPredictions_NRCRI_2021May03.csv"), row.names = F)
-```
 
 
 

@@ -1,5 +1,5 @@
 ---
-title: "Parent-wise cross-validation to check the accuracy of predicting cross (co)-variances"
+title: "Parent-wise and standard cross-validation"
 author: "Marnin Wolfe"
 date: "2021-May-14"
 output: 
@@ -19,78 +19,24 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F,
 
 4.  [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, pedigree and BLUPs, genetic map *and* recombination frequency matrix, for use in predictions.
 
-Also:
+# Parent-wise cross-validation
 
-5.  [Extract and process PHG files](08-PHGfiles.html): Extract a VCF file from the PHG `*.db` file produced by Evan Long. Subsequently, prepare haplotype and dosage matrices, genetic map *and* recombination frequency matrix, for use in predictions.
+**Assess the accuracy of predicted previously unobserved crosses.**
 
-# Automating cross-validation
-
-In the manuscript, the cross-validation is documented many pages and scripts, [documented here](https://wolfemd.github.io/PredictOutbredCrossVar/).
-
-For ongoing GS, I have a function `runCrossVal()` that manages all inputs and outputs easy to work with pre-computed accuracies.
-
-Goal here is to make a function: `runParentWiseCrossVal()`, or at least make progress towards developing one.
-
-*However*, for computational reasons, I imagine it might still be best to separate the task into a few functions.
-
-My goal is to simplify and integrate into the pipeline used for NextGen Cassava. In the paper, used multi-trait Bayesian ridge-regression (MtBRR) to obtain marker effects, and also stored posterior matrices on disk to later compute posterior mean variances. This was computationally expensive and different from my standard univariate REML approach. I think MtBRR and PMV are probably the least biased way to go... but...
-
-For the sake of testing a simple integration into the in-use pipeline, I want to try univariate REML to get the marker effects, which I'll subsequently use for the cross-validation.
-
-Revised the functions in **`package:predCrossVar`** to increase the computational efficiency. Not yet included into the actual R package but instead sourced from `code/predCrossVar.R`. Additional speed increases were achieved by extra testing to optimize balance of `OMP_NUM_THREADS` setting (multi-core BLAS) and parallel processing of the  crosses-being-predicted. Improvements will benefit users predicting with REML / Bayesian-VPM, but probably worse for Bayesian-PMV.
-
-# Set-up server computing env.
-
-Use a a singularity image from the rocker project, as recommended by Qi Sun to get an OpenBLAS-linked R environment that packages can easily be installed on.
-
-**This first chunk is one-time only and doesn't take long. Saves a 650Mb `*.sif` file to server's /workdir/**
-```{bash, eval=F}
-# copy the project data
-cd /home/jj332_cas/marnin/;
-cp -R implementGMSinCassava /home/$USER;
-# the project directory can be in my networked folder for 2 reasons:
-# 1) singularity will automatically recognize and be able to access it
-# 2) My analyses not read/write intensive; don't break server rules/etiquette 
-# set up a working directory on the remote machine
-mkdir /workdir/$USER
-cd /workdir/$USER/; 
-
-# pull a singularity image and save in the file rocker.sif
-# next time you use the rocker.sif file to start the container
-singularity pull rocker.sif docker://rocker/tidyverse:latest;
-```
-
-For analysis, operate each R session within a singularity Linux shell within a screen shell.
-```{bash, eval=F}
-# 1) start a screen shell
-screen; 
+```{bash parentwiseCV R env, eval=F}
+# 1) start a screen shell 
+screen; # or screen -r if re-attaching...
 # 2) start the singularity Linux shell inside that
-singularity shell /workdir/$USER/rocker.sif; 
+singularity shell ~/rocker2.sif; 
 # Project directory, so R will use as working dir.
-cd /home/mw489/implementGMSinCassava/;
+cd /home/mw489/IITA_2021GS/;
 # 3) Start R
 R
 ```
-
-# Parent-wise cross-validation
-
-Fully-tested `runParentWiseCrossVal()` and component functions are in the `code/parentWiseCrossVal.R` script. 
-
-Below, source it and use it for a full cross-validation run. 
-
-```{r install packages if needed}
-# install.packages(c("RhpcBLASctl","here","rsample","sommer","psych","future.callr","furrr","lme4"))
-# install.packages('future.callr')
-```
-
-```{r primary inputs}
-require(tidyverse); require(magrittr); 
-# 5 threads per Rsession for matrix math (openblas)
-RhpcBLASctl::blas_set_num_threads(5)
-
-# SOURCE CORE FUNCTIONS
-source(here::here("code","parentWiseCrossVal.R"))
-source(here::here("code","predCrossVar.R"))
+```{r parentwiseCV input}
+# NEEDED LIBRARIES
+require(tidyverse); require(magrittr); library(qs)
+library(genomicMateSelectR)
 
 # PEDIGREE
 ped<-read.table(here::here("output","verified_ped.txt"),
@@ -99,39 +45,33 @@ ped<-read.table(here::here("output","verified_ped.txt"),
          damID=DamID,
          sireID=SireID) %>% 
   dplyr::select(GID,sireID,damID)
+
 # Keep only families with _at least_ 2 offspring
 ped %<>%
   semi_join(ped %>% count(sireID,damID) %>% filter(n>1) %>% ungroup())
 
 # BLUPs
-blups<-readRDS(file=here::here("data","blups_forCrossVal.rds")) %>% 
+blups<-readRDS(file=here::here("data","blups_forGP.rds")) %>% 
   dplyr::select(-varcomp)
 
-# GENOMIC RELATIONSHIP MATRICES (GRMS)
-grms<-list(A=readRDS(file=here::here("output","kinship_A_IITA_2021May13.rds")),
-           D=readRDS(file=here::here("output",
-                                     "kinship_domGenotypic_IITA_2021July5.rds")))
-## using A+domGenotypic (instead of domClassic used previously)
-## will achieve appropriate dom effects for predicting family mean TGV
-## but resulting add effects WILL NOT represent allele sub. effects and thus
-## predictions won't equal GEBV, allele sub. effects will be post-computed
-## as alpha = a + d(q-p)
+# DOSAGE MATRIX (UNFILTERED)
+dosages<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
 
-# DOSAGE MATRIX
-dosages<-readRDS(file=here::here("data",
-                                 "dosages_IITA_filtered_2021May13.rds"))
+# RECOMBINATION FREQUENCY MATRIX (UNFILTERED)
+recombFreqMat<-qread(file=here::here("data",
+                                     "recombFreqMat_1minus2c_2021Aug02.qs"))
 
-# RECOMBINATION FREQUENCY MATRIX
-recombFreqMat<-readRDS(file=here::here("data",
-                                       "recombFreqMat_1minus2c_2021May13.rds"))
-# HAPLOTYPE MATRIX
+# HAPLOTYPE MATRIX (UNFILTERED)
 ## keep only haplos for parents-in-the-pedigree
 ## those which will be used in prediction, saves memory
-haploMat<-readRDS(file=here::here("data","haps_IITA_filtered_2021May13.rds"))
+haploMat<-readRDS(file=here::here("data","haps_IITA_2021Aug09.rds"))
 parents<-union(ped$sireID,ped$damID) 
 parenthaps<-sort(c(paste0(parents,"_HapA"),
                    paste0(parents,"_HapB")))
-haploMat<-haploMat[parenthaps,colnames(recombFreqMat)]
+haploMat<-haploMat[parenthaps,]
+
+# SNP SETS TO ANALYZE
+snpsets<-readRDS(file = here::here("data","snpsets.rds"))
 
 # SELECTION INDEX WEIGHTS
 ## from IYR+IK
@@ -145,234 +85,380 @@ SIwts<-c(logFYLD=20,
          logTOPYLD=15,
          PLTHT=10) 
 ```
+```{r parentwiseCV analysis chunks}
+# cbsulm14 - 112 cores, 512 GB RAM - 2021 Aug 10 - 1:10pm
+snpSet<-"full_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_IITA_2021Aug09.rds")))
+# [1] "Marker-effects Computed. Took  3.08366 hrs"
+# [1] "Done predicting fam vars. Took 51.41 mins for 209 crosses"
+# [1] "Done predicting fam vars. Took 20.63 mins for 209 crosses"
+# [1] "Done predicting fam vars. Took 39.99 mins for 155 crosses"
+# [1] "Done predicting fam vars. Took 15.56 mins for 155 crosses"
+# [1] "Done predicting fam vars. Took 57.26 mins for 226 crosses"
+# [1] "Done predicting fam vars. Took 21.83 mins for 226 crosses"
+# [1] "Done predicting fam vars. Took 53.94 mins for 223 crosses"
+# [1] "Done predicting fam vars. Took 20.51 mins for 223 crosses"
+# [1] "Done predicting fam vars. Took 53.21 mins for 204 crosses"
+# [1] "Done predicting fam vars. Took 20.25 mins for 204 crosses"
+# [1] "Done predicting fam vars. Took 48.73 mins for 188 crosses"
+# [1] "Done predicting fam vars. Took 18.62 mins for 188 crosses"
+# [1] "Done predicting fam vars. Took 55.69 mins for 228 crosses"
+# [1] "Done predicting fam vars. Took 21.25 mins for 228 crosses"
+# [1] "Done predicting fam vars. Took 56.76 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 22.43 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 47.4 mins for 194 crosses"
+# [1] "Done predicting fam vars. Took 18.68 mins for 194 crosses"
+# [1] "Done predicting fam vars. Took 42.87 mins for 175 crosses"
+# [1] "Done predicting fam vars. Took 16.79 mins for 175 crosses"
+# [1] "Done predicting fam vars. Took 54.11 mins for 216 crosses"
+# [1] "Done predicting fam vars. Took 21.92 mins for 216 crosses"
+# [1] "Done predicting fam vars. Took 56.88 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 22.41 mins for 235 crosses"
 
-## model=DirDom
-
-Server 1: modelType="DirDom"
-
-cbsulm17 - 112 cores, 512 GB RAM
-```{r model DirDom - 5 full reps - parent-wise CV}
-cvDirDom_5rep5fold<-runParentWiseCrossVal(nrepeats=5,nfolds=5,seed=84,
-                                          modelType="DirDom",
-                                          ncores=20,nBLASthreads=5,
-                                          outName="output/cvDirDom_5rep5fold",
-                                          ped=ped,
-                                          blups=blups,
-                                          dosages=dosages,
-                                          haploMat=haploMat,
-                                          grms=grms,
-                                          recombFreqMat = recombFreqMat,
-                                          selInd = TRUE, SIwts = SIwts)
-saveRDS(cvDirDom_5rep5fold,here::here("output","cvDirDom_5rep5fold_predAccuracy.rds"))
-# [1] "Marker-effects Computed. Took  2.3851 hrs"
+# cbsulm30 - 112 cores, 512 GB RAM - 2021 Aug 10 - 2:40pm
+snpSet<-"medium_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_MediumSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_MediumSNPset_IITA_2021Aug09.rds")))
+# [1] "Marker-effects Computed. Took  1.38038 hrs"
 # [1] "Predicting cross variances and covariances"
 # Joining, by = c("Repeat", "Fold")
-# [1] "Done predicting fam vars. Took 59.08 mins for 198 crosses"
-# [1] "Done predicting fam vars. Took 18.63 mins for 198 crosses"
-# [1] "Done predicting fam vars. Took 64.82 mins for 216 crosses"
-# [1] "Done predicting fam vars. Took 20.41 mins for 216 crosses"
-# [1] "Done predicting fam vars. Took 46.42 mins for 156 crosses"
-# [1] "Done predicting fam vars. Took 14.94 mins for 156 crosses"
-# [1] "Done predicting fam vars. Took 63.45 mins for 210 crosses"
-# [1] "Done predicting fam vars. Took 19.8 mins for 210 crosses"
-# [1] "Done predicting fam vars. Took 50.62 mins for 171 crosses"
-# [1] "Done predicting fam vars. Took 16.26 mins for 171 crosses"
-# [1] "Done predicting fam vars. Took 49.87 mins for 163 crosses"
-# [1] "Done predicting fam vars. Took 16.2 mins for 163 crosses"
-# [1] "Done predicting fam vars. Took 73.37 mins for 253 crosses"
-# [1] "Done predicting fam vars. Took 23.59 mins for 253 crosses"
-# [1] "Done predicting fam vars. Took 56.32 mins for 190 crosses"
-# [1] "Done predicting fam vars. Took 18.44 mins for 190 crosses"
-# [1] "Done predicting fam vars. Took 47.33 mins for 161 crosses"
-# [1] "Done predicting fam vars. Took 15.79 mins for 161 crosses"
-# [1] "Done predicting fam vars. Took 59.18 mins for 189 crosses"
-# [1] "Done predicting fam vars. Took 18.67 mins for 189 crosses"
-# [1] "Done predicting fam vars. Took 64.72 mins for 205 crosses"
-# [1] "Done predicting fam vars. Took 21.17 mins for 205 crosses"
-# [1] "Done predicting fam vars. Took 63.97 mins for 213 crosses"
-# [1] "Done predicting fam vars. Took 20.04 mins for 213 crosses"
-# [1] "Done predicting fam vars. Took 53.03 mins for 180 crosses"
-# [1] "Done predicting fam vars. Took 17.28 mins for 180 crosses"
-# [1] "Done predicting fam vars. Took 58.67 mins for 199 crosses"
-# [1] "Done predicting fam vars. Took 19.03 mins for 199 crosses"
-# ....
+# [1] "Done predicting fam vars. Took 10 mins for 209 crosses"
+# [1] "Done predicting fam vars. Took 4.03 mins for 209 crosses"
+# [1] "Done predicting fam vars. Took 7.57 mins for 155 crosses"
+# [1] "Done predicting fam vars. Took 3.19 mins for 155 crosses"
+# [1] "Done predicting fam vars. Took 11.54 mins for 226 crosses"
+# [1] "Done predicting fam vars. Took 4.36 mins for 226 crosses"
+# [1] "Done predicting fam vars. Took 10.82 mins for 223 crosses"
+# [1] "Done predicting fam vars. Took 4.11 mins for 223 crosses"
+# [1] "Done predicting fam vars. Took 10.27 mins for 204 crosses"
+# [1] "Done predicting fam vars. Took 3.93 mins for 204 crosses"
+# [1] "Done predicting fam vars. Took 9.74 mins for 188 crosses"
+# [1] "Done predicting fam vars. Took 3.7 mins for 188 crosses"
+# [1] "Done predicting fam vars. Took 11 mins for 228 crosses"
+# [1] "Done predicting fam vars. Took 4.19 mins for 228 crosses"
+# [1] "Done predicting fam vars. Took 11.14 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 4.25 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 9.32 mins for 194 crosses"
+# [1] "Done predicting fam vars. Took 3.77 mins for 194 crosses"
+# [1] "Done predicting fam vars. Took 8.57 mins for 175 crosses"
+# [1] "Done predicting fam vars. Took 3.43 mins for 175 crosses"
+# [1] "Accuracies predicted. Took  7.3515 hrs total.Goodbye!"
+# > saveRDS(parentWiseCV,
+# +         file = here::here("output",
+# +                           paste0("parentWiseCV_",snpSet,"_CrossPredAccuracy.rds")))
+# > endtime<-proc.time()[3]; print(paste0("Time elapsed: ",
+# +                                       round((endtime-starttime)/60,3)," mins"))
+# [1] "Time elapsed: 441.107 mins"
 
-# estimate 20 more hours, complete on July 12 very early AM?
 
-# [1] "Accuracies predicted. Took  34.37369 hrs total.Goodbye!"
-# Warning message:
-# In for (ii in 1L:length(res)) { : closing unused connection 3 (localhost)
-# > saveRDS(cvDirDom_5rep5fold,here::here("output","cvDirDom_5rep5fold_predAccuracy.rds"))
+
+# cbsulm17 - 112 cores, 512 GB RAM - 2021 Aug 10 - 1:10pm
+snpSet<-"reduced_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_ReducedSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_ReducedSNPset_IITA_2021Aug09.rds")))
+# FAILED WITH ERRORS BELOW
+```
+"reduced_set" failed with errors in the code chunk below:
+```{r cbsulm17 error on reduced_set}
+snpSet<-"reduced_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_ReducedSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_ReducedSNPset_IITA_2021Aug09.rds")))
+# [1] "Time elapsed: 318.057 mins"
+# Run `rlang::last_error()` to see where the error occurred.
+# > saveRDS(parentWiseCV,
+# +         file = here::here("output",
+# +                           paste0("parentWiseCV_",snpSet,"_CrossPredAccuracy.rds")))
+# Error in saveRDS(parentWiseCV, file = here::here("output", paste0("parentWiseCV_",  :
+#   object 'parentWiseCV' not found
+# > endtime<-proc.time()[3]; print(paste0("Time elapsed: ",
+# +                                       round((endtime-starttime)/60,3)," mins"))
+# [1] "Time elapsed: 318.057 mins"
+# >
+# > rlang::last_error()
+# <error/dplyr:::mutate_error>
+# Problem with `mutate()` column `predVars`.
+# ℹ `predVars = future_map(...)`.
+# ✖ error writing to connection
+# Backtrace:
+#   1. genomicMateSelectR::runParentWiseCrossVal(...)
+#  25. base::.handleSimpleError(...)
+#  26. dplyr:::h(simpleError(msg, call))
+# Run `rlang::last_trace()` to see the full context.
+# Backtrace:
+#      █
+#   1. ├─genomicMateSelectR::runParentWiseCrossVal(...)
+#   2. │ └─genomicMateSelectR:::varPredAccuracy(...)
+#   3. │   └─`%<>%`(...)
+#   4. ├─dplyr::mutate(...)
+#   5. ├─dplyr:::mutate.data.frame(...)
+#   6. │ └─dplyr:::mutate_cols(.data, ..., caller_env = caller_env())
+#   7. │   ├─base::withCallingHandlers(...)
+#   8. │   └─mask$eval_all_mutate(quo)
+#   9. ├─furrr::future_map(...)
+#  10. │ └─furrr:::furrr_map_template(...)
+#  11. │   └─furrr:::furrr_template(...)
+#  12. │     └─future::future(...)
+#  13. │       └─future:::makeFuture(...)
+#  14. │         └─future:::strategy(..., envir = envir, workers = workers)
+#  15. │           ├─future::run(future)
+#  16. │           └─future:::run.ClusterFuture(future)
+#  17. │             ├─base::suppressWarnings(...)
+#  18. │             │ └─base::withCallingHandlers(...)
+#  19. │             └─parallel::clusterCall(cl, fun = gassign, name, value)
+#  20. │               └─parallel:::sendCall(cl[[i]], fun, list(...))
+#  21. │                 └─parallel:::postNode(...)
+#  22. │                   ├─parallel:::sendData(con, list(type = type, data = value, tag = tag))
+#  23. │                   └─parallel:::sendData.SOCK0node(...)
+#  24. │                     └─base::serialize(data, node$con, xdr = FALSE)
+#  25. └─base::.handleSimpleError(...)
+#  26.   └─dplyr:::h(simpleError(msg, call))
+# <error/simpleError>
+# error writing to connection
+# > 
+
+```
+
+In the following code chunk, I manually debug / run the component functions of `runParentWiseCrossVal()` one-by-one only to find no error. Perhaps a server memory issue? Either way, "reduced_set" cross-val. is also completed...
+
+```{r cbsulm30 debug the error}
+# TRY TO FIX FIND AND FIX THE ERROR THAT KILLED THE REDUCED_SET ANALYSIS
+## EVEN THOUGH IT ISN'T A VIP RESULT
+## THE ERROR THAT KILLED IT NEEDS FOUND!
+snpSet<-"reduced_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_ReducedSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_ReducedSNPset_IITA_2021Aug09.rds")))
+
+snps2keep<-snpsets %>% 
+  filter(Set==snpSet) %>% 
+  select(snps2keep) %>% 
+  unnest(snps2keep)
+
+dosages<-dosages[,snps2keep$FULL_SNP_ID]
+haploMat<-haploMat[,snps2keep$FULL_SNP_ID]
+recombFreqMat<-recombFreqMat[snps2keep$FULL_SNP_ID,snps2keep$FULL_SNP_ID]
+rm(snpsets); gc()
+
+parentfolds<-makeParentFolds(ped=ped,gid="GID",
+                             nrepeats=5,
+                             nfolds=5,
+                             seed=121212)
+markEffs<-genomicMateSelectR:::getMarkEffs(parentfolds,blups=blups,gid="GID",modelType="DirDom",
+                                           grms=grms,dosages=dosages,
+                                           ncores=20,nBLASthreads=5)
+saveRDS(parentfolds,file=here::here("output","TMP_parentWiseCV_reduced_set_parentfolds.rds"))
+saveRDS(markEffs,file=here::here("output","TMP_parentWiseCV_reduced_set_markerEffects.rds"))
+
+starttime<-proc.time()[3]
+cvPredVars<-genomicMateSelectR:::predictCrossVars(modelType="DirDom",snpeffs=markEffs,
+                                                  parentfolds=parentfolds,
+                                                  haploMat=haploMat,recombFreqMat=recombFreqMat,
+                                                  ncores=20,nBLASthreads=5)
+# [1] "Done predicting fam vars. Took 4.56 mins for 209 crosses"
+# [1] "Done predicting fam vars. Took 2.35 mins for 209 crosses"
+# [1] "Done predicting fam vars. Took 3.57 mins for 155 crosses"
+# [1] "Done predicting fam vars. Took 1.92 mins for 155 crosses"
+# [1] "Done predicting fam vars. Took 4.94 mins for 226 crosses"
+# [1] "Done predicting fam vars. Took 2.66 mins for 226 crosses"
+# [1] "Done predicting fam vars. Took 4.89 mins for 223 crosses"
+# [1] "Done predicting fam vars. Took 2.45 mins for 223 crosses"
+# [1] "Done predicting fam vars. Took 4.75 mins for 204 crosses"
+# [1] "Done predicting fam vars. Took 2.21 mins for 204 crosses"
+# [1] "Done predicting fam vars. Took 3.95 mins for 188 crosses"
+# [1] "Done predicting fam vars. Took 2.2 mins for 188 crosses"
+# [1] "Done predicting fam vars. Took 4.88 mins for 228 crosses"
+# [1] "Done predicting fam vars. Took 2.58 mins for 228 crosses"
+# [1] "Done predicting fam vars. Took 5.01 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 2.74 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 4.31 mins for 194 crosses"
+# [1] "Done predicting fam vars. Took 2.27 mins for 194 crosses"
+# [1] "Done predicting fam vars. Took 3.98 mins for 175 crosses"
+# [1] "Done predicting fam vars. Took 2.09 mins for 175 crosses"
+# [1] "Done predicting fam vars. Took 4.57 mins for 216 crosses"
+# [1] "Done predicting fam vars. Took 2.63 mins for 216 crosses"
+# [1] "Done predicting fam vars. Took 4.83 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 2.62 mins for 235 crosses"
+# [1] "Done predicting fam vars. Took 4.57 mins for 217 crosses"
+# [1] "Done predicting fam vars. Took 2.49 mins for 217 crosses"
+# [1] "Done predicting fam vars. Took 3.46 mins for 161 crosses"
+# [1] "Done predicting fam vars. Took 1.94 mins for 161 crosses"
+# [1] "Done predicting fam vars. Took 4.23 mins for 187 crosses"
+# [1] "Done predicting fam vars. Took 2.32 mins for 187 crosses"
+# [1] "Done predicting fam vars. Took 4.15 mins for 178 crosses"
+# [1] "Done predicting fam vars. Took 2.07 mins for 178 crosses"
+# [1] "Done predicting fam vars. Took 4.99 mins for 221 crosses"
+# [1] "Done predicting fam vars. Took 2.54 mins for 221 crosses"
+# [1] "Done predicting fam vars. Took 4.06 mins for 188 crosses"
+# [1] "Done predicting fam vars. Took 2.28 mins for 188 crosses"
+# [1] "Done predicting fam vars. Took 5.52 mins for 259 crosses"
+# [1] "Done predicting fam vars. Took 2.86 mins for 259 crosses"
+# [1] "Done predicting fam vars. Took 3.55 mins for 161 crosses"
+# [1] "Done predicting fam vars. Took 1.91 mins for 161 crosses"
+# [1] "Done predicting fam vars. Took 4.68 mins for 211 crosses"
+# [1] "Done predicting fam vars. Took 2.48 mins for 211 crosses"
+# [1] "Done predicting fam vars. Took 4.02 mins for 187 crosses"
+# [1] "Done predicting fam vars. Took 2.21 mins for 187 crosses"
+# [1] "Done predicting fam vars. Took 4.04 mins for 186 crosses"
+# [1] "Done predicting fam vars. Took 2.11 mins for 186 crosses"
+# [1] "Done predicting fam vars. Took 4.5 mins for 216 crosses"
+# [1] "Done predicting fam vars. Took 2.45 mins for 216 crosses"
+
+cvPredMeans<-genomicMateSelectR:::predictCrossMeans(modelType="DirDom",ncores=20,
+                                                    snpeffs=markEffs,
+                                                    parentfolds=parentfolds,
+                                                    doseMat=dosages)
+
+varPredAcc<-genomicMateSelectR:::varPredAccuracy(modelType = "DirDom",ncores=20,
+                                                 crossValOut = cvPredVars,
+                                                 snpeffs = markEffs,
+                                                 ped = ped,selInd = TRUE,SIwts = SIwts)
+
+## Mean prediction accuracies
+meanPredAcc<-genomicMateSelectR:::meanPredAccuracy(modelType = "DirDom",
+                                                   crossValOut = cvPredMeans,
+                                                   snpeffs = markEffs,
+                                                   ped = ped,selInd = TRUE,SIwts = SIwts)
+
+accuracy_out<-list(meanPredAccuracy=meanPredAcc,
+                   varPredAccuracy=varPredAcc)
+saveRDS(accuracy_out,
+        file = here::here("output",
+                          paste0("parentWiseCV_",snpSet,"_CrossPredAccuracy.rds")))
+# In the end, the code completed successfully.
+# There doesn't seem to be a problem with the "reduced_set" or the package...
+# Assuming the "full_set" (still running) completes without problems
+# It may have been a server error or memory issue.... 
 ```
 
 
-## model=AD
-Server 2: modelType="AD"
+```{r run parentwiseCV for each snpset}
+snps2keep<-snpsets %>% 
+  filter(Set==snpSet) %>% 
+  select(snps2keep) %>% 
+  unnest(snps2keep)
 
-cbsulm29 - 104 cores, 512 GB RAM
+dosages<-dosages[,snps2keep$FULL_SNP_ID]
+haploMat<-haploMat[,snps2keep$FULL_SNP_ID]
+recombFreqMat<-recombFreqMat[snps2keep$FULL_SNP_ID,snps2keep$FULL_SNP_ID]
+rm(snpsets); gc()
 
-```{r model AD - 5 full reps - parent-wise CV}
-grmsAD<-list(A=readRDS(file=here::here("output","kinship_A_IITA_2021May13.rds")),
-             D=readRDS(file=here::here("output",
-                                       "kinship_D_IITA_2021May13.rds")))
-rm(grms)
-cvAD_5rep5fold<-runParentWiseCrossVal(nrepeats=5,nfolds=5,seed=84,
-                                      modelType="AD",
-                                      ncores=20,
-                                      outName="output/cvAD_5rep5fold",
-                                      ped=ped,
-                                      blups=blups,
-                                      dosages=dosages,
-                                      haploMat=haploMat,
-                                      grms=grmsAD,
-                                      recombFreqMat = recombFreqMat,
-                                      selInd = TRUE, SIwts = SIwts)
-saveRDS(cvAD_5rep5fold,here::here("output","cvAD_5rep5fold_predAccuracy.rds"))
-# [1] "Marker-effects Computed. Took  1.81086 hrs"
-# [1] "Done predicting fam vars. Took 43.11 mins for 198 crosses"
-# [1] "Done predicting fam vars. Took 47.04 mins for 216 crosses"
-# .....
-# [1] "Accuracies predicted. Took  19.68694 hrs total.\n Goodbye!"
-# [1] "Accuracies predicted. Took  19.73242 hrs total.Goodbye!"
-# > saveRDS(cvAD_5rep5fold,here::here("output","cvAD_5rep5fold_predAccuracy.rds"))
+starttime<-proc.time()[3]
+parentWiseCV<-runParentWiseCrossVal(nrepeats=5,nfolds=5,seed=121212,
+                                    modelType="DirDom",
+                                    ncores=20,nBLASthreads=5,
+                                    outName=NULL,
+                                    ped=ped,
+                                    blups=blups,
+                                    dosages=dosages,
+                                    haploMat=haploMat,
+                                    grms=grms,
+                                    recombFreqMat = recombFreqMat,
+                                    selInd = TRUE, SIwts = SIwts)
+saveRDS(parentWiseCV,
+        file = here::here("output",
+                          paste0("parentWiseCV_",snpSet,"_CrossPredAccuracy.rds")))
+endtime<-proc.time()[3]; print(paste0("Time elapsed: ",
+                                      round((endtime-starttime)/60,3)," mins"))
+
 ```
 
-# [TO DO] PHG parent-wise cross-validation
+# Standard clone-wise cross-validation
 
-# [TO DO] Standard clone-wise cross-validation
+**Run k-fold cross-validation and assess the accuracy of predicted previously unobserved genotypes (individuals) based on the available training data.** 
 
-## Add DirDom to runCrossVal func
-```{r runCrossVal}
-#' @param byGroup logical, if TRUE, assumes a column named "Group" is present which unique classifies each GID into some genetic grouping.
-#' @param modelType string, A, AD or ADE representing model with Additive-only, Add. plus Dominance, and Add. plus Dom. plus. AxD Epistasis (AD), respectively.
-#' @param grms list of GRMs where each element is named either A, D, or, AD. Matrices supplied must match required by A, AD and ADE models. For ADE grms=list(A=A,D=D,AD=AD)...
-#' @param augmentTP option to supply an additional set of training data, which will be added to each training model but never included in the test set.
-#' @param TrainTestData data.frame with de-regressed BLUPs, BLUPs and weights (WT) for training and test. If byGroup==TRUE, a column with Group as the header uniquely classifying GIDs into genetic groups, is expected.
-runCrossVal<-function(TrainTestData,modelType,grms,nrepeats,nfolds,ncores=1,
-                          byGroup=FALSE,augmentTP=NULL,gid="GID",...){
-  require(sommer); require(rsample)
-  # Set-up replicated cross-validation folds
-  # splitting by clone (if clone in training dataset, it can't be in testing)
-  if(byGroup){
-    cvsamples<-tibble(GroupName=unique(TrainTestData$Group))
-  } else { cvsamples<-tibble(GroupName="None") }
-  cvsamples<-cvsamples %>%
-    mutate(Splits=map(GroupName,function(GroupName){
-      if(GroupName!="None"){
-        thisgroup<-TrainTestData %>%
-          filter(Group==GroupName) } else { thisgroup<-TrainTestData }
-      out<-tibble(repeats=1:nrepeats,
-                  splits=rerun(nrepeats,group_vfold_cv(thisgroup, group = gid, v = nfolds))) %>%
-        unnest(splits)
-      return(out)
-    })) %>%
-    unnest(Splits)
+```{bash standardCV R env, eval=F}
+# 1) start a screen shell 
+screen; # or screen -r if re-attaching...
+# 2) start the singularity Linux shell inside that
+singularity shell ~/rocker2.sif; 
+# Project directory, so R will use as working dir.
+cd /home/mw489/IITA_2021GS/;
+# 3) Start R
+R
+```
+```{r standardCV inputs}
+# NEEDED LIBRARIES
+require(tidyverse); require(magrittr); library(qs)
+library(genomicMateSelectR)
 
-  ## Internal function
-  ## fits prediction model and calcs. accuracy for each train-test split
+# BLUPs
+blups<-readRDS(file=here::here("data","blups_forGP.rds")) %>% 
+  dplyr::select(-varcomp) %>% 
+  rename(TrainingData=blups) # for compatibility with runCrossVal() function 
 
-  fitModel<-possibly(function(splits,modelType,augmentTP,TrainTestData,GroupName,grms){
-    starttime<-proc.time()[3]
-    # Set-up training set
-    trainingdata<-training(splits)
-    ## Make sure, if there is an augmentTP, no GIDs in test-sets
-    if(!is.null(augmentTP)){
-      ## remove any test-set members from augment TP before adding to training data
-      training_augment<-augmentTP %>% filter(!(!!sym(gid) %in% testing(splits)[[gid]]))
-      trainingdata<-bind_rows(trainingdata,training_augment) }
-    if(GroupName!="None"){ trainingdata<-bind_rows(trainingdata,
-                                                   TrainTestData %>%
-                                                     filter(Group!=GroupName,
-                                                            !(!!sym(gid) %in% testing(splits)[[gid]]))) }
-    # Subset kinship matrices
-    traintestgids<-union(trainingdata[[gid]],testing(splits)[[gid]])
-    A1<-grms[["A"]][traintestgids,traintestgids]
-    trainingdata[[paste0(gid,"a")]]<-factor(trainingdata[[gid]],levels=rownames(A1))
-    if(modelType %in% c("AD","ADE")){
-      D1<-grms[["D"]][traintestgids,traintestgids]
-      trainingdata[[paste0(gid,"d")]]<-factor(trainingdata[[gid]],levels=rownames(D1))
-      if(modelType=="ADE"){
-        #AA1<-grms[["AA"]][traintestgids,traintestgids]
-        AD1<-grms[["AD"]][traintestgids,traintestgids]
-        diag(AD1)<-diag(AD1)+1e-06
-        #DD1<-grms[["DD"]][traintestgids,traintestgids]
-        #trainingdata[[paste0(gid,"aa")]]<-factor(trainingdata[[gid]],levels=rownames(AA1))
-        trainingdata[[paste0(gid,"ad")]]<-factor(trainingdata[[gid]],levels=rownames(AD1))
-        #trainingdata[[paste0(gid,"dd")]]<-factor(trainingdata[[gid]],levels=rownames(DD1))
-      }
-    }
-    # Set-up random model statements
-    randFormula<-paste0("~vs(",gid,"a,Gu=A1)")
-    if(modelType %in% c("AD","ADE")){
-      randFormula<-paste0(randFormula,"+vs(",gid,"d,Gu=D1)")
-      if(modelType=="ADE"){
-        randFormula<-paste0(randFormula,"+vs(",gid,"ad,Gu=AD1)")
-        #"+vs(",gid,"aa,Gu=AA1)",
-        #"+vs(",gid,"ad,Gu=AD1)")
-        #"+vs(",gid,"dd,Gu=DD1)")
-      }
-    }
-    # Fit genomic prediction model
-    fit <- mmer(fixed = drgBLUP ~1,
-                random = as.formula(randFormula),
-                weights = WT,
-                data=trainingdata)
-    # Gather the BLUPs
-    gblups<-tibble(GID=as.character(names(fit$U[[paste0("u:",gid,"a")]]$drgBLUP)),
-                   GEBV=as.numeric(fit$U[[paste0("u:",gid,"a")]]$drgBLUP))
-    if(modelType %in% c("AD","ADE")){
-      gblups %<>% mutate(GEDD=as.numeric(fit$U[[paste0("u:",gid,"d")]]$drgBLUP))
-      if(modelType=="ADE"){
-        gblups %<>% mutate(#GEEDaa=as.numeric(fit$U[[paste0("u:",gid,"aa")]]$drgBLUP),
-          GEEDad=as.numeric(fit$U[[paste0("u:",gid,"ad")]]$drgBLUP))
-        #GEEDdd=as.numeric(fit$U[[paste0("u:",gid,"dd")]]$drgBLUP))
-      }
-    }
-    # Calc GETGVs
-    ## Note that for modelType=="A", GEBV==GETGV
-    gblups %<>%
-      mutate(GETGV=rowSums(.[,grepl("GE",colnames(.))]))
-    # Test set validation data
-    validationData<-TrainTestData %>%
-      dplyr::select(gid,BLUP) %>%
-      filter(GID %in% testing(splits)[[gid]])
-    # Measure accuracy in test set
-    ## cor(GEBV,BLUP)
-    ## cor(GETGV,BLUP)
-    accuracy<-gblups %>%
-      mutate(GETGV=rowSums(.[,grepl("GE",colnames(.))])) %>%
-      filter(GID %in% testing(splits)[[gid]]) %>%
-      left_join(validationData) %>%
-      summarize(accGEBV=cor(GEBV,BLUP, use = 'complete.obs'),
-                accGETGV=cor(GETGV,BLUP, use = 'complete.obs'))
-    computeTime<-proc.time()[3]-starttime
-    accuracy %<>% mutate(computeTime=computeTime)
-    return(accuracy)
-  },otherwise = NA)
-  ## Run models across all train-test splits
-  ## Parallelize
-  require(furrr); plan(multicore, workers = ncores)
-  options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+# DOSAGE MATRIX (UNFILTERED)
+dosages<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
 
-  cvsamples<-cvsamples %>%
-    mutate(accuracy=future_map2(splits,GroupName,
-                                ~fitModel(splits=.x,GroupName=.y,
-                                          modelType=modelType,augmentTP=NULL,TrainTestData=TrainTestData,grms=grms),
-                                .progress = FALSE)) %>%
-    unnest(accuracy)
-  return(cvsamples)
-}
+# SNP SETS TO ANALYZE
+snpsets<-readRDS(file = here::here("data","snpsets.rds"))
+
+# SELECTION INDEX WEIGHTS
+## from IYR+IK
+## note that not ALL predicted traits are on index
+SIwts<-c(logFYLD=20,
+         HI=10,
+         DM=15,
+         MCMDS=-10,
+         logRTNO=12,
+         logDYLD=20,
+         logTOPYLD=15,
+         PLTHT=10) 
+```
+```{r standardCV analysis chunks}
+# cbsulm19 - 88 cores, 512 GB RAM - 2021 Aug 10 - 6:45am
+snpSet<-"full_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_IITA_2021Aug09.rds")))
+# [1] "Time elapsed: 209.1 mins"
+
+# cbsulm20 - 88 cores, 512 GB RAM - 2021 Aug 10 - 6:45am 
+snpSet<-"reduced_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_ReducedSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_ReducedSNPset_IITA_2021Aug09.rds")))
+# [1] "Time elapsed: 157.748 mins"
+
+# cbsulm19 - 88 cores, 512 GB RAM - 2021 Aug 10 - 2:45pm
+snpSet<-"medium_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_MediumSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_MediumSNPset_IITA_2021Aug09.rds")))
+# [1] "Time elapsed: 169.183 mins"
+
+```
+```{r run standardCV for each snpset}
+snps2keep<-snpsets %>% 
+  filter(Set==snpSet) %>% 
+  select(snps2keep) %>% 
+  unnest(snps2keep)
+
+dosages<-dosages[,snps2keep$FULL_SNP_ID]
+rm(snpsets); gc()
+
+starttime<-proc.time()[3]
+standardCV<-runCrossVal(blups=blups,
+                        modelType="DirDom",
+                        selInd=TRUE,SIwts=SIwts,
+                        grms=grms,dosages=dosages,
+                        nrepeats=5,nfolds=5,
+                        ncores=17,nBLASthreads=5,
+                        gid="GID",seed=424242)
+saveRDS(standardCV,
+        file = here::here("output",
+                          paste0("standardCV_",snpSet,"_ClonePredAccuracy.rds")))
+endtime<-proc.time()[3]; print(paste0("Time elapsed: ",
+                                      round((endtime-starttime)/60,3)," mins"))
+
 ```
 
 # Next step / Results
 
-6. [Genomic predictions](06-GenomicPredictions.html): 
-  - A. Standard genomic prediction of individual GEBV and GETGV for all selection candidates using all available data. 
-  - B. Predict cross means and variances for genomic mate selection
+6.  [Genomic predictions](06-GenomicPredictions.html):   
 
+- First, predict of individual GEBV/GETGV for all selection candidates using all available data and return marker effects for use downstream. 
+- Next, Select a top set of candidate parents, for whom we would like to predict cross performances. 
+- Finally, predict all pairwise crosses of candidate parents and evaluate them for genomic mate selection. 
+- Select the top crosses and plant a crossing nursery with the parents indicated.
 
-
-See [Results](07-Results.html): Home for plots and summary tables.
+[Cross-validation results here](07-Results.html#Prediction_accuracy_estimates)
 
 
 

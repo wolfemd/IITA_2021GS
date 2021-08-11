@@ -14,9 +14,11 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F,
                       tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
 ```
 
-# Previous step
+# Previous steps
 
-3. [Validate the pedigree obtained from cassavabase](03-validatePedigree.html): Before setting up a cross-validation scheme for  predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.
+-  [Impute DCas21-6038](ImputeDCas21_6038.html): with West Africa reference panel merged with additional GS progeny (IITA TMS18)
+
+-  [Validate the pedigree obtained from cassavabase](03-validatePedigree.html): Before setting up a cross-validation scheme for predictions that depend on a correct pedigree, add a basic verification step to the pipeline. Not trying to fill unknown relationships or otherwise correct the pedigree. Assess evidence that relationship is correct, remove if incorrect.
 
 # Haplotype matrix from phased VCF
 
@@ -24,9 +26,9 @@ Extract haps from VCF with `bcftools`
 
 ```{r, eval=F}
 library(tidyverse); library(magrittr)
-pathIn<-"/home/jj332_cas/marnin/implementGMSinCassava/data/"
+pathIn<-"~/IITA_2021GS/output/"
 pathOut<-pathIn
-vcfName<-"AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719"
+vcfName<-"AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08"
 system(paste0("bcftools convert --hapsample ",
               pathOut,vcfName," ",
               pathIn,vcfName,".vcf.gz "))
@@ -46,29 +48,32 @@ sampleids<-fread(paste0(pathIn,vcfName,".sample"),
 
 ```{r, eval=F}
 blups<-readRDS(file=here::here("output",
-                               "IITA_blupsForModelTraining_twostage_asreml_2021May10.rds"))
+                               "IITA_blupsForModelTraining_twostage_asreml_2021Aug09.rds"))
 blups %>% 
   select(Trait,blups) %>% 
   unnest(blups) %>% 
   distinct(GID) %$% GID -> gidWithBLUPs
 
 genotypedWithBLUPs<-gidWithBLUPs[gidWithBLUPs %in% sampleids$V1]
-length(genotypedWithBLUPs) # 7960
+length(genotypedWithBLUPs) 
+# [1] 8669
 
 ped<-read.table(here::here("output","verified_ped.txt"),
                 header = T, stringsAsFactors = F)
 
 pednames<-union(ped$FullSampleName,
                 union(ped$SireID,ped$DamID))
-length(pednames) # 4384
+length(pednames) 
+# [1] 4615
 
 samples2keep<-union(genotypedWithBLUPs,pednames)
-length(samples2keep) # 8013
+length(samples2keep) 
+# [1] 8857
 
 # write a sample list to disk for downstream purposes
 # format suitable for subsetting with --keep in plink
 write.table(tibble(FID=0,IID=samples2keep),
-            file=here::here("output","samples2keep_IITA_2021May13.txt"),
+            file=here::here("output","samples2keep_IITA_2021Aug09.txt"),
             row.names = F, col.names = F, quote = F)
 ```
 
@@ -88,10 +93,9 @@ colnames(haps)<-c("Chr","HAP_ID","Pos","REF","ALT",hapids$HapID)
 Subset haps
 ```{r, eval=F}
 hapids2keep<-hapids %>% filter(SampleID %in% samples2keep)
-hapids2keep$HapID
-dim(haps) # [1] 68814 43717
+dim(haps) # [1] 61239 46669
 haps<-haps[,c("Chr","HAP_ID","Pos","REF","ALT",hapids2keep$HapID)]
-dim(haps) # [1] 68814 16031
+dim(haps) # [1] 61239 17719
 ```
 
 Format, transpose, convert to matrix and save!
@@ -101,7 +105,7 @@ haps %<>%
   column_to_rownames(var = "HAP_ID") %>% 
   select(-Chr,-Pos,-REF,-ALT)
 haps %<>% t(.) %>% as.matrix(.)
-saveRDS(haps,file=here::here("data","haps_IITA_2021May13.rds")
+saveRDS(haps,file=here::here("data","haps_IITA_2021Aug09.rds"))
 ```
 
 # Make dosages from haps
@@ -119,225 +123,211 @@ dosages<-haps %>%
   ungroup() %>% 
   column_to_rownames(var = "SampleID") %>% 
   as.matrix
-saveRDS(dosages,file=here::here("data","dosages_IITA_2021May13.rds"))
-# > dim(dosages)
-# [1]  8013 68814
+dim(dosages)
+# [1]  8857 61239
+saveRDS(dosages,file=here::here("data","dosages_IITA_2021Aug09.rds"))
+
 ```
 
 # Variant filters
 
-**Apply a MAF filter and lightly LD prune:** The number of markers in the "raw" dataset (~68K) is ~3X the number used in the mate selection paper and I think more than is necessary. There is a burden incurred because we have to compute and store in memory (and on disk) $N_{snp} \times N_{snp}$ recombination frequency matrices. 
+**Apply two variant filters:** According to the [results of preliminary experiments](https://wolfemd.github.io/implementGMSinCassava/07-Results.html#Optimize_marker_density_for_speed) I will work with two marker sets downstream, both filtered to MAF>=1%. 
 
-```{r}
-# library(tidyverse); library(magrittr)
-# pathIn<-"/home/jj332_cas/marnin/implementGMSinCassava/data/"
-# pathOut<-pathIn
-# vcfName<-"AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719"
-# 
-# write.table(tibble(FID=0,IID=samples2keep),
-#             file=here::here("output","samples2keep_IITA_2021May13.txt"),
-#             row.names = F, col.names = F, quote = F)
-# 
-# ped2check<-read.table(file=here::here("output","ped2genos.txt"),
-#                       header = F, stringsAsFactors = F)
-# 
-# # pednames<-union(ped2check$V1,union(ped2check$V2,ped2check$V3)) %>% 
-# #   tibble(FID=0,IID=.)
-# # write.table(pednames,file=here::here("output","pednames2keep.txt"), 
-# #             row.names = F, col.names = F, quote = F)
-```
+1) lightly LD-pruned: `plink --indep-pairwise 50 25 0.98` (**considered the "full_set"**)
+2) more strongly pruned `plink --indep-pairwise 1000 'kb' 50 0.6` (**considered the "reduced_set"**)
 
 ```{plink, eval=F}
-cd /home/jj332_cas/marnin/implementGMSinCassava/
+cd ~/IITA_2021GS/
 export PATH=/programs/plink-1.9-x86_64-beta3.30:$PATH;
-plink --bfile data/AllChrom_RefPanelAndGSprogeny_ReadyForGP_72719 \
-  --keep output/samples2keep_IITA_2021May13.txt \
+# Lightly pruned "full_set"
+plink --bfile output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08 \
+  --keep output/samples2keep_IITA_2021Aug09.txt \
   --maf 0.01 \
   --indep-pairwise 50 25 0.98 \
   --out output/samples2keep_IITA_MAFpt01_prune50_25_pt98;
+# 60896 variants and 8857 people pass filters and QC.
+# Note: No phenotypes present.
+# Pruned 4504 variants from chromosome 1, leaving 3064.
+# Pruned 1552 variants from chromosome 2, leaving 2033.
+# Pruned 1578 variants from chromosome 3, leaving 2049.
+# Pruned 1931 variants from chromosome 4, leaving 1438.
+# Pruned 1805 variants from chromosome 5, leaving 1865.
+# Pruned 1600 variants from chromosome 6, leaving 1739.
+# Pruned 725 variants from chromosome 7, leaving 970.
+# Pruned 1440 variants from chromosome 8, leaving 1696.
+# Pruned 1599 variants from chromosome 9, leaving 1621.
+# Pruned 1082 variants from chromosome 10, leaving 1521.
+# Pruned 1261 variants from chromosome 11, leaving 1622.
+# Pruned 1253 variants from chromosome 12, leaving 1477.
+# Pruned 1257 variants from chromosome 13, leaving 1353.
+# Pruned 2456 variants from chromosome 14, leaving 2716.
+# Pruned 1733 variants from chromosome 15, leaving 1772.
+# Pruned 1390 variants from chromosome 16, leaving 1329.
+# Pruned 1108 variants from chromosome 17, leaving 1485.
+# Pruned 1306 variants from chromosome 18, leaving 1566.
+# Pruning complete.  29580 of 60896 variants removed.
+
+# Stronger "reduced_set"
+plink --bfile output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08 \
+  --keep output/samples2keep_IITA_2021Aug09.txt \
+  --maf 0.01 \
+  --indep-pairwise 1000 'kb' 50 0.6 \
+  --out output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt6; 
+# 60896 variants and 8857 people pass filters and QC.
+# Note: No phenotypes present.
+# Pruned 7035 variants from chromosome 1, leaving 533.
+# Pruned 2949 variants from chromosome 2, leaving 636.
+# Pruned 3033 variants from chromosome 3, leaving 594.
+# Pruned 2931 variants from chromosome 4, leaving 438.
+# Pruned 3172 variants from chromosome 5, leaving 498.
+# Pruned 2832 variants from chromosome 6, leaving 507.
+# Pruned 1336 variants from chromosome 7, leaving 359.
+# Pruned 2635 variants from chromosome 8, leaving 501.
+# Pruned 2842 variants from chromosome 9, leaving 378.
+# Pruned 2148 variants from chromosome 10, leaving 455.
+# Pruned 2455 variants from chromosome 11, leaving 428.
+# Pruned 2292 variants from chromosome 12, leaving 438.
+# Pruned 2210 variants from chromosome 13, leaving 400.
+# Pruned 4583 variants from chromosome 14, leaving 589.
+# Pruned 3137 variants from chromosome 15, leaving 368.
+# Pruned 2266 variants from chromosome 16, leaving 453.
+# Pruned 2251 variants from chromosome 17, leaving 342.
+# Pruned 2442 variants from chromosome 18, leaving 430.
+# Pruning complete.  52549 of 60896 variants removed.
+```
+
+After initial test results, the "reduced_set" was too harsh. 
+Try a "medium_set":
+```{plink, eval=F}
+cd ~/IITA_2021GS/
+export PATH=/programs/plink-1.9-x86_64-beta3.30:$PATH;
+plink --bfile output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08 \
+  --keep output/samples2keep_IITA_2021Aug09.txt \
+  --maf 0.01 \
+  --indep-pairwise 1000 'kb' 50 0.8 \
+  --out output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt8; 
+# Before main variant filters, 8857 founders and 0 nonfounders present.
+# Calculating allele frequencies... done.
+# 343 variants removed due to minor allele threshold(s)
+# (--maf/--max-maf/--mac/--max-mac).
+# 60896 variants and 8857 people pass filters and QC.
+# Note: No phenotypes present.
+# Pruned 6645 variants from chromosome 1, leaving 923.
+# Pruned 2568 variants from chromosome 2, leaving 1017.
+# Pruned 2722 variants from chromosome 3, leaving 905.
+# Pruned 2751 variants from chromosome 4, leaving 618.
+# Pruned 2862 variants from chromosome 5, leaving 808.
+# Pruned 2515 variants from chromosome 6, leaving 824.
+# Pruned 1168 variants from chromosome 7, leaving 527.
+# Pruned 2336 variants from chromosome 8, leaving 800.
+# Pruned 2618 variants from chromosome 9, leaving 602.
+# Pruned 1862 variants from chromosome 10, leaving 741.
+# Pruned 2156 variants from chromosome 11, leaving 727.
+# Pruned 2056 variants from chromosome 12, leaving 674.
+# Pruned 2010 variants from chromosome 13, leaving 600.
+# Pruned 4123 variants from chromosome 14, leaving 1049.
+# Pruned 2856 variants from chromosome 15, leaving 649.
+# Pruned 2088 variants from chromosome 16, leaving 631.
+# Pruned 2029 variants from chromosome 17, leaving 564.
+# Pruned 2201 variants from chromosome 18, leaving 671.
+# Pruning complete.  47566 of 60896 variants removed.
+# Marker lists written to
+# output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt8.prune.in and
+# output/samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt8.prune.out
 ```
 
 Used plink to output a list of pruned SNPs. 
 
-Next, subset the columns of `haps` and `dosages` in R.
-
-```{r, eval=F}
-library(tidyverse); library(magrittr); 
-haps<-readRDS(file=here::here("data","haps_IITA_2021May13.rds"))
-dosages<-readRDS(file=here::here("data","dosages_IITA_2021May13.rds"))
-snps2keep<-read.table(here::here("output",
-                      "samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.in"),
-           header = F, stringsAsFactors = F)
-snps2keep<-tibble(HapSNP_ID=colnames(haps)) %>% 
-  separate(HapSNP_ID,c("Chr","Pos","Ref","Alt"),remove = F) %>% 
-  mutate(SNP_ID=paste0("S",Chr,"_",Pos)) %>% 
-  filter(SNP_ID %in% snps2keep$V1)
-
-haps<-haps[,snps2keep$HapSNP_ID]
-dosages<-dosages[,snps2keep$HapSNP_ID]
-
-# dim(haps); dim(dosages); haps[1:5,1:10]
-
-saveRDS(haps,file=here::here("data","haps_IITA_filtered_2021May13.rds"))
-saveRDS(dosages,file=here::here("data","dosages_IITA_filtered_2021May13.rds"))
-```
-
 # Make Add and Dom GRMs from dosages
 ```{bash, eval=F}
-# activate multithread OpenBLAS for fast matrix algebra
-export OMP_NUM_THREADS=56
-```
-```{r, eval=F}
-dosages<-readRDS(file=here::here("data","dosages_IITA_filtered_2021May13.rds"))
-A<-predCrossVar::kinship(dosages,type="add")
-D<-predCrossVar::kinship(dosages,type="dom")
-saveRDS(A,file=here::here("output","kinship_A_IITA_2021May13.rds"))
-saveRDS(D,file=here::here("output","kinship_D_IITA_2021May13.rds"))
-```
-
-```{bash, eval=F}
-cd /home/mw489/implementGMSinCassava/;
-screen; 
-singularity shell rocker.sif; R
+# 1) start a screen shell 
+screen; # or screen -r if re-attaching...
+# 2) start the singularity Linux shell inside that
+#singularity shell /workdir/$USER/rocker.sif; 
+singularity shell ~/rocker2.sif; 
+# Project directory, so R will use as working dir.
+cd /home/mw489/IITA_2021GS/;
+# 3) Start R
+R
 ```
 
 ```{r, eval=F}
-dosages<-readRDS(file=here::here("data","dosages_IITA_filtered_2021May13.rds"))
-source(here::here("code","gsFunctions.R"))
+library(tidyverse); library(magrittr); library(genomicMateSelectR)
 RhpcBLASctl::blas_set_num_threads(56)
-D<-kinship(dosages,type="domGenotypic")
-saveRDS(D,file=here::here("output","kinship_domGenotypic_IITA_2021July5.rds"))
-```
+dosages<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
 
+full_set<-read.table(here::here("output",
+                                 "samples2keep_IITA_MAFpt01_prune50_25_pt98.prune.in"),
+                      header = F, stringsAsFactors = F)
+medium_set<-read.table(here::here("output",
+                                   "samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt8.prune.in"),
+                        header = F, stringsAsFactors = F)
+reduced_set<-read.table(here::here("output",
+                                   "samples2keep_IITA_MAFpt01_prune1Mb_50kb_pt6.prune.in"),
+                        header = F, stringsAsFactors = F)
 
-# Genetic Map
-
-```{bash,eval = FALSE}
-cp -r /home/jj332_cas/CassavaGenotypeData/CassavaGeneticMap /home/jj332_cas/marnin/implementGMSinCassava/data/
-```
-
-```{bash, eval=F}
-# activate multithread OpenBLAS for fast matrix algebra
-export OMP_NUM_THREADS=56
-```
-
-[Creating the map used for Beagle-imputation in 2019](https://wolfemd.github.io/NaCRRI_2020GS/Imputation_EastAfrica_StageI_82819.html#Genetic_Map_for_Beagle_-_V2): In 2019, I obtained a ICGMC-derived genetic map, I _think_ from Guillaume Bauchet and used it to create a map I've been using for imputation, which has 25K markers (Beagle interpolates the map to the markers genotyped in the panel).
-
-*However,* the recombination frequency matrix and thus cross-variance predictions needs to have all positions for which we have marker effects. It means I have to interpolate a map from the original file `cassava_cM_pred.v6.allchr.txt`. See below:
-
-```{r}
-library(tidyverse); library(magrittr)
-dosages<-readRDS(file=here::here("data","dosages_IITA_filtered_2021May13.rds"))
-# genmap<-tibble(Chr=1:18) %>% 
-#   mutate(geneticMap=map(Chr,~read.table(here::here("data/CassavaGeneticMap",
-#                                                    paste0("chr",.,"_cassava_cM_pred.v6_91019.map")),
-#                                         header = F, stringsAsFactors = F)))
-
-genmap<-read.table(here::here("data/CassavaGeneticMap",
-                              "cassava_cM_pred.v6.allchr.txt"),
-           header = F, stringsAsFactors = F,sep=';') %>% 
-  rename(SNP_ID=V1,Pos=V2,cM=V3) %>% 
-  as_tibble
-
-snps_genmap<-tibble(DoseSNP_ID=colnames(dosages)) %>% 
-  separate(DoseSNP_ID,c("Chr","Pos","Ref","Alt"),remove = F) %>% 
+full_set<-tibble(FULL_SNP_ID=colnames(dosages)) %>% 
+  separate(FULL_SNP_ID,c("Chr","Pos","Ref","Alt"),remove = F) %>% 
   mutate(SNP_ID=paste0("S",Chr,"_",Pos)) %>% 
-  left_join(genmap %>% mutate(across(everything(),as.character)))
-# snps_genmap %>% 
-#   ggplot(.,aes(x=as.integer(Pos),y=as.numeric(cM))) + 
-#   geom_point() + 
-#   theme_bw() + 
-#   facet_wrap(~Chr)
-```
-```{r}
-interpolate_genmap<-function(data){
-  # for each chromosome map
-  # find and _decrements_ in the genetic map distance
-  # fix them to the cumulative max to force map to be only increasing
-  # fit a spline for each chromosome
-  # Use it to predict values for positions not previously on the map
-  # fix them AGAIN (in case) to the cumulative max, forcing map to only increase
-  data_forspline<-data %>% 
-    filter(!is.na(cM)) %>% 
-    mutate(cumMax=cummax(cM),
-           cumIncrement=cM-cumMax) %>% 
-    filter(cumIncrement>=0) %>% 
-    select(-cumMax,-cumIncrement)
-  
-  spline<-data_forspline %$% smooth.spline(x=Pos,y=cM,spar = 0.75)
-  
-  splinemap<-predict(spline,x = data$Pos) %>% 
-    as_tibble(.) %>% 
-    rename(Pos=x,cM=y) %>% 
-    mutate(cumMax=cummax(cM),
-           cumIncrement=cM-cumMax) %>% 
-    mutate(cM=cumMax) %>% 
-    select(-cumMax,-cumIncrement)
-  
-  return(splinemap) 
-}
+  filter(SNP_ID %in% full_set$V1)
+medium_set<-tibble(FULL_SNP_ID=colnames(dosages)) %>% 
+  separate(FULL_SNP_ID,c("Chr","Pos","Ref","Alt"),remove = F) %>% 
+  mutate(SNP_ID=paste0("S",Chr,"_",Pos)) %>% 
+  filter(SNP_ID %in% medium_set$V1)
+reduced_set<-tibble(FULL_SNP_ID=colnames(dosages)) %>% 
+  separate(FULL_SNP_ID,c("Chr","Pos","Ref","Alt"),remove = F) %>% 
+  mutate(SNP_ID=paste0("S",Chr,"_",Pos)) %>% 
+  filter(SNP_ID %in% reduced_set$V1)
+
+# > dim(reduced_set)
+# [1] 8347    6
+# > dim(medium_set)
+# [1] 13330     6
+# > dim(full_set)
+# [1] 31316     6
+
+snpsets<-full_set %>%
+  mutate(Set="full_set") %>% 
+  bind_rows(medium_set %>% 
+                mutate(Set="medium_set")) %>% 
+  bind_rows(reduced_set %>% 
+                mutate(Set="reduced_set")) %>% 
+  nest(snps2keep=-Set)
+saveRDS(snpsets,file = here::here("data","snpsets.rds"))
 ```
 
-
-```{r}
-splined_snps_genmap<-snps_genmap %>% 
-  select(-cM) %>% 
-  mutate(Pos=as.numeric(Pos)) %>% 
-  left_join(snps_genmap %>% 
-              mutate(across(c(Pos,cM),as.numeric)) %>% 
-              arrange(Chr,Pos) %>% 
-              nest(-Chr) %>% 
-              mutate(data=map(data,interpolate_genmap)) %>% 
-              unnest(data)) %>% 
-  distinct
-```
-```{r}
-all(splined_snps_genmap$DoseSNP_ID == colnames(dosages))
-# [1] TRUE
-
-saveRDS(splined_snps_genmap,file=here::here("data","genmap_2021May13.rds"))
-```
-
-
-```{r, fig.width=12}
-splined_snps_genmap %>% 
-  mutate(Map="Spline") %>% 
-  bind_rows(snps_genmap %>% 
-              mutate(across(c(Pos,cM),as.numeric)) %>% 
-              arrange(Chr,Pos) %>% mutate(Map="Data")) %>% 
-  ggplot(.,aes(x=Pos,y=cM,color=Map),alpha=0.5,size=0.75) + 
-  geom_point() + 
-  theme_bw() + facet_wrap(~as.integer(Chr), scales='free_x')
-```
-
-# Recomb. freq. matrix
-
-Construct a matrix of recombination frequencies at loci for all study loci. 
-Pre-compute 1-2c to save time predicting cross variance.
 ```{r, eval=F}
-library(predCrossVar)
-genmap<-readRDS(file=here::here("data","genmap_2021May13.rds"))
-m<-genmap$cM;
-names(m)<-genmap$DoseSNP_ID
-recombFreqMat<-1-(2*genmap2recombfreq(m,nChr = 18))
-saveRDS(recombFreqMat,file=here::here("data","recombFreqMat_1minus2c_2021May13.rds"))
-```
+# Kinships from full snp set
+A<-kinship(dosages[,full_set$FULL_SNP_ID],type="add")
+D<-kinship(dosages[,full_set$FULL_SNP_ID],type="domGenotypic")
+saveRDS(A,file=here::here("output","kinship_A_IITA_2021Aug09.rds"))
+saveRDS(D,file=here::here("output","kinship_Dgeno_IITA_2021Aug09.rds"))
 
+# kinships from reduced snp set
+A<-kinship(dosages[,medium_set$FULL_SNP_ID],type="add")
+D<-kinship(dosages[,medium_set$FULL_SNP_ID],type="domGenotypic")
+saveRDS(A,file=here::here("output","kinship_A_MediumSNPset_IITA_2021Aug09.rds"))
+saveRDS(D,file=here::here("output","kinship_Dgeno_MediumSNPset_IITA_2021Aug09.rds"))
 
-# Pick traits to cross-validate
-```{r}
-# This list from Dec. 2020 GeneticGain rate estimation
-# These were what Ismail/IITA/BMGF wanted to see
-# Will cross-validate these traits
-traits<-c("logDYLD","logFYLD","logRTNO","logTOPYLD","MCMDS","DM","BCHROMO",
-          "PLTHT","BRLVLS","BRNHT1","HI")
-
-# Full trait list = 14:
-## traits<-c("MCMDS","DM","PLTHT","BRNHT1","BRLVLS","HI",
-##           "logDYLD", # <-- logDYLD now included.
-##           "logFYLD","logTOPYLD","logRTNO","TCHART","LCHROMO","ACHROMO","BCHROMO")
+# kinships from reduced snp set
+A<-kinship(dosages[,reduced_set$FULL_SNP_ID],type="add")
+D<-kinship(dosages[,reduced_set$FULL_SNP_ID],type="domGenotypic")
+saveRDS(A,file=here::here("output","kinship_A_ReducedSNPset_IITA_2021Aug09.rds"))
+saveRDS(D,file=here::here("output","kinship_Dgeno_ReducedSNPset_IITA_2021Aug09.rds"))
 
 ```
+
+# Genetic Map and Recomb. freq. matrix
+
+The genetic map and recombination frequency matrix including all the SNPs that will be in any downstream analysis, were created previously. [See here](https://wolfemd.github.io/implementGMSinCassava/05-CrossValidation.html#Optimize_marker_density_for_speed).
+
+Download `recombFreqMat` from Cassavabase FTP server: [**Click Here* to download `recombFreqMat_1minus2c_2021Aug02.qs`**](ftp://ftp.cassavabase.org/marnin_datasets/implementGMSinCassava/data/recombFreqMat_1minus2c_2021Aug02.qs).
+
+Copy to project directory.
+```{bash, eval=F}
+cp ~/implementGMSinCassava/data/recombFreqMat_1minus2c_2021Aug02.qs ~/IITA_2021GS/data/
+```
+
 
 # Pedigree
 
@@ -351,51 +341,122 @@ ped<-read.table(here::here("output","verified_ped.txt"),
 # BLUPs
 
 Select traits and data to be analyzed.
+```{r}
+# This list from Dec. 2020 GeneticGain rate estimation
+# These were what Ismail/IITA/BMGF wanted to see
+# Will cross-validate these traits
+traits<-c("logDYLD","logFYLD","logRTNO","logTOPYLD","MCMDS","DM","BCHROMO",
+          "PLTHT","BRLVLS","BRNHT1","HI")
+# only 8 of these on the SELIND
+
+# Full trait list = 14:
+## traits<-c("MCMDS","DM","PLTHT","BRNHT1","BRLVLS","HI",
+##           "logDYLD", # <-- logDYLD now included.
+##           "logFYLD","logTOPYLD","logRTNO","TCHART","LCHROMO","ACHROMO","BCHROMO")
+
+```
+
 ```{r, eval=F}
 library(tidyverse); library(magrittr);
 blups<-readRDS(file=here::here("output",
-                               "IITA_blupsForModelTraining_twostage_asreml_2021May10.rds"))
-dosages<-readRDS(file=here::here("data","dosages_IITA_filtered_2021May13.rds"))
-
+                               "IITA_blupsForModelTraining_twostage_asreml_2021Aug09.rds"))
+dosages<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
 
 blups %>% 
   select(Trait,blups) %>% 
   unnest(blups) %>% 
   distinct(GID) %$% GID -> gidWithBLUPs
-
+# [1] 77854
+length(gidWithBLUPs)
 genotypedWithBLUPs<-gidWithBLUPs[gidWithBLUPs %in% rownames(dosages)]
-length(genotypedWithBLUPs) # 7960
+length(genotypedWithBLUPs) 
+# [1] 8669
 
 blups %<>% 
   filter(Trait %in% traits) %>% 
   select(Trait,blups,varcomp) %>% 
   mutate(blups=map(blups,~filter(.,GID %in% genotypedWithBLUPs)))
 
-saveRDS(blups,file=here::here("data","blups_forCrossVal.rds"))
+saveRDS(blups,file=here::here("data","blups_forGP.rds"))
 ```
 
 # Index weights [get from Ismail]
-```{r, eval=F}
-# library(tidyverse); library(magrittr); library(predCrossVar); library(BGLR);
-# blups<-readRDS(here::here("data","blups_forawcdata.rds")) %>% 
-#   select(Trait,blups) %>% # BLUPs long-->wide for multivar analysis
-#   unnest(blups) %>% 
-#   select(Trait,germplasmName,drgBLUP) %>% 
-#   spread(Trait,drgBLUP)
-# 
-# indices<-blups %>% 
-#   summarize_if(is.numeric,sd, na.rm=T) %>% 
-#   pivot_longer(cols = everything(), names_to = "Trait", values_to = "blupSD") %>% 
-#   left_join(tibble(Trait=c("DM","logFYLD","MCMDS","TCHART"), 
-#                    stdSI_unscaled=c(5, 10, -10, -5),
-#                    biofortSI_unscaled=c(10, 5, -5,10))) %>% 
-#   mutate(stdSI=stdSI_unscaled/blupSD,
-#          biofortSI=biofortSI_unscaled/blupSD)
-# indices %>% mutate_if(is.numeric,~round(.,2))
-# saveRDS(indices,file=here::here("data","selection_index_weights_4traits.rds"))
+```{r}
+# SELECTION INDEX WEIGHTS
+## from IYR+IK
+## note that not ALL predicted traits are on index
+SIwts<-c(logFYLD=20,
+         HI=10,
+         DM=15,
+         MCMDS=-10,
+         logRTNO=12,
+         logDYLD=20,
+         logTOPYLD=15,
+         PLTHT=10)
+SIwts
 ```
 
+# Germplasm Likely In Field Summer 2021
+
+Soon, will get a precise list from IITA team. For now: went to cassavabase wizard, made a list of all IITA accessions in field trials dated 2020 and 2021 at 4 locations (IBA, IKN, MOK, UBJ), as these can likely source for crossing nurseries. Cross reference that list with my genos-2-phenos matches to get a list of clones I can make genomic predictions for. 
+
+```{r, eval=F}
+library(tidyverse); library(magrittr);
+dbdata<-readRDS(here::here("output","IITA_ExptDesignsDetected_2021Aug08.rds"))
+
+accessions_possibly_infield<-read.table(here::here("data","Accessions_IITA_LikelyInField_IbaIknMokUbj_2020to2021.txt"), 
+           header = F, stringsAsFactors = F) %>% 
+  as_tibble %>% 
+  rename(germplasmName=V1) %>% 
+  inner_join(dbdata %>% 
+               distinct(germplasmName,GID,FullSampleName)) %>% 
+  filter(!is.na(FullSampleName)) %>% 
+  mutate(Cohort=NA,
+         Cohort=ifelse(grepl("TMS20",germplasmName,ignore.case = T),"TMS20",
+                       ifelse(grepl("TMS19",germplasmName,ignore.case = T),"TMS19",
+                              ifelse(grepl("TMS18",germplasmName,ignore.case = T),"TMS18",
+                                     ifelse(grepl("TMS17",germplasmName,ignore.case = T),"TMS17",
+                                            ifelse(grepl("TMS16",germplasmName,ignore.case = T),"TMS16",
+                                                   ifelse(grepl("TMS15",germplasmName,ignore.case = T),"TMS15",
+                                                          ifelse(grepl("TMS14",germplasmName,ignore.case = T),"TMS14",
+                                                                 ifelse(grepl("TMS13|2013_",germplasmName,ignore.case = T),"TMS13","GGetc")))))))))
+saveRDS(accessions_possibly_infield,
+        here::here("data","accessions_possibly_infield_2021Aug10.rds"))
+# accessions_possibly_infield %>%  
+#   count(Cohort)
+# Cohort  n
+# GGetc	1107			
+# TMS13	85			
+# TMS14	74			
+# TMS15	19			
+# TMS16	1			
+# TMS17	38			
+# TMS18	671			
+# TMS19	186			
+# TMS20	674	
+```
+# Set-up the singularity and R environment
+```{bash, eval=F}
+# 1) start a screen shell 
+screen; # or screen -r if re-attaching...
+# 2) Pull a singularity impage from rocker/
+singularity pull ~/rocker2.sif docker://rocker/tidyverse:latest;
+# 3) start the singularity Linux shell inside that
+singularity shell ~/rocker2.sif; 
+# Project directory, so R will use as working dir.
+cd /home/mw489/IITA_2021GS/;
+# 3) Start R
+R
+```
+
+```{r, eval=F}
+# Install genomicMateSelectR to user-accessible libPath
+libPath<-"/home/mw489/R/x86_64-pc-linux-gnu-library/4.1"
+withr::with_libpaths(new=libPath, devtools::install_github("wolfemd/genomicMateSelectR", ref = 'master'))
+```
 
 # Next step
 
-5. [Parent-wise cross-validation](05-CrossValidation.html): Compute parent-wise cross-validation folds using the validated pedigree. Fit models to get marker effects and make subsequent predictions of cross means and (co)variances.
+5.  [Parent-wise and standard cross-validation](05-CrossValidation.html): estimate selection index (and component trait) prediction accuracies using the direction-dominance (**DirDom**) model.
+
+6.  [Genomic predictions](06-GenomicPredictions.html): First, predict of individual GEBV/GETGV for all selection candidates using all available data and return marker effects for use downstream. Next, Select a top set of candidate parents, for whom we would like to predict cross performances. Finally, predict all pairwise crosses of candidate parents and evaluate them for genomic mate selection. Select the top crosses and plant a crossing nursery with the parents indicated.

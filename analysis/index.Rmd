@@ -11,7 +11,7 @@ editor_options:
 -   I recently (Aug 3, 2021) completed thorough testing to develop a protocol for genomic *mate* selection in NextGen Cassava and will implement it here for the first time in practice! Check [here](https://wolfemd.github.io/implementGMSinCassava/) to see the implementation tests / code-base development documented.
 -   Subsequently, I have developed my entire code base into an R package [genomicMateSelectR](https://wolfemd.github.io/genomicMateSelectR/index.html). The package is fully documented (in rough draft version), but doesn't yet include a tutorial / vignette.
 -   The IITA DArTseqLD report (DCas21_6038), which contains the GS C5 (i.e. progeny of crosses made in 2020, "TMS20F"), was recently (July 19, 2021) released.
--   The imputations of DCas21_6038, genomic predictions and mate selection that follows will leverage [genomicMateSelectR](https://wolfemd.github.io/genomicMateSelectR/index.html) functions and will form the principal example of their use.
+-   The imputations of DCas21_6038, genomic predictions and mate selection that follows will leverage [genomicMateSelectR](https://wolfemd.github.io/genomicMateSelectR/index.html) functions and will form the principal example of their use. Install it e.g. `devtools::install_github("wolfemd/genomicMateSelectR", ref = 'master')` .
 
 [**See the Results here!**](07-Results.html)
 
@@ -35,7 +35,7 @@ editor_options:
 -   **All chrom. combined, RefPanel and DCas21_6038 VCF merged** `output/AllChrom_RefPanelAndGSprogeny_ReadyForGP_2021Aug08.vcf.gz`\
     ([**Click here for FTP server location**](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/))
 
-# Preliminary data steps
+## Preliminary data steps
 
 1.  [Prepare training dataset](01-cleanTPdata.html): Download data from DB, "Clean" and format DB data.
 
@@ -45,7 +45,7 @@ editor_options:
 
 4.  [Preprocess data files](04-PreprocessDataFiles.html): Prepare haplotype and dosage matrices, GRMs, pedigree and BLUPs, genetic map *and* recombination frequency matrix, for use in predictions.
 
-# Genomic (mate) predictions
+## Genomic (mate) predictions
 
 5.  [Parent-wise and standard cross-validation](05-CrossValidation.html): estimate selection index (and component trait) prediction accuracies using the direction-dominance (**DirDom**) model.
 
@@ -53,17 +53,17 @@ editor_options:
 
         -   ***If,*** accuracy and $cor_{preds}(All\_SNPs, Reduced\_Set)$ are similar based on both kinds of cross-validation, proceed to make cross-variance predictions with reduced marker set; possibly use full marker set for cross-mean predictions.
 
-    -    [Click here to see the results](https://wolfemd.github.io/IITA_2021GS/07-Results.html#Prediction_accuracy_estimates)**!**
+    -   [Click here to see the results](https://wolfemd.github.io/IITA_2021GS/07-Results.html#Prediction_accuracy_estimates)**!**
 
 6.  [Genomic predictions](06-GenomicPredictions.html): First, predict of individual GEBV/GETGV for all selection candidates using all available data and return marker effects for use downstream. Next, Select a top set of candidate parents, for whom we would like to predict cross performances. Finally, predict all pairwise crosses of candidate parents and evaluate them for genomic mate selection. Select the top crosses and plant a crossing nursery with the parents indicated.
 
-    -    [Click here to see the results](https://wolfemd.github.io/IITA_2021GS/07-Results.html#Genomic_Predictions)**!**
+    -   [Click here to see the results](https://wolfemd.github.io/IITA_2021GS/07-Results.html#Genomic_Predictions)**!**
 
 7.  [Results and recommendations](07-Results.html): Home for all plots, summary tables, conclusions and recommendations.
 
 # Data and code repository access
 
-[CLICK HERE FOR ACCESS TO THE FULL REPOSITORY](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/) \
+[CLICK HERE FOR ACCESS TO THE FULL REPOSITORY](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/)\
 (select "Guest" credentials when prompted by the Cassavabase FTP server)
 
 or
