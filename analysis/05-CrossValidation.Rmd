@@ -115,6 +115,9 @@ grms<-list(A=readRDS(here::here("output","kinship_A_IITA_2021Aug09.rds")),
 # [1] "Done predicting fam vars. Took 21.92 mins for 216 crosses"
 # [1] "Done predicting fam vars. Took 56.88 mins for 235 crosses"
 # [1] "Done predicting fam vars. Took 22.41 mins for 235 crosses"
+# ....
+# [1] "Accuracies predicted. Took  32.68635 hrs total.Goodbye!"
+# [1] "Time elapsed: 1961.205 mins"
 
 # cbsulm30 - 112 cores, 512 GB RAM - 2021 Aug 10 - 2:40pm
 snpSet<-"medium_set"

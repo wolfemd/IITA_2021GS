@@ -248,7 +248,7 @@ saveRDS(CrossesToPredict,
 
 Predict all pairwise crosses of those 200 parents.
 
-```{r crossPred analysis chunks}
+```{r crossPred analysis chunks, eval=F}
 # cbsulm17 - 112 cores, 512 GB RAM - 2021 Aug 11 - 8:10am
 snpSet<-"full_set"
 grms<-list(A=readRDS(here::here("output","kinship_A_IITA_2021Aug09.rds")), 
@@ -263,10 +263,11 @@ grms<-list(A=readRDS(here::here("output","kinship_A_MediumSNPset_IITA_2021Aug09.
            D=readRDS(here::here("output","kinship_Dgeno_MediumSNPset_IITA_2021Aug09.rds")))
 predTheMeans<-TRUE; predTheVars<-TRUE
 gpreds<-readRDS(file = here::here("output","genomicPredictions_medium_set_2021Aug09.rds")); gc()
+# 1263.904
 
 ```
 
-```{r run crossPreds for each snpset}
+```{r run crossPreds for each snpset, eval=F}
 snps2keep<-snpsets %>% 
   filter(Set==snpSet) %>% 
   select(snps2keep) %>% 
@@ -298,8 +299,9 @@ saveRDS(crossPreds,file = here::here("output",
 # Write tidy breeder-friendly predictions to disk
 
 Add genetic groups and cohort identifiers and tidy format
-```{r output tidy csv of gebv/getgv}
-library(tidyverse);
+
+```{r output tidy csv of gebv/getgv, eval=F}
+library(tidyverse); library(magrittr)
 gpreds<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds")) 
 gpreds$gblups[[1]] %>% 
   mutate(GeneticGroup=case_when(grepl("2013_|TMS13",GID)~"C1",
@@ -328,41 +330,73 @@ gpreds$gblups[[1]] %>%
             row.names = F)
 ```
 
-```{r output tidy csv of usefulness predictions}
-# crossPreds_dirdom<-readRDS(file = here::here("output","genomicMatePredictions_top121parents_ModelDirDom.rds"))
-# crossPreds_ad<-readRDS(file = here::here("output","genomicMatePredictions_top121parents_ModelAD.rds"))
-# 
-# crossPreds_ad$tidyPreds[[1]] %>% 
-#   mutate(sireGroup=case_when(grepl("2013_|TMS13",sireID)~"C1",
-#                              grepl("TMS14",sireID)~"C2",
-#                              grepl("TMS15",sireID)~"C3",
-#                              grepl("TMS18",sireID)~"C4",
-#                              !grepl("2013_|TMS13|TMS14|TMS15|TMS18",sireID)~"PreGS"),
-#          damGroup=case_when(grepl("2013_|TMS13",damID)~"C1",
-#                             grepl("TMS14",damID)~"C2",
-#                             grepl("TMS15",damID)~"C3",
-#                             grepl("TMS18",damID)~"C4",
-#                             !grepl("2013_|TMS13|TMS14|TMS15|TMS18",damID)~"PreGS"),
-#          CrossGroup=paste0(sireGroup,"x",damGroup)) %>% 
-#   relocate(contains("Group"),.before = "Nsegsnps") %>% 
-#   write.csv(.,file = here::here("output","genomicMatePredictions_top121parents_ModelAD.csv"),
-#             row.names = F)
-# 
-# crossPreds_dirdom$tidyPreds[[1]] %>% 
-#   mutate(sireGroup=case_when(grepl("2013_|TMS13",sireID)~"C1",
-#                              grepl("TMS14",sireID)~"C2",
-#                              grepl("TMS15",sireID)~"C3",
-#                              grepl("TMS18",sireID)~"C4",
-#                              !grepl("2013_|TMS13|TMS14|TMS15|TMS18",sireID)~"PreGS"),
-#          damGroup=case_when(grepl("2013_|TMS13",damID)~"C1",
-#                             grepl("TMS14",damID)~"C2",
-#                             grepl("TMS15",damID)~"C3",
-#                             grepl("TMS18",damID)~"C4",
-#                             !grepl("2013_|TMS13|TMS14|TMS15|TMS18",damID)~"PreGS"),
-#          CrossGroup=paste0(sireGroup,"x",damGroup)) %>% 
-#   relocate(contains("Group"),.before = "Nsegsnps") %>% 
-#   write.csv(.,file = here::here("output","genomicMatePredictions_top121parents_ModelDirDom.csv"),
-#             row.names = F)
+**NOTE:** For cross predictions, check that the predMean from full and medium set are highly correlated. As long as that is true, combine the predMean from full set with pred var from medium set.
+
+```{r load usefulness predictions, eval=F}
+crossPreds_full<-readRDS(file = here::here("output","genomicMatePredictions_full_set_2021Aug10.rds"))
+crossPreds_medium<-readRDS(file = here::here("output","genomicMatePredictions_medium_set_2021Aug10.rds"))
+```
+
+
+```{r corPredMeans full-medium, eval=F}
+crossPreds_full$tidyPreds[[1]] %>% 
+  rename(predMean_full=predMean) %>% 
+  left_join(crossPreds_medium$tidyPreds[[1]] %>% 
+              rename(predMean_medium=predMean)) %>% 
+  group_by(predOf,Trait) %>% 
+  summarize(corPredMeans=cor(predMean_full,predMean_medium),.groups = 'drop') %>% 
+  arrange(desc(corPredMeans)) %$% summary(corPredMeans)
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.9493  0.9798  0.9928  0.9855  0.9960  0.9981 
+```
+
+The lowest corPredMeans was 0.95 for the SELIND, perhaps unsurprisingly. 
+
+Mean corPredMeans=0.9855. I think we are good to go.
+
+Make a plot (below) to examine the scaling of predMean_medium vs. predMean_full to be sure that combining predMean_full with predSD_medium is safe. Seems like it. Everything is on the same scale as expected.
+```{r plot predMeans full vs medium, eval=F}
+# crossPreds_full$tidyPreds[[1]] %>% 
+#   rename(predMean_full=predMean) %>% 
+#   left_join(crossPreds_medium$tidyPreds[[1]] %>% 
+#               rename(predMean_medium=predMean)) %>% 
+#   ggplot(aes(x=predMean_full,y=predMean_medium)) + 
+#   geom_point() + 
+#   geom_abline(slope=1,color='darkred') +
+#   facet_wrap(~Trait, scales='free')
+```
+
+Recompute **predUsefulness** using **predMean_full** before saving to disk.
+
+```{r output tidy UC predictions, eval=F}
+crossPreds_full$tidyPreds[[1]] %>% 
+  left_join(crossPreds_medium$tidyPreds[[1]] %>% 
+              rename(predMean_medium=predMean)) %>% 
+  mutate(predUsefulness=predMean+(2.0627128*predSD),
+         sireGroup=case_when(grepl("2013_|TMS13",sireID)~"TMS13",
+                                    grepl("TMS14",sireID)~"TMS14",
+                                    grepl("TMS15",sireID)~"TMS15",
+                                    grepl("TMS16",sireID)~"TMS16",
+                                    grepl("TMS17",sireID)~"TMS17",
+                                    grepl("TMS18",sireID)~"TMS18",
+                                    grepl("TMS19",sireID)~"TMS19",
+                                    grepl("TMS20",sireID)~"TMS20",
+                                    !grepl("2013_|TMS13|TMS14|TMS15|TMS16|TMS17|TMS18|TMS19|TMS20",sireID)~"PreGS"),
+         damGroup=case_when(grepl("2013_|TMS13",damID)~"TMS13",
+                                    grepl("TMS14",damID)~"TMS14",
+                                    grepl("TMS15",damID)~"TMS15",
+                                    grepl("TMS16",damID)~"TMS16",
+                                    grepl("TMS17",damID)~"TMS17",
+                                    grepl("TMS18",damID)~"TMS18",
+                                    grepl("TMS19",damID)~"TMS19",
+                                    grepl("TMS20",damID)~"TMS20",
+                            !grepl("2013_|TMS13|TMS14|TMS15|TMS16|TMS17|TMS18|TMS19|TMS20",damID)~"PreGS"),
+         CrossGroup=paste0(sireGroup,"x",damGroup)) %>%
+  relocate(contains("Group"),.before = "Nsegsnps") %>% 
+  relocate(predMean,.before = "predMean_medium") %>% 
+  arrange(predOf,Trait,desc(predUsefulness)) %>% 
+  write.csv(.,file = here::here("output","genomicMatePredictions_2021Aug10.csv"),
+            row.names = F)
 ```
 
 

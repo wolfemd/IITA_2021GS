@@ -84,10 +84,10 @@ or
 
 -   **GEBVs for parent selection and GETGVs for variety advancement:**
 
-    -   [download DirDom model genomic predictions](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicPredictions_ModelDirDom.csv)
+    -   [download DirDom model genomic predictions](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicPredictions_full_set_2021Aug09.csv)
 
 -   **Predicted means, variances and usefulness of crosses among top parents:**
 
-    -   [download DirDom model genomic mate predictions](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicMatePredictions_topParents_ModelDirDom.csv)
+    -   [download DirDom model genomic mate predictions](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicMatePredictions_2021Aug10.csv)
 
 -   Kinship matrices, dosages, haplotype matrix, recombination frequency matrix, genetic map files
