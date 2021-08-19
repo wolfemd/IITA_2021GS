@@ -34,7 +34,7 @@ R
 
 ## Concept
 
-Determine error-variance vs. plot-size/rep-number scaling for [input to simulations](https://wolfemd.github.io/IITA_2021GS/BreedingSchemeOpt/).
+Determine error-variance vs. plot-size/rep-number scaling for [input to simulations](https://wolfemd.github.io/BreedingSchemeOpt/baselineSim.html).
 
 Our downstream objective is to simulate a baseline and alternative breeding pipelines (variety development pipelines; VDPs) based on proposed differences in plot-size (number of plants), number of reps, locations and overall trial-stage size.
 
@@ -296,4 +296,4 @@ Certainly this will vary by breeding, location, and much more.
 There are also possibly many alternative methods to analyze this problem, and alternative datasets to choose.
 
 
-**NEW APPROACH:** While inconclusive, this exercise emphasizes a key concern for conducting simulations that alter the VDP: that the cost-benefit balance could depend on the relative information value/selection accuracy/error variance of different plot sizes and trial configurations. As a result, I propose to simulate a range of error-vs-plot size as part of the [baseline simulation](baselineSim.html) of each breeding program. ***If*** we observe a shift-point in the cost-benefit analysis we can then work with breeding programs to determine where their data indicate they lie and what changes are subsequently recommended. 
+**NEW APPROACH:** While inconclusive, this exercise emphasizes a key concern for conducting simulations that alter the VDP: that the cost-benefit balance could depend on the relative information value/selection accuracy/error variance of different plot sizes and trial configurations. As a result, I propose to simulate a range of error-vs-plot size as part of the [baseline simulation](https://wolfemd.github.io/BreedingSchemeOpt/baselineSim.html) of each breeding program. ***If*** we observe a shift-point in the cost-benefit analysis we can then work with breeding programs to determine where their data indicate they lie and what changes are subsequently recommended. 
