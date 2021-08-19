@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Empirical inputs for simulations - IITA</title>
+
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #232629;
+    color: #7a7c7d;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d;  padding-left: 4px; }
+div.sourceCode
+  { color: #cfcfc2; background-color: #232629; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { color: #cfcfc2; } /* Normal */
+code span.al { color: #95da4c; background-color: #4d1f24; font-weight: bold; } /* Alert */
+code span.an { color: #3f8058; } /* Annotation */
+code span.at { color: #2980b9; } /* Attribute */
+code span.bn { color: #f67400; } /* BaseN */
+code span.bu { color: #7f8c8d; } /* BuiltIn */
+code span.cf { color: #fdbc4b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #3daee9; } /* Char */
+code span.cn { color: #27aeae; font-weight: bold; } /* Constant */
+code span.co { color: #7a7c7d; } /* Comment */
+code span.cv { color: #7f8c8d; } /* CommentVar */
+code span.do { color: #a43340; } /* Documentation */
+code span.dt { color: #2980b9; } /* DataType */
+code span.dv { color: #f67400; } /* DecVal */
+code span.er { color: #da4453; text-decoration: underline; } /* Error */
+code span.ex { color: #0099ff; font-weight: bold; } /* Extension */
+code span.fl { color: #f67400; } /* Float */
+code span.fu { color: #8e44ad; } /* Function */
+code span.im { color: #27ae60; } /* Import */
+code span.in { color: #c45b00; } /* Information */
+code span.kw { color: #cfcfc2; font-weight: bold; } /* Keyword */
+code span.op { color: #cfcfc2; } /* Operator */
+code span.ot { color: #27ae60; } /* Other */
+code span.pp { color: #27ae60; } /* Preprocessor */
+code span.re { color: #2980b9; background-color: #153042; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #da4453; } /* SpecialString */
+code span.st { color: #f44f4f; } /* String */
+code span.va { color: #27aeae; } /* Variable */
+code span.vs { color: #da4453; } /* VerbatimString */
+code span.wa { color: #da4453; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IITA_2021GS</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Imputation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="convertDCas21_6038_ToVCF.html">Conversion DArT report DCas21_6038 to VCF</a>
+    </li>
+    <li>
+      <a href="ImputeDCas21_6038.html">Impute DCas21_6038</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Preliminary Steps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-cleanTPdata.html">Data Cleaning</a>
+    </li>
+    <li>
+      <a href="02-GetBLUPs.html">Get BLUPs</a>
+    </li>
+    <li>
+      <a href="03-validatePedigree.html">Verify pedigree records</a>
+    </li>
+    <li>
+      <a href="04-PreprocessDataFiles.html">Preprocessing input data</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="05-CrossValidation.html">Cross-validation</a>
+</li>
+<li>
+  <a href="06-GenomicPredictions.html">Genomic (mate) predictions</a>
+</li>
+<li>
+  <a href="07-Results.html">Results</a>
+</li>
+<li>
+  <a href="inputsForSimulation.html">Inputs for Sims</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Other
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="about.html">About</a>
+    </li>
+    <li>
+      <a href="license.html">License</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/wolfemd/IITA_2021GS">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Empirical inputs for simulations - IITA</h1>
+<h4 class="date">2021-Aug-13</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-08-19
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>IITA_2021GS/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210504code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210504)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210504code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210504)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStreeb0425f3195384021a62a6e8b20893fe512fdb025targetblankb0425f3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/IITA_2021GS/tree/b0425f3195384021a62a6e8b20893fe512fdb025" target="_blank">b0425f3</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStreeb0425f3195384021a62a6e8b20893fe512fdb025targetblankb0425f3a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/IITA_2021GS/tree/b0425f3195384021a62a6e8b20893fe512fdb025" target="_blank">b0425f3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+
+Untracked files:
+    Untracked:  data/DatabaseDownload_2021Aug08/
+    Untracked:  data/DatabaseDownload_2021May04/
+    Untracked:  data/GBSdataMasterList_31818.csv
+    Untracked:  data/IITA_GBStoPhenoMaster_33018.csv
+    Untracked:  data/NRCRI_GBStoPhenoMaster_40318.csv
+    Untracked:  data/PedigreeGeneticGainCycleTime_aafolabi_01122020.xls
+    Untracked:  data/Report-DCas21-6038/
+    Untracked:  data/blups_forGP.rds
+    Untracked:  data/chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam
+    Untracked:  data/dosages_IITA_2021Aug09.rds
+    Untracked:  data/haps_IITA_2021Aug09.rds
+    Untracked:  data/recombFreqMat_1minus2c_2021Aug02.qs
+    Untracked:  output/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/inputsForSimulation.Rmd</code>) and HTML (<code>docs/inputsForSimulation.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/b0425f3195384021a62a6e8b20893fe512fdb025/analysis/inputsForSimulation.Rmd" target="_blank">b0425f3</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-19
+</td>
+<td>
+Integrate and publish results of an analysis to decide on inputs for
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/8a6c1662b53318de5f2ec270f419cd0c80db5580/analysis/inputsForSimulation.Rmd" target="_blank">8a6c166</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-11
+</td>
+<td>
+Update README clean-up git
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/IITA_2021GS/8a6c1662b53318de5f2ec270f419cd0c80db5580/docs/inputsForSimulation.html" target="_blank">8a6c166</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-11
+</td>
+<td>
+Update README clean-up git
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/IITA_2021GS/934141c48eff754aa674925be5357d0a2b8be7d3/docs/inputsForSimulation.html" target="_blank">934141c</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/IITA_2021GS/3a1faa07679b017c7db8427e11ceb2eb9bf27287/docs/inputsForSimulation.html" target="_blank">3a1faa0</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/134c8d3d46cfa7ff413c00379cffb8b8e561469a/analysis/inputsForSimulation.Rmd" target="_blank">134c8d3</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+<td>
+Publish first pass at GS pipeline-integrated estimation of selection error for input into simulations downstream.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) start a screen shell </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span><span class="kw">;</span> <span class="co"># or screen -r if re-attaching...</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># cbsurobbins SLURM </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">-n</span> 20 <span class="at">--mem</span><span class="op">=</span>60G <span class="at">--time</span><span class="op">=</span>06:00:00<span class="kw">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) start the singularity Linux shell inside that</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> shell ~/rocker2.sif<span class="kw">;</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Project directory, so R will use as working dir.</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /home/mw489/IITA_2021GS/<span class="kw">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Start R</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span></code></pre></div>
+<div id="estimate-selection-error" class="section level1">
+<h1>Estimate selection error</h1>
+<div id="concept" class="section level2">
+<h2>Concept</h2>
+<p>Determine error-variance vs. plot-size/rep-number scaling for <a href="https://wolfemd.github.io/IITA_2021GS/BreedingSchemeOpt/">input to simulations</a>.</p>
+<p>Our downstream objective is to simulate a baseline and alternative breeding pipelines (variety development pipelines; VDPs) based on proposed differences in plot-size (number of plants), number of reps, locations and overall trial-stage size.</p>
+<p>We can’t compute the same selection index for each trial because of variation in the traits scored.</p>
+<p>Below, I outline an approach that integrates into the existing GS pipeline and deals with heterogeneity in the traits observed from trial-to-trial.</p>
+<p>Approach:</p>
+<ul>
+<li><p>Use the <em>SELECTION INDEX</em> GETGV from genomic prediction using all entire available training population and all of the latest available data as a best estimate of “true” net merit</p>
+<ul>
+<li><p>The predictions documented <a href="https://wolfemd.github.io/IITA_2021GS/06-GenomicPredictions.html">here</a> is the most up-to-date. See the summary of genomic prediction results <a href="https://wolfemd.github.io/IITA_2021GS/07-Results.html#Genomic_Predictions">here</a>.</p></li>
+<li><p>Alternative best estimate of “true” net merit: actual national performance trial data (e.g. from NCRPs in Nigeria?)</p></li>
+</ul></li>
+<li><p>For each trial, analyze the cleaned plot-basis data:</p>
+<ol style="list-style-type: decimal">
+<li><p>Fit a univariate mixed-model to each trait scored</p></li>
+<li><p>Extract trial-specific BLUPs for whatever clones were present</p></li>
+<li><p>Compute the SELIND for the current trial using BLUPs for whatever component traits were scored (<span class="math inline">\(SI_{TrialBLUP}\)</span>).</p></li>
+<li><p>Regress <span class="math inline">\(SI_{GETGV}\)</span> on the <span class="math inline">\(SI_{TrialBLUP}\)</span></p></li>
+<li><p>Extract the <span class="math inline">\(\hat{\sigma}^2_e\)</span> of the regression as the trial-specific estimate of the selection error</p></li>
+</ol></li>
+<li><p>Using the results from all trials: Regress <span class="math inline">\(\hat{\sigma}^2_e\)</span> on plot-size. Weight by number of clones available to measure <span class="math inline">\(\hat{\sigma}^2_e\)</span>. Extract coefficients to generate relative scaling profiles of error variances to input for simulating VDPs.</p></li>
+</ul>
+</div>
+<div id="analysis" class="section level2">
+<h2>Analysis</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(genomicMateSelectR); </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># SELIND GETGVS (for input to estimateSelectionError func below)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>gpreds<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;genomicPredictions_full_set_2021Aug09.rds&quot;</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>getgvs<span class="ot">&lt;-</span>gpreds<span class="sc">$</span>gblups[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(predOf<span class="sc">==</span><span class="st">&quot;GETGV&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GID,SELIND)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># CLEANED PLOT-LEVEL TRIAL DATA</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;IITA_ExptDesignsDetected_2021Aug08.rds&quot;</span>))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="do">### Restrict consideration to &gt;2012 </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="do">### to measure the selection error during the current &quot;era&quot; at IITA.</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>trials2keep<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyYear<span class="sc">&gt;=</span><span class="dv">2013</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(MaxNOHAV)) <span class="sc">%$%</span> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(studyName)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(trials2keep) <span class="sc">%&gt;%</span> <span class="fu">paste0</span>(.,<span class="st">&quot; trials&quot;</span>)</span></code></pre></div>
+<pre><code>[1] &quot;641 trials&quot;</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] 641 trials</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>dbdata <span class="sc">%&gt;%</span> <span class="fu">filter</span>(studyName <span class="sc">%in%</span> trials2keep) <span class="sc">%&gt;%</span> nrow <span class="sc">%&gt;%</span> <span class="fu">paste0</span>(.,<span class="st">&quot; plots&quot;</span>)</span></code></pre></div>
+<pre><code>[1] &quot;182195 plots&quot;</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] 182195 plots</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>trialdata<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyYear<span class="sc">&gt;=</span><span class="dv">2013</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>         studyName <span class="sc">%in%</span> trials2keep) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">TrialData=</span><span class="sc">-</span><span class="fu">c</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">propGenotyped=</span><span class="fu">map_dbl</span>(TrialData,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                              <span class="sc">~</span><span class="fu">length</span>(<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">unique</span>(.<span class="sc">$</span>FullSampleName))))<span class="sc">/</span><span class="fu">length</span>(<span class="fu">unique</span>(.<span class="sc">$</span>GID))))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># SELECTION INDEX WEIGHTS</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="do">## from IYR+IK</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="do">## note that not ALL predicted traits are on index</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>SIwts<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="at">logFYLD=</span><span class="dv">20</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">HI=</span><span class="dv">10</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">DM=</span><span class="dv">15</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">MCMDS=</span><span class="sc">-</span><span class="dv">10</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">logRTNO=</span><span class="dv">12</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">logDYLD=</span><span class="dv">20</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">logTOPYLD=</span><span class="dv">15</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">PLTHT=</span><span class="dv">10</span>) </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co"># SOURCE FUNCTION estimateSelectionError() </span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;code&quot;</span>,<span class="st">&quot;estimateSelectionError.R&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Nplots=</span><span class="fu">nrow</span>(.),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">across</span>(<span class="fu">c</span>(locationName,studyYear,studyName,TrialType,GID), <span class="sc">~</span><span class="fu">length</span>(<span class="fu">unique</span>(.)),<span class="at">.names =</span> <span class="st">&quot;N_{.col}&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Nplots"],"name":[1],"type":["int"],"align":["right"]},{"label":["N_locationName"],"name":[2],"type":["int"],"align":["right"]},{"label":["N_studyYear"],"name":[3],"type":["int"],"align":["right"]},{"label":["N_studyName"],"name":[4],"type":["int"],"align":["right"]},{"label":["N_TrialType"],"name":[5],"type":["int"],"align":["right"]},{"label":["N_GID"],"name":[6],"type":["int"],"align":["right"]}],"data":[{"1":"182195","2":"11","3":"8","4":"641","5":"8","6":"35884"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Summary of available plot-level data:</strong> See <a href="01-cleanTPdata.html">here</a> for details about the cleaned trial data most recently downloaded from IITA/Cassavabase and used below. Number of unique plots, locations, years, etc. in the cleaned plot-basis data.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(TrialType,CompleteBlocks,IncompleteBlocks) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(TrialType,n) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["CompleteBlocks"],"name":[1],"type":["lgl"],"align":["right"]},{"label":["IncompleteBlocks"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["AYT"],"name":[3],"type":["int"],"align":["right"]},{"label":["CET"],"name":[4],"type":["int"],"align":["right"]},{"label":["CrossingBlock"],"name":[5],"type":["int"],"align":["right"]},{"label":["ExpCET"],"name":[6],"type":["int"],"align":["right"]},{"label":["GeneticGain"],"name":[7],"type":["int"],"align":["right"]},{"label":["NCRP"],"name":[8],"type":["int"],"align":["right"]},{"label":["PYT"],"name":[9],"type":["int"],"align":["right"]},{"label":["UYT"],"name":[10],"type":["int"],"align":["right"]}],"data":[{"1":"FALSE","2":"FALSE","3":"NA","4":"12078","5":"678","6":"NA","7":"3418","8":"NA","9":"972","10":"NA"},{"1":"FALSE","2":"TRUE","3":"152","4":"44611","5":"1512","6":"2891","7":"4024","8":"NA","9":"NA","10":"NA"},{"1":"TRUE","2":"FALSE","3":"22871","4":"328","5":"NA","6":"NA","7":"276","8":"711","9":"21064","10":"14353"},{"1":"TRUE","2":"TRUE","3":"12227","4":"NA","5":"NA","6":"NA","7":"NA","8":"4050","9":"26251","10":"9728"}],"options":{"columns":{"min":{},"max":[15]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Count the trial designs by TrialType:</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(MaxNOHAV)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TrialType=</span><span class="fu">factor</span>(TrialType,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;CrossingBlock&quot;</span>,<span class="st">&quot;GeneticGain&quot;</span>,<span class="st">&quot;CET&quot;</span>,<span class="st">&quot;ExpCET&quot;</span>,<span class="st">&quot;PYT&quot;</span>,<span class="st">&quot;AYT&quot;</span>,<span class="st">&quot;UYT&quot;</span>,<span class="st">&quot;NCRP&quot;</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>TrialType,<span class="at">y=</span>MaxNOHAV,<span class="at">fill=</span>TrialType)) <span class="sc">+</span> </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">notch =</span> T) <span class="sc">+</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">45</span>,<span class="at">vjust=</span>.<span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Max number harvested as a proxy for planned plot size&quot;</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">&quot;MaxNOHAV = The maximum number stands harvested per trial. studyYear&gt;=2013&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/plot%20MaxNOHAV%20vs.%20TrialType-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-no-spaces-plot-MaxNOHAV-vs.-TrialType-1">
+Past versions of “plot MaxNOHAV vs. TrialType-1.png”
+</button>
+</p>
+<div id="fig-no-spaces-plot-MaxNOHAV-vs.-TrialType-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/8a6c1662b53318de5f2ec270f419cd0c80db5580/docs/figure/inputsForSimulation.Rmd/plot MaxNOHAV vs. TrialType-1.png" target="_blank">8a6c166</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-11
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/3a1faa07679b017c7db8427e11ceb2eb9bf27287/docs/figure/inputsForSimulation.Rmd/plot MaxNOHAV vs. TrialType-1.png" target="_blank">3a1faa0</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">###### unit test inputs for estimateSelectionError</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># TrialData&lt;-trialdata$TrialData[[1]]</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># CompleteBlocks&lt;-trialdata$CompleteBlocks[[1]]</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># IncompleteBlocks&lt;-trialdata$IncompleteBlocks[[1]]</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># TrialData&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% TrialData[[1]]</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># CompleteBlocks&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% CompleteBlocks[[1]]</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># IncompleteBlocks&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% IncompleteBlocks[[1]]</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ncores=4</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># rm(TrialData,CompleteBlocks,IncompleteBlocks)</span></span></code></pre></div>
+<p>Run function <code>estimateSelectionError()</code> across trials to estimation selection errors.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(furrr); <span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">20</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">future.globals.maxSize=</span><span class="sc">+</span><span class="cn">Inf</span>); <span class="fu">options</span>(<span class="at">future.rng.onMisuse=</span><span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SelectionError=</span><span class="fu">future_pmap</span>(.,estimateSelectionError,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">SIwts=</span>SIwts,<span class="at">getgvs=</span>getgvs))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(trialdata,here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError.rds&quot;</span>))</span></code></pre></div>
+</div>
+<div id="result" class="section level2">
+<h2>Result</h2>
+<p>Out of 633 trials, 516 produced successful model fits and subsequent estimates of TrialMSE (selection index error).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(genomicMateSelectR)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>estSelError<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError.rds&quot;</span>))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>SI_BLUPs,<span class="sc">-</span>BLUPs,<span class="sc">-</span>SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(TrialMSE))</span></code></pre></div>
+<p>Here’s the <code>str()</code> of the estimates I made.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> str</span></code></pre></div>
+<pre><code>tibble [516 × 12] (S3: tbl_df/tbl/data.frame)
+ $ studyYear       : int [1:516] 2013 2013 2013 2013 2013 2013 2013 2013 2013 2013 ...
+ $ locationName    : chr [1:516] &quot;Ibadan&quot; &quot;Ibadan&quot; &quot;Ibadan&quot; &quot;Ibadan&quot; ...
+ $ studyName       : chr [1:516] &quot;13Ayt16ICTIB&quot; &quot;13ayt20pdIB&quot; &quot;13ayt20pdwhtrtIB&quot; &quot;13ayt20pdyrtIB&quot; ...
+ $ TrialType       : chr [1:516] &quot;AYT&quot; &quot;AYT&quot; &quot;AYT&quot; &quot;AYT&quot; ...
+ $ MaxNOHAV        : num [1:516] 10 10 10 10 11 20 10 10 10 10 ...
+ $ CompleteBlocks  : logi [1:516] TRUE TRUE TRUE TRUE TRUE TRUE ...
+ $ IncompleteBlocks: logi [1:516] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ propGenotyped   : num [1:516] 0.983 0.516 0.575 0.75 0.6 ...
+ $ cor2si          : num [1:516] -0.3344 0.2644 0.573 -0.0843 0.5199 ...
+ $ r2_si           : num [1:516] 0.1118 0.0699 0.3284 0.0071 0.2703 ...
+ $ TrialMSE        : num [1:516] 22982 15691 1933 7259 17167 ...
+ $ NcloneForReg    : int [1:516] 30 10 23 25 11 11 11 11 9 28 ...</code></pre>
+<ul>
+<li><strong><code>cor2si</code></strong> = correlation between SI computed from each trial’s BLUPs and the SI computed from GETGV (all training data and traits used)</li>
+<li><strong><code>r2_si</code></strong> = r-squared, regression of SI_GETGV on SI_TrialBLUP</li>
+<li><strong><code>TrialMSE</code></strong> = mean squared error from that regression</li>
+<li><strong><code>NcloneForReg</code></strong> = the number of clones with estimates of both SI_TrialBLUP and SI_GETGV for a given trial. Avoid considering trials with too few data points.</li>
+</ul>
+<p>I made two plots below, one of the <code>cor2si</code> and one of the <code>TrialMSE</code> vs. MaxNOHAV (the proxy for plot size). Trial-results are scaled by NcloneForReg and a smooth spline is fit.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>MaxNOHAV,<span class="at">y=</span>cor2si,<span class="at">color=</span>NcloneForReg,<span class="at">size=</span>NcloneForReg)) <span class="sc">+</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;The cor(SI_GETGV,SI_TrialBLUPs) vs. MaxNOHAV as a proxy for plot size&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/cor2si%20vs%20MaxNOHAV-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-no-spaces-cor2si-vs-MaxNOHAV-1">
+Past versions of “cor2si vs MaxNOHAV-1.png”
+</button>
+</p>
+<div id="fig-no-spaces-cor2si-vs-MaxNOHAV-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/8a6c1662b53318de5f2ec270f419cd0c80db5580/docs/figure/inputsForSimulation.Rmd/cor2si vs MaxNOHAV-1.png" target="_blank">8a6c166</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-11
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/3a1faa07679b017c7db8427e11ceb2eb9bf27287/docs/figure/inputsForSimulation.Rmd/cor2si vs MaxNOHAV-1.png" target="_blank">3a1faa0</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>MaxNOHAV,<span class="at">y=</span>TrialMSE,<span class="at">color=</span>NcloneForReg,<span class="at">size=</span>NcloneForReg)) <span class="sc">+</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Trial-specific selection error ests. vs. MaxNOHAV&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/TrialMSE%20vs%20MaxNOHAV-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>In my opinion, there is no clear pattern. I am biased to seeing a hint of a trend.</p>
+<p>Look at a correlation matrix and do some regression analysis below.</p>
+<p>Try to measure an effect size of increasing the number of stands per plot.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>estSelError<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError.rds&quot;</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># extract some covariates which might be predictive of cor2si, </span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># which I think is on a uniform scale</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Nclone in trial: want est. of plot-size effect NOT dependent on Nclones</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># estSelError$TrialData[[1]] %$% length(unique(GID)) </span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># MeanPropNOHAV: measure trial quality by how &quot;full&quot; the plots were at harvest</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># estSelError$TrialData[[1]] %$% mean(PropNOHAV) </span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Nclones=</span><span class="fu">map_dbl</span>(TrialData,<span class="sc">~</span><span class="fu">length</span>(<span class="fu">unique</span>(.<span class="sc">$</span>GID))),</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">MeanPropNOHAV=</span><span class="fu">map_dbl</span>(TrialData,<span class="sc">~</span><span class="fu">mean</span>(.<span class="sc">$</span>PropNOHAV,<span class="at">na.rm=</span>T)),</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">Nobs=</span><span class="fu">map_dbl</span>(TrialData,<span class="sc">~</span><span class="fu">nrow</span>(.)),</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">TrialDesign=</span><span class="fu">paste0</span>(<span class="st">&quot;Complete&quot;</span>,CompleteBlocks,<span class="st">&quot;Incomplete&quot;</span>,IncompleteBlocks)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>SI_BLUPs,<span class="sc">-</span>BLUPs,<span class="sc">-</span>SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(TrialMSE)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">propAvailForReg=</span>NcloneForReg<span class="sc">/</span>Nclones)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> str</span></code></pre></div>
+<pre><code>tibble [516 × 17] (S3: tbl_df/tbl/data.frame)
+ $ studyYear       : int [1:516] 2013 2013 2013 2013 2013 2013 2013 2013 2013 2013 ...
+ $ locationName    : chr [1:516] &quot;Ibadan&quot; &quot;Ibadan&quot; &quot;Ibadan&quot; &quot;Ibadan&quot; ...
+ $ studyName       : chr [1:516] &quot;13Ayt16ICTIB&quot; &quot;13ayt20pdIB&quot; &quot;13ayt20pdwhtrtIB&quot; &quot;13ayt20pdyrtIB&quot; ...
+ $ TrialType       : chr [1:516] &quot;AYT&quot; &quot;AYT&quot; &quot;AYT&quot; &quot;AYT&quot; ...
+ $ MaxNOHAV        : num [1:516] 10 10 10 10 11 20 10 10 10 10 ...
+ $ CompleteBlocks  : logi [1:516] TRUE TRUE TRUE TRUE TRUE TRUE ...
+ $ IncompleteBlocks: logi [1:516] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ propGenotyped   : num [1:516] 0.983 0.516 0.575 0.75 0.6 ...
+ $ cor2si          : num [1:516] -0.3344 0.2644 0.573 -0.0843 0.5199 ...
+ $ r2_si           : num [1:516] 0.1118 0.0699 0.3284 0.0071 0.2703 ...
+ $ TrialMSE        : num [1:516] 22982 15691 1933 7259 17167 ...
+ $ NcloneForReg    : int [1:516] 30 10 23 25 11 11 11 11 9 28 ...
+ $ Nclones         : num [1:516] 60 31 40 60 30 65 30 30 30 81 ...
+ $ MeanPropNOHAV   : num [1:516] 0.835 0.738 0.773 0.713 0.651 ...
+ $ Nobs            : num [1:516] 240 124 160 240 120 260 120 120 120 275 ...
+ $ TrialDesign     : chr [1:516] &quot;CompleteTRUEIncompleteFALSE&quot; &quot;CompleteTRUEIncompleteFALSE&quot; &quot;CompleteTRUEIncompleteFALSE&quot; &quot;CompleteTRUEIncompleteFALSE&quot; ...
+ $ propAvailForReg : num [1:516] 0.5 0.323 0.575 0.417 0.367 ...</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cor2si,TrialMSE,MaxNOHAV,NcloneForReg,Nclones,MeanPropNOHAV,Nobs,propAvailForReg) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(., <span class="at">use=</span><span class="st">&#39;pairwise.complete.obs&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(.,<span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  corrplot<span class="sc">::</span><span class="fu">corrplot</span>(<span class="at">type=</span><span class="st">&quot;lower&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulation.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li><code>MeanPropNOHAV</code>: Avg. proportion of stands harvested per plot. Measure of trial quality / success.</li>
+<li><code>Nclones</code> and <code>Nobs</code>: Measures of trial size</li>
+<li><code>propAvailForReg = NcloneForReg/Nclones</code>: a weight for the regressions below. The maximum weight is to be on trials with as many clones as intended scored on the selection index.</li>
+</ul>
+<p>Linear model below: include all feasible co-variables <em>and</em> an interaction b/t TrialDesign and MaxNOHAV (plot size)</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(cor2si<span class="sc">~</span>MaxNOHAV<span class="sc">+</span>TrialDesign<span class="sc">+</span>TrialDesign<span class="sc">*</span>MaxNOHAV<span class="sc">+</span>studyYear<span class="sc">+</span>Nclones<span class="sc">+</span>MeanPropNOHAV,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>   <span class="at">data =</span> estSelError,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>   <span class="at">weights =</span> propAvailForReg) <span class="sc">%&gt;%</span> summary</span></code></pre></div>
+<pre><code>
+Call:
+lm(formula = cor2si ~ MaxNOHAV + TrialDesign + TrialDesign * 
+    MaxNOHAV + studyYear + Nclones + MeanPropNOHAV, data = estSelError, 
+    weights = propAvailForReg)
+
+Weighted Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.93878 -0.21431  0.01064  0.22382  0.57224 
+
+Coefficients:
+                                                  Estimate Std. Error t value
+(Intercept)                                     -5.222e+01  2.674e+01  -1.953
+MaxNOHAV                                         5.222e-03  1.598e-02   0.327
+TrialDesignCompleteFALSEIncompleteTRUE          -3.082e-02  2.382e-01  -0.129
+TrialDesignCompleteTRUEIncompleteFALSE           2.480e-02  2.255e-01   0.110
+TrialDesignCompleteTRUEIncompleteTRUE           -1.013e-01  2.284e-01  -0.443
+studyYear                                        2.580e-02  1.330e-02   1.940
+Nclones                                          5.049e-04  1.668e-04   3.027
+MeanPropNOHAV                                    3.762e-01  1.515e-01   2.484
+MaxNOHAV:TrialDesignCompleteFALSEIncompleteTRUE  5.469e-03  1.913e-02   0.286
+MaxNOHAV:TrialDesignCompleteTRUEIncompleteFALSE -7.924e-04  1.676e-02  -0.047
+MaxNOHAV:TrialDesignCompleteTRUEIncompleteTRUE   7.955e-03  1.714e-02   0.464
+                                                Pr(&gt;|t|)   
+(Intercept)                                      0.05134 . 
+MaxNOHAV                                         0.74393   
+TrialDesignCompleteFALSEIncompleteTRUE           0.89711   
+TrialDesignCompleteTRUEIncompleteFALSE           0.91248   
+TrialDesignCompleteTRUEIncompleteTRUE            0.65766   
+studyYear                                        0.05293 . 
+Nclones                                          0.00259 **
+MeanPropNOHAV                                    0.01332 * 
+MaxNOHAV:TrialDesignCompleteFALSEIncompleteTRUE  0.77513   
+MaxNOHAV:TrialDesignCompleteTRUEIncompleteFALSE  0.96231   
+MaxNOHAV:TrialDesignCompleteTRUEIncompleteTRUE   0.64279   
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.3097 on 501 degrees of freedom
+  (4 observations deleted due to missingness)
+Multiple R-squared:  0.05904,   Adjusted R-squared:  0.04026 
+F-statistic: 3.144 on 10 and 501 DF,  p-value: 0.0006501</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(TrialMSE<span class="sc">~</span>MaxNOHAV<span class="sc">+</span>TrialDesign<span class="sc">+</span>TrialDesign<span class="sc">*</span>MaxNOHAV<span class="sc">+</span>studyYear<span class="sc">+</span>Nclones<span class="sc">+</span>MeanPropNOHAV,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>   <span class="at">data =</span> estSelError,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>   <span class="at">weights =</span> propAvailForReg) <span class="sc">%&gt;%</span> summary</span></code></pre></div>
+<pre><code>
+Call:
+lm(formula = TrialMSE ~ MaxNOHAV + TrialDesign + TrialDesign * 
+    MaxNOHAV + studyYear + Nclones + MeanPropNOHAV, data = estSelError, 
+    weights = propAvailForReg)
+
+Weighted Residuals:
+    Min      1Q  Median      3Q     Max 
+-9940.9 -2731.2  -549.3  2480.9 12845.6 
+
+Coefficients:
+                                                  Estimate Std. Error t value
+(Intercept)                                     914475.297 356860.012   2.563
+MaxNOHAV                                          -232.808    213.554  -1.090
+TrialDesignCompleteFALSEIncompleteTRUE           -5230.826   3182.386  -1.644
+TrialDesignCompleteTRUEIncompleteFALSE           -7568.083   3012.140  -2.513
+TrialDesignCompleteTRUEIncompleteTRUE            -2341.172   3041.104  -0.770
+studyYear                                         -446.189    177.483  -2.514
+Nclones                                              4.471      2.225   2.010
+MeanPropNOHAV                                      891.391   2023.441   0.441
+MaxNOHAV:TrialDesignCompleteFALSEIncompleteTRUE    370.713    255.684   1.450
+MaxNOHAV:TrialDesignCompleteTRUEIncompleteFALSE    396.631    223.945   1.771
+MaxNOHAV:TrialDesignCompleteTRUEIncompleteTRUE     290.578    228.212   1.273
+                                                Pr(&gt;|t|)  
+(Intercept)                                       0.0107 *
+MaxNOHAV                                          0.2762  
+TrialDesignCompleteFALSEIncompleteTRUE            0.1009  
+TrialDesignCompleteTRUEIncompleteFALSE            0.0123 *
+TrialDesignCompleteTRUEIncompleteTRUE             0.4418  
+studyYear                                         0.0122 *
+Nclones                                           0.0450 *
+MeanPropNOHAV                                     0.6597  
+MaxNOHAV:TrialDesignCompleteFALSEIncompleteTRUE   0.1477  
+MaxNOHAV:TrialDesignCompleteTRUEIncompleteFALSE   0.0771 .
+MaxNOHAV:TrialDesignCompleteTRUEIncompleteTRUE    0.2035  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 4139 on 505 degrees of freedom
+Multiple R-squared:  0.1047,    Adjusted R-squared:  0.08696 
+F-statistic: 5.905 on 10 and 505 DF,  p-value: 1.819e-08</code></pre>
+<p>&lt;6% variance explained (<code>cor2si</code>) and 10% for <code>TrialMSE</code>.</p>
+<p>Next simplify a bit, remove the interactions and TrialDesign effect, but keep the covariates.</p>
+<p>Simplify it a bit, e.g.: <code>cor2si~MaxNOHAV+studyYear+Nclones+MeanPropNOHAV</code></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>lm_cor2si<span class="ot">&lt;-</span><span class="fu">lm</span>(cor2si<span class="sc">~</span>MaxNOHAV<span class="sc">+</span>studyYear<span class="sc">+</span>Nclones<span class="sc">+</span>MeanPropNOHAV,</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>   <span class="at">data =</span> estSelError,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>   <span class="at">weights =</span> propAvailForReg)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>lm_cor2si <span class="sc">%&gt;%</span> summary</span></code></pre></div>
+<pre><code>
+Call:
+lm(formula = cor2si ~ MaxNOHAV + studyYear + Nclones + MeanPropNOHAV, 
+    data = estSelError, weights = propAvailForReg)
+
+Weighted Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.95664 -0.21012  0.00948  0.22580  0.58414 
+
+Coefficients:
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   -5.633e+01  2.363e+01  -2.384   0.0175 *  
+MaxNOHAV       7.920e-03  3.894e-03   2.034   0.0425 *  
+studyYear      2.782e-02  1.174e-02   2.369   0.0182 *  
+Nclones        5.196e-04  1.219e-04   4.264 2.39e-05 ***
+MeanPropNOHAV  3.718e-01  1.487e-01   2.500   0.0127 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.3082 on 507 degrees of freedom
+  (4 observations deleted due to missingness)
+Multiple R-squared:  0.05678,   Adjusted R-squared:  0.04934 
+F-statistic: 7.631 on 4 and 507 DF,  p-value: 5.642e-06</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(TrialMSE<span class="sc">~</span>MaxNOHAV<span class="sc">+</span>studyYear<span class="sc">+</span>Nclones<span class="sc">+</span>MeanPropNOHAV,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>   <span class="at">data =</span> estSelError,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>   <span class="at">weights =</span> propAvailForReg) <span class="sc">%&gt;%</span> summary</span></code></pre></div>
+<pre><code>
+Call:
+lm(formula = TrialMSE ~ MaxNOHAV + studyYear + Nclones + MeanPropNOHAV, 
+    data = estSelError, weights = propAvailForReg)
+
+Weighted Residuals:
+    Min      1Q  Median      3Q     Max 
+-9411.3 -2973.2  -403.7  2316.7 13128.4 
+
+Coefficients:
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   447088.115 324383.326   1.378   0.1687    
+MaxNOHAV         110.772     53.086   2.087   0.0374 *  
+studyYear       -217.692    161.210  -1.350   0.1775    
+Nclones            7.450      1.678   4.440  1.1e-05 ***
+MeanPropNOHAV   2125.966   2049.063   1.038   0.3000    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 4248 on 511 degrees of freedom
+Multiple R-squared:  0.04559,   Adjusted R-squared:  0.03812 
+F-statistic: 6.102 on 4 and 511 DF,  p-value: 8.407e-05</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># VarT=100</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># h2=0.2</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># VarE=(1-h2)*VarT</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># tibble(plotSize=1:50) %&gt;% </span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(expCorToSI=lm_cor2si$coefficients[[&quot;MaxNOHAV&quot;]]*plotSize,</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">#          sqCorToSI=round(expCorToSI^2,2),</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">#          VarE=VarE*(1-sqCorToSI))</span></span></code></pre></div>
+</div>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>The analysis seems far from conclusive. Do we even expect the relation b/t plot-size and error variance to be linearly decreasing?</p>
+<p>Certainly this will vary by breeding, location, and much more.</p>
+<p>There are also possibly many alternative methods to analyze this problem, and alternative datasets to choose.</p>
+<p><strong>NEW APPROACH:</strong> While inconclusive, this exercise emphasizes a key concern for conducting simulations that alter the VDP: that the cost-benefit balance could depend on the relative information value/selection accuracy/error variance of different plot sizes and trial configurations. As a result, I propose to simulate a range of error-vs-plot size as part of the <a href="baselineSim.html">baseline simulation</a> of each breeding program. <strong><em>If</em></strong> we observe a shift-point in the cost-benefit analysis we can then work with breeding programs to determine where their data indicate they lie and what changes are subsequently recommended.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur 10.16
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] forcats_0.5.1            stringr_1.4.0            readr_2.0.1             
+ [4] ggplot2_3.3.5            tidyverse_1.3.1          genomicMateSelectR_0.2.0
+ [7] purrr_0.3.4              tidyr_1.1.3              dplyr_1.0.7             
+[10] tibble_3.1.3             workflowr_1.6.2         
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.7        lattice_0.20-44   lubridate_1.7.10  here_1.0.1       
+ [5] assertthat_0.2.1  rprojroot_2.0.2   digest_0.6.27     utf8_1.2.2       
+ [9] R6_2.5.0          cellranger_1.1.0  backports_1.2.1   reprex_2.0.1     
+[13] evaluate_0.14     highr_0.9         httr_1.4.2        pillar_1.6.2     
+[17] rlang_0.4.11      readxl_1.3.1      rstudioapi_0.13   whisker_0.4      
+[21] jquerylib_0.1.4   Matrix_1.3-4      rmarkdown_2.10    splines_4.1.0    
+[25] labeling_0.4.2    munsell_0.5.0     broom_0.7.9       compiler_4.1.0   
+[29] httpuv_1.6.1      modelr_0.1.8      xfun_0.25         pkgconfig_2.0.3  
+[33] mgcv_1.8-36       htmltools_0.5.1.1 tidyselect_1.1.1  fansi_0.5.0      
+[37] crayon_1.4.1      tzdb_0.1.2        dbplyr_2.1.1      withr_2.4.2      
+[41] later_1.2.0       grid_4.1.0        nlme_3.1-152      jsonlite_1.7.2   
+[45] gtable_0.3.0      lifecycle_1.0.0   DBI_1.1.1         git2r_0.28.0     
+[49] magrittr_2.0.1    scales_1.1.1      cli_3.0.1         stringi_1.7.3    
+[53] farver_2.1.0      fs_1.5.0          promises_1.2.0.1  xml2_1.3.2       
+[57] bslib_0.2.5.1     ellipsis_0.3.2    generics_0.1.0    vctrs_0.3.8      
+[61] tools_4.1.0       glue_1.4.2        hms_1.1.0         yaml_2.2.1       
+[65] colorspace_2.0-2  corrplot_0.90     rvest_1.0.1       knitr_1.33       
+[69] haven_2.4.3       sass_0.4.0       </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
