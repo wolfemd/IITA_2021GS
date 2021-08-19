@@ -639,16 +639,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStree182b83cb7769bd139c998e20fa8b1ac912cb3e31targetblank182b83ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/IITA_2021GS/tree/182b83cb7769bd139c998e20fa8b1ac912cb3e31" target="_blank">182b83c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStree81816535c91562c703d940f3f16cc96c7cef1158targetblank8181653a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/IITA_2021GS/tree/81816535c91562c703d940f3f16cc96c7cef1158" target="_blank">8181653</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStree182b83cb7769bd139c998e20fa8b1ac912cb3e31targetblank182b83ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStree81816535c91562c703d940f3f16cc96c7cef1158targetblank8181653a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/IITA_2021GS/tree/182b83cb7769bd139c998e20fa8b1ac912cb3e31" target="_blank">182b83c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/IITA_2021GS/tree/81816535c91562c703d940f3f16cc96c7cef1158" target="_blank">8181653</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -714,6 +714,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/81816535c91562c703d940f3f16cc96c7cef1158/analysis/inputsForSimulation.Rmd" target="_blank">8181653</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-19
+</td>
+<td>
+Tweak links.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/IITA_2021GS/19c3a3886854b0f6c3ec4ff20e479e9ec6aad70e/docs/inputsForSimulation.html" target="_blank">19c3a38</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-19
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -856,7 +890,7 @@ Publish first pass at GS pipeline-integrated estimation of selection error for i
 <h1>Estimate selection error</h1>
 <div id="concept" class="section level2">
 <h2>Concept</h2>
-<p>Determine error-variance vs. plot-size/rep-number scaling for <a href="https://wolfemd.github.io/IITA_2021GS/BreedingSchemeOpt/">input to simulations</a>.</p>
+<p>Determine error-variance vs. plot-size/rep-number scaling for <a href="https://wolfemd.github.io/BreedingSchemeOpt/baselineSim.html">input to simulations</a>.</p>
 <p>Our downstream objective is to simulate a baseline and alternative breeding pipelines (variety development pipelines; VDPs) based on proposed differences in plot-size (number of plants), number of reps, locations and overall trial-stage size.</p>
 <p>We can’t compute the same selection index for each trial because of variation in the traits scored.</p>
 <p>Below, I outline an approach that integrates into the existing GS pipeline and deals with heterogeneity in the traits observed from trial-to-trial.</p>
@@ -1418,7 +1452,7 @@ F-statistic: 6.102 on 4 and 511 DF,  p-value: 8.407e-05</code></pre>
 <p>The analysis seems far from conclusive. Do we even expect the relation b/t plot-size and error variance to be linearly decreasing?</p>
 <p>Certainly this will vary by breeding, location, and much more.</p>
 <p>There are also possibly many alternative methods to analyze this problem, and alternative datasets to choose.</p>
-<p><strong>NEW APPROACH:</strong> While inconclusive, this exercise emphasizes a key concern for conducting simulations that alter the VDP: that the cost-benefit balance could depend on the relative information value/selection accuracy/error variance of different plot sizes and trial configurations. As a result, I propose to simulate a range of error-vs-plot size as part of the <a href="baselineSim.html">baseline simulation</a> of each breeding program. <strong><em>If</em></strong> we observe a shift-point in the cost-benefit analysis we can then work with breeding programs to determine where their data indicate they lie and what changes are subsequently recommended.</p>
+<p><strong>NEW APPROACH:</strong> While inconclusive, this exercise emphasizes a key concern for conducting simulations that alter the VDP: that the cost-benefit balance could depend on the relative information value/selection accuracy/error variance of different plot sizes and trial configurations. As a result, I propose to simulate a range of error-vs-plot size as part of the <a href="https://wolfemd.github.io/BreedingSchemeOpt/baselineSim.html">baseline simulation</a> of each breeding program. <strong><em>If</em></strong> we observe a shift-point in the cost-benefit analysis we can then work with breeding programs to determine where their data indicate they lie and what changes are subsequently recommended.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
