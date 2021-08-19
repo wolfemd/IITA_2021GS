@@ -1,0 +1,299 @@
+---
+title: "Empirical inputs for simulations - IITA"
+site: workflowr::wflow_site
+date: "2021-Aug-13"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+    toc: true
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F, 
+                      tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
+```
+
+```{bash set-up remote R environment, eval=F}
+# 1) start a screen shell 
+screen; # or screen -r if re-attaching...
+
+# cbsurobbins SLURM 
+salloc -n 20 --mem=60G --time=06:00:00;
+
+# 2) start the singularity Linux shell inside that
+singularity shell ~/rocker2.sif; 
+# Project directory, so R will use as working dir.
+cd /home/mw489/IITA_2021GS/;
+# 3) Start R
+R
+```
+
+# Estimate selection error
+
+## Concept
+
+Determine error-variance vs. plot-size/rep-number scaling for [input to simulations](https://wolfemd.github.io/IITA_2021GS/BreedingSchemeOpt/).
+
+Our downstream objective is to simulate a baseline and alternative breeding pipelines (variety development pipelines; VDPs) based on proposed differences in plot-size (number of plants), number of reps, locations and overall trial-stage size.
+
+We can't compute the same selection index for each trial because of variation in the traits scored.
+
+Below, I outline an approach that integrates into the existing GS pipeline and deals with heterogeneity in the traits observed from trial-to-trial.
+
+Approach:
+
+-   Use the *SELECTION INDEX* GETGV from genomic prediction using all entire available training population and all of the latest available data as a best estimate of "true" net merit
+
+    -   The predictions documented [here](https://wolfemd.github.io/IITA_2021GS/06-GenomicPredictions.html) is the most up-to-date. See the summary of genomic prediction results [here](https://wolfemd.github.io/IITA_2021GS/07-Results.html#Genomic_Predictions).
+
+    -   Alternative best estimate of "true" net merit: actual national performance trial data (e.g. from NCRPs in Nigeria?)
+
+-   For each trial, analyze the cleaned plot-basis data:
+
+    1.  Fit a univariate mixed-model to each trait scored
+
+    2.  Extract trial-specific BLUPs for whatever clones were present
+
+    3.  Compute the SELIND for the current trial using BLUPs for whatever component traits were scored ($SI_{TrialBLUP}$).
+
+    4.  Regress $SI_{GETGV}$ on the $SI_{TrialBLUP}$
+
+    5.  Extract the $\hat{\sigma}^2_e$ of the regression as the trial-specific estimate of the selection error
+
+-   Using the results from all trials: Regress $\hat{\sigma}^2_e$ on plot-size. Weight by number of clones available to measure $\hat{\sigma}^2_e$. Extract coefficients to generate relative scaling profiles of error variances to input for simulating VDPs.
+
+## Analysis
+
+```{r load getgv and support data}
+library(genomicMateSelectR); 
+library(tidyverse)
+
+# SELIND GETGVS (for input to estimateSelectionError func below)
+gpreds<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds"))
+getgvs<-gpreds$gblups[[1]] %>% 
+  filter(predOf=="GETGV") %>% 
+  select(GID,SELIND)
+
+# CLEANED PLOT-LEVEL TRIAL DATA
+dbdata<-readRDS(here::here("output","IITA_ExptDesignsDetected_2021Aug08.rds"))
+### Restrict consideration to >2012 
+### to measure the selection error during the current "era" at IITA.
+trials2keep<-dbdata %>% 
+  filter(studyYear>=2013) %>% 
+  distinct(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV) %>% 
+  filter(!is.na(MaxNOHAV)) %$% 
+  unique(studyName)
+length(trials2keep) %>% paste0(.," trials")
+# [1] 641 trials
+dbdata %>% filter(studyName %in% trials2keep) %>% nrow %>% paste0(.," plots")
+# [1] 182195 plots
+trialdata<-dbdata %>% 
+  filter(studyYear>=2013,
+         studyName %in% trials2keep) %>% 
+  nest(TrialData=-c(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV))
+trialdata %<>% 
+  mutate(propGenotyped=map_dbl(TrialData,
+                              ~length(which(!is.na(unique(.$FullSampleName))))/length(unique(.$GID))))
+
+# SELECTION INDEX WEIGHTS
+## from IYR+IK
+## note that not ALL predicted traits are on index
+SIwts<-c(logFYLD=20,
+         HI=10,
+         DM=15,
+         MCMDS=-10,
+         logRTNO=12,
+         logDYLD=20,
+         logTOPYLD=15,
+         PLTHT=10) 
+
+# SOURCE FUNCTION estimateSelectionError() 
+source(here::here("code","estimateSelectionError.R"))
+```
+
+```{r summarize trial data}
+trialdata %>% unnest(TrialData) %>% 
+  summarise(Nplots=nrow(.),
+            across(c(locationName,studyYear,studyName,TrialType,GID), ~length(unique(.)),.names = "N_{.col}")) %>% 
+  rmarkdown::paged_table()
+```
+
+**Summary of available plot-level data:** See [here](01-cleanTPdata.html) for details about the cleaned trial data most recently downloaded from IITA/Cassavabase and used below. Number of unique plots, locations, years, etc. in the cleaned plot-basis data.
+
+```{r, cols.print=15}
+trialdata %>% unnest(TrialData) %>% 
+  count(TrialType,CompleteBlocks,IncompleteBlocks) %>% 
+  spread(TrialType,n) %>% 
+  rmarkdown::paged_table()
+```
+
+**Count the trial designs by TrialType:**
+
+```{r plot MaxNOHAV vs. TrialType, cols.print=16}
+trialdata %>% unnest(TrialData) %>% 
+  distinct(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV) %>% 
+  filter(!is.na(MaxNOHAV)) %>% 
+  mutate(TrialType=factor(TrialType,levels=c("CrossingBlock","GeneticGain","CET","ExpCET","PYT","AYT","UYT","NCRP"))) %>% 
+  ggplot(.,aes(x=TrialType,y=MaxNOHAV,fill=TrialType)) + 
+  geom_boxplot(notch = T) + 
+  theme_bw() + theme(axis.text.x = element_text(angle=45,vjust=.5)) +
+  labs(title = "Max number harvested as a proxy for planned plot size",
+       subtitle="MaxNOHAV = The maximum number stands harvested per trial. studyYear>=2013")
+```
+
+```{r unit test inputs for estimateSelectionError, eval=F}
+###### unit test inputs for estimateSelectionError
+# TrialData<-trialdata$TrialData[[1]]
+# CompleteBlocks<-trialdata$CompleteBlocks[[1]]
+# IncompleteBlocks<-trialdata$IncompleteBlocks[[1]]
+# TrialData<-trialdata %>% filter(propGenotyped>0.75) %>% slice(4) %$% TrialData[[1]]
+# CompleteBlocks<-trialdata %>% filter(propGenotyped>0.75) %>% slice(4) %$% CompleteBlocks[[1]]
+# IncompleteBlocks<-trialdata %>% filter(propGenotyped>0.75) %>% slice(4) %$% IncompleteBlocks[[1]]
+# ncores=4
+# rm(TrialData,CompleteBlocks,IncompleteBlocks)
+```
+
+Run function `estimateSelectionError()` across trials to estimation selection errors.
+
+```{r, eval=F}
+require(furrr); plan(multisession, workers = 20)
+options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+trialdata %<>% 
+  mutate(SelectionError=future_pmap(.,estimateSelectionError,
+                                    SIwts=SIwts,getgvs=getgvs))
+plan(sequential)
+saveRDS(trialdata,here::here("output","estimateSelectionError.rds"))
+
+```
+
+## Result
+
+Out of 633 trials, 516 produced successful model fits and subsequent estimates of TrialMSE (selection index error).
+
+```{r}
+library(genomicMateSelectR)
+estSelError<-readRDS(here::here("output","estimateSelectionError.rds"))
+estSelError %<>% 
+  select(-TrialData) %>% 
+  unnest(SelectionError) %>% 
+  select(-SI_BLUPs,-BLUPs,-SelectionError) %>% 
+  filter(!is.na(TrialMSE))
+```
+
+Here's the `str()` of the estimates I made.
+
+```{r}
+estSelError %>% str
+```
+
+-   **`cor2si`** = correlation between SI computed from each trial's BLUPs and the SI computed from GETGV (all training data and traits used)
+-   **`r2_si`** = r-squared, regression of SI_GETGV on SI_TrialBLUP
+-   **`TrialMSE`** = mean squared error from that regression
+-   **`NcloneForReg`** = the number of clones with estimates of both SI_TrialBLUP and SI_GETGV for a given trial. Avoid considering trials with too few data points.
+
+I made two plots below, one of the `cor2si` and one of the `TrialMSE` vs. MaxNOHAV (the proxy for plot size). Trial-results are scaled by NcloneForReg and a smooth spline is fit.
+```{r cor2si vs MaxNOHAV}
+estSelError %>% 
+  ggplot(.,aes(x=MaxNOHAV,y=cor2si,color=NcloneForReg,size=NcloneForReg)) + 
+  geom_point() + geom_smooth() + theme_bw() + theme(panel.grid = element_blank()) +
+  labs(title = "The cor(SI_GETGV,SI_TrialBLUPs) vs. MaxNOHAV as a proxy for plot size")
+```
+
+```{r TrialMSE vs MaxNOHAV}
+estSelError %>% 
+  ggplot(.,aes(x=MaxNOHAV,y=TrialMSE,color=NcloneForReg,size=NcloneForReg)) + 
+  geom_point() + geom_smooth() + theme_bw() + theme(panel.grid = element_blank()) +
+  labs(title = "Trial-specific selection error ests. vs. MaxNOHAV")
+```
+
+In my opinion, there is no clear pattern. I am biased to seeing a hint of a trend.
+
+Look at a correlation matrix and do some regression analysis below.
+
+Try to measure an effect size of increasing the number of stands per plot.
+
+```{r}
+estSelError<-readRDS(here::here("output","estimateSelectionError.rds"))
+# extract some covariates which might be predictive of cor2si, 
+# which I think is on a uniform scale
+
+# Nclone in trial: want est. of plot-size effect NOT dependent on Nclones
+# estSelError$TrialData[[1]] %$% length(unique(GID)) 
+# MeanPropNOHAV: measure trial quality by how "full" the plots were at harvest
+# estSelError$TrialData[[1]] %$% mean(PropNOHAV) 
+estSelError %<>%
+  mutate(Nclones=map_dbl(TrialData,~length(unique(.$GID))),
+         MeanPropNOHAV=map_dbl(TrialData,~mean(.$PropNOHAV,na.rm=T)),
+         Nobs=map_dbl(TrialData,~nrow(.)),
+         TrialDesign=paste0("Complete",CompleteBlocks,"Incomplete",IncompleteBlocks)) %>% 
+  select(-TrialData) %>% 
+  unnest(SelectionError) %>% 
+  select(-SI_BLUPs,-BLUPs,-SelectionError) %>% 
+  filter(!is.na(TrialMSE)) %>% 
+  mutate(propAvailForReg=NcloneForReg/Nclones)
+estSelError %>% str
+```
+
+```{r}
+estSelError %>% 
+  select(cor2si,TrialMSE,MaxNOHAV,NcloneForReg,Nclones,MeanPropNOHAV,Nobs,propAvailForReg) %>% 
+  cor(., use='pairwise.complete.obs') %>% 
+  round(.,2) %>% 
+  corrplot::corrplot(type="lower")
+```
+
+- `MeanPropNOHAV`: Avg. proportion of stands harvested per plot. Measure of trial quality / success.
+- `Nclones` and `Nobs`: Measures of trial size
+- `propAvailForReg = NcloneForReg/Nclones`: a weight for the regressions below. The maximum weight is to be on trials with as many clones as intended scored on the selection index. 
+
+Linear model below: include all feasible co-variables _and_ an interaction b/t TrialDesign and MaxNOHAV (plot size)
+```{r}
+lm(cor2si~MaxNOHAV+TrialDesign+TrialDesign*MaxNOHAV+studyYear+Nclones+MeanPropNOHAV,
+   data = estSelError,
+   weights = propAvailForReg) %>% summary
+```
+```{r}
+lm(TrialMSE~MaxNOHAV+TrialDesign+TrialDesign*MaxNOHAV+studyYear+Nclones+MeanPropNOHAV,
+   data = estSelError,
+   weights = propAvailForReg) %>% summary
+```
+<6% variance explained (`cor2si`) and 10% for `TrialMSE`. 
+
+Next simplify a bit, remove the interactions and TrialDesign effect, but keep the covariates.
+
+Simplify it a bit, e.g.: `cor2si~MaxNOHAV+studyYear+Nclones+MeanPropNOHAV`
+```{r}
+lm_cor2si<-lm(cor2si~MaxNOHAV+studyYear+Nclones+MeanPropNOHAV,
+   data = estSelError,
+   weights = propAvailForReg)
+lm_cor2si %>% summary
+```
+
+```{r}
+lm(TrialMSE~MaxNOHAV+studyYear+Nclones+MeanPropNOHAV,
+   data = estSelError,
+   weights = propAvailForReg) %>% summary
+```
+
+```{r}
+# VarT=100
+# h2=0.2
+# VarE=(1-h2)*VarT
+# tibble(plotSize=1:50) %>% 
+#   mutate(expCorToSI=lm_cor2si$coefficients[["MaxNOHAV"]]*plotSize,
+#          sqCorToSI=round(expCorToSI^2,2),
+#          VarE=VarE*(1-sqCorToSI))
+```
+
+# Conclusions
+
+The analysis seems far from conclusive. Do we even expect the relation b/t plot-size and error variance to be linearly decreasing? 
+
+Certainly this will vary by breeding, location, and much more.
+
+There are also possibly many alternative methods to analyze this problem, and alternative datasets to choose.
+
+
+**NEW APPROACH:** While inconclusive, this exercise emphasizes a key concern for conducting simulations that alter the VDP: that the cost-benefit balance could depend on the relative information value/selection accuracy/error variance of different plot sizes and trial configurations. As a result, I propose to simulate a range of error-vs-plot size as part of the [baseline simulation](baselineSim.html) of each breeding program. ***If*** we observe a shift-point in the cost-benefit analysis we can then work with breeding programs to determine where their data indicate they lie and what changes are subsequently recommended. 

@@ -5,7 +5,7 @@ navbar:
   left:
   - text: Home
     href: index.html
-  - text: Imputation (DCas21_6038)
+  - text: Imputation
     menu:
     - text: Conversion DArT report DCas21_6038 to VCF
       href: convertDCas21_6038_ToVCF.html
@@ -27,6 +27,8 @@ navbar:
     href: 06-GenomicPredictions.html
   - text: Results
     href: 07-Results.html
+  - text: Inputs for Sims
+    href: inputsForSimulation.html
   - text: Other
     menu:
     - text: About

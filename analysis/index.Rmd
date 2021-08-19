@@ -61,6 +61,11 @@ editor_options:
 
 7.  [Results and recommendations](07-Results.html): Home for all plots, summary tables, conclusions and recommendations.
 
+## Empricial inputs for simulations
+
+See [here](inputsForSimulation.html) for an analysis of IITA trial data to derive empirical inputs for [breeding scheme simulations](https://wolfemd.github.io/BreedingSchemeOpt/). I analyze trial-by-trial, picking up after the [data cleaning step](01-cleanTPdata.html) above, to measure selection error and associate it with plot-size. 
+
+
 # Data and code repository access
 
 [CLICK HERE FOR ACCESS TO THE FULL REPOSITORY](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/)\
