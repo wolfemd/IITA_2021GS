@@ -125,7 +125,7 @@ I decided to take a narrow view of plot configurations and analyze only trials c
 
 Below, I work carefully up to a multivariate model with 7 of the 8 SELIND traits. Starting with homogenous variances and one trait, then 2 traits, 2 traits + heterogenous error by TrailType, 4 + heterog. error, and finally 7 traits skipping PLTHT b/c of \>50% missingness.
 
-```{r keep trials with 'standard' plotArea}
+```{r keep trials with standard plotArea}
 trialdata %<>% 
   semi_join(trialdata %>% 
               distinct(TrialType,studyName,plotArea,plotWidth,plotLength) %>% 
@@ -640,7 +640,7 @@ trialdata %<>%
 source(here::here("code","estimateSelectionError.R"))
 ```
 
-```{r unit test inputs for estimateSelectionError, eval=F}
+```{r test inputs for estimateSelectionError, eval=F}
 ###### unit test inputs for estimateSelectionError
 # TrialData<-trialdata$TrialData[[1]]
 # CompleteBlocks<-trialdata$CompleteBlocks[[1]]
@@ -655,7 +655,8 @@ source(here::here("code","estimateSelectionError.R"))
 
 Run function `estimateSelectionError()` across trials to estimation selection errors.
 
-```{r, eval=F}
+Two runs: once with "original" SIwts, also with adjusted SIwts and SI_GETGVs.
+```{r run estimateSelectionError func, eval=F}
 # ORIGINAL SIwts
 require(furrr); plan(multisession, workers = 20)
 options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
@@ -676,12 +677,88 @@ saveRDS(trialdata,here::here("output","estimateSelectionError_adjSIwts_2021Aug24
 
 ```
 
+```{r load results}
+estSelError_adj<-readRDS(here::here("output","estimateSelectionError_adjSIwts_2021Aug24.rds"))
+estSelError_adj %<>% 
+  select(-TrialData) %>% 
+  unnest(SelectionError) %>% 
+  select(-SI_BLUPs,-BLUPs,-SelectionError) %>% 
+  filter(!is.na(TrialMSE))
+
+estSelError<-readRDS(here::here("output","estimateSelectionError_origSIwts_2021Aug24.rds"))
+estSelError %<>% 
+  select(-TrialData) %>% 
+  unnest(SelectionError) %>% 
+  select(-SI_BLUPs,-BLUPs,-SelectionError) %>% 
+  filter(!is.na(TrialMSE))
+```
+
+Use mean (or median) $\hat{\sigma}^2_e$ for each TrialType / plotArea as potential simulation input. Consider a weighted mean/median according to number of clones available to measure $\hat{\sigma}^2_e$ for each trial.
+
+```{r boxplot TrialMSE vs plotArea}
+estSelError_adj %>% 
+  ggplot(.,aes(x=plotArea,y=TrialMSE, size=NcloneForReg, fill=TrialType)) + 
+  geom_boxplot(notch = T) + theme_bw() + 
+  labs(title="Distributions of TrialMSE by TrialType (sorted by plotArea)",
+       subtitle="From regression of SI_GETGV on Trial-specific SI_BLUP.")
+```
+
+Compute per TrialType means:
+
+- `meanTrialMSE`: from regression of SI_GETGV on Trial-specific SI_BLUP
+- `meanCor2si`: correlation b/t SI_GETGV and Trial-specific SI_BLUP
+- weighted by `NcloneForReg`: the number of clones in a trial that had data to compute SELIND.
+
+```{r}
+estSelError_adj_summarized<-estSelError_adj %>% 
+  group_by(TrialType,plotArea) %>% 
+  summarize(meanTrialMSE=weighted.mean(TrialMSE,w = NcloneForReg),
+            meanCor2si=weighted.mean(cor2si,w = NcloneForReg,na.rm = T)) %>% 
+  arrange(plotArea)
+estSelError_adj_summarized
+```
+
+```{r}
+estSelError_adj_summarized %>% 
+  ggplot(.,aes(x=plotArea,y=meanTrialMSE)) + geom_line() + theme_bw() + 
+  geom_label(aes(label=TrialType,color=TrialType),size=4) + 
+  labs(title = "Regress SELIND GETGV on Trial-specific SELIND BLUP",
+       subtitle = "Per TrialType mean MSE. Adjusted SIwts. Order TrialType by plotArea.")
+```
+
+```{r}
+estSelError_adj_summarized %>% 
+  ggplot(.,aes(x=plotArea,y=meanCor2si)) + geom_line() + theme_bw() + 
+  geom_label(aes(label=TrialType,color=TrialType),size=4) + 
+  labs(title = "Regress SELIND GETGV on Trial-specific SELIND BLUP",
+       subtitle = "Per TrialType mean cor(SI_GETGV,SI_TrialBLUP). Adjusted SIwts. Order TrialType by plotArea.")
+```
+
 # Conclusions
 
-The analysis seems far from conclusive. Do we even expect the relation b/t plot-size and error variance to be linearly decreasing?
+```{r side by side plot of results, fig.width=10}
+library(patchwork)
+p1<-adjErrorVars %>% 
+  left_join(trialdata %>% 
+              distinct(TrialType,plotArea)) %>% 
+  arrange(plotArea) %>% 
+  ggplot(.,aes(x=plotArea,y=siErrorVarEst)) + geom_line() + theme_bw() + 
+  geom_label(aes(label=TrialType,color=TrialType),size=4) + 
+  labs(title = "Direct Estimate by Multivariate Mixed Model")
+p2<-estSelError_adj_summarized %>% 
+  ggplot(.,aes(x=plotArea,y=meanTrialMSE)) + geom_line() + theme_bw() + 
+  geom_label(aes(label=TrialType,color=TrialType),size=4) + 
+  labs(title = "Indirect Estimate by SELIND GETGV on Trial BLUP")
+p1 + p2 + 
+  plot_annotation(tag_levels = 'A') + 
+  plot_layout(guides='collect') &
+  theme(legend.position = "bottom")
+```
 
-Certainly this will vary by breeding, location, and much more.
+Above is a side-by-side plot of the key result from two approaches I have tried above for empirically estimating measurement (or selection) error relative to the selection index. The first approach (A), was to fit a multivariate mixed-model with heterogenous error covariances among TrialType. The direct approach allowed calculating the SELIND error variance (y-axis) by $b^T\boldsymbol{R}_{TrialType}b$, where \boldsymbol{R}_{TrialType} is the TrialType-specific estimate of the error covariance matrix and $b$ are the SELIND weights. The second approach (B) was to fit univariate mixed-models to each trait in each trial, then compute trial-specific SELIND using the resulting BLUPs. The SELIND GETGV value for all clones based on using _all_ phenotypic data and genomic information was then regressed on each trial's SELIND BLUPs. The mean squared error (mean residual variance) from each regression was extracted and then the average TrialMSE by TrialType was computed (y-axis, B).
 
-There are also possibly many alternative methods to analyze this problem, and alternative datasets to choose.
+We need to choose one of these two options, or revise the approach further, for use input for VDP simulations. Note that in simulation, the error variances we input will be divided by the Nrep and Nloc for each stage specific, so even if UYT has worse error than AYT overall, at the clone-level, UYT would have lower error b/c of more reps and locs.
 
-**NEW APPROACH:** While inconclusive, this exercise emphasizes a key concern for conducting simulations that alter the VDP: that the cost-benefit balance could depend on the relative information value/selection accuracy/error variance of different plot sizes and trial configurations. As a result, I propose to simulate a range of error-vs-plot size as part of the [baseline simulation](https://wolfemd.github.io/BreedingSchemeOpt/baselineSim.html) of each breeding program. ***If*** we observe a shift-point in the cost-benefit analysis we can then work with breeding programs to determine where their data indicate they lie and what changes are subsequently recommended.
+I prefer **option A / approach #1** and only hesitate that it may be challenging to successfully fit these models for each breeding program's data. 
+
+See the [baseline simulations page](https://wolfemd.github.io/BreedingSchemeOpt/baselineSim.html) for downstream usage / next steps.

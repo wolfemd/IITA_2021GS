@@ -28,7 +28,12 @@ navbar:
   - text: Results
     href: 07-Results.html
   - text: Inputs for Sims
-    href: inputsForSimulation.html
+    href: inputsForSimulationV2.html
+    menu:
+    - text: Version 2
+      href: inputsForSimulationV2.html
+    - text: Version 1
+      href: inputsForSimulation.html
   - text: Other
     menu:
     - text: About
