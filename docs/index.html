@@ -289,8 +289,20 @@ $(document).ready(function () {
 <li>
   <a href="07-Results.html">Results</a>
 </li>
-<li>
-  <a href="inputsForSimulation.html">Inputs for Sims</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Inputs for Sims
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="inputsForSimulationV2.html">Version 2</a>
+    </li>
+    <li>
+      <a href="inputsForSimulation.html">Version 1</a>
+    </li>
+  </ul>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -350,7 +362,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-08-19
+<strong>Last updated:</strong> 2021-08-26
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -381,16 +393,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStree182b83cb7769bd139c998e20fa8b1ac912cb3e31targetblank182b83ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/IITA_2021GS/tree/182b83cb7769bd139c998e20fa8b1ac912cb3e31" target="_blank">182b83c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStreec2c7dae2e3c42d9bca89e7aacef2257a865aac62targetblankc2c7daea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/IITA_2021GS/tree/c2c7dae2e3c42d9bca89e7aacef2257a865aac62" target="_blank">c2c7dae</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStree182b83cb7769bd139c998e20fa8b1ac912cb3e31targetblank182b83ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStreec2c7dae2e3c42d9bca89e7aacef2257a865aac62targetblankc2c7daea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/IITA_2021GS/tree/182b83cb7769bd139c998e20fa8b1ac912cb3e31" target="_blank">182b83c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/IITA_2021GS/tree/c2c7dae2e3c42d9bca89e7aacef2257a865aac62" target="_blank">c2c7dae</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -456,6 +468,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/c2c7dae2e3c42d9bca89e7aacef2257a865aac62/analysis/index.Rmd" target="_blank">c2c7dae</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-26
+</td>
+<td>
+Update site with new version of inputs for simulations including 2 approaches now.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/IITA_2021GS/19c3a3886854b0f6c3ec4ff20e479e9ec6aad70e/docs/index.html" target="_blank">19c3a38</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-19
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -809,7 +855,12 @@ Start workflowr project.
 </div>
 <div id="empricial-inputs-for-simulations" class="section level2">
 <h2>Empricial inputs for simulations</h2>
-<p>See <a href="inputsForSimulation.html">here</a> for an analysis of IITA trial data to derive empirical inputs for <a href="https://wolfemd.github.io/BreedingSchemeOpt/">breeding scheme simulations</a>. I analyze trial-by-trial, picking up after the <a href="01-cleanTPdata.html">data cleaning step</a> above, to measure selection error and associate it with plot-size.</p>
+<p>See the updated <a href="inputsForSimulationV2.html">version of this analysis here</a> and the <a href="inputsForSimulation.html">original analysis here</a>.</p>
+<p>Uses two approaches to empirically estimate the measurement (selection) error associated with different TrialType’s / plot configurations.</p>
+<p>First approach, was to fit a multivariate mixed-model with heterogenous error covariances among TrialType. The direct approach allowed calculating the SELIND error variance (y-axis) by <span class="math inline">\(b^T\boldsymbol{R}_{TrialType}b\)</span>, where _{TrialType} is the TrialType-specific estimate of the error covariance matrix and <span class="math inline">\(b\)</span> are the SELIND weights.</p>
+<p>The second approach was to fit univariate mixed-models to each trait in each trial, then compute trial-specific SELIND using the resulting BLUPs. The SELIND GETGV value for all clones based on using <em>all</em> phenotypic data and genomic information was then regressed on each trial’s SELIND BLUPs. The mean squared error (mean residual variance) from each regression was extracted and then the average TrialMSE by TrialType was computed.</p>
+<p>We need to choose one of these two options, or revise the approach further, for use input for VDP simulations. Note that in simulation, the error variances we input will be divided by the Nrep and Nloc for each stage specific, so even if e.g. UYT has worse error than AYT overall, at the clone-level, UYT would have lower error b/c of more reps and locs.</p>
+<p>For downstream usage of the results, see the <a href="https://wolfemd.github.io/BreedingSchemeOpt/">breeding scheme simulations here</a>.</p>
 </div>
 </div>
 <div id="data-and-code-repository-access" class="section level1">

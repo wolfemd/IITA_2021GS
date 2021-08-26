@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Empirical inputs for simulations - IITA</title>
+
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #232629;
+    color: #7a7c7d;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d;  padding-left: 4px; }
+div.sourceCode
+  { color: #cfcfc2; background-color: #232629; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { color: #cfcfc2; } /* Normal */
+code span.al { color: #95da4c; background-color: #4d1f24; font-weight: bold; } /* Alert */
+code span.an { color: #3f8058; } /* Annotation */
+code span.at { color: #2980b9; } /* Attribute */
+code span.bn { color: #f67400; } /* BaseN */
+code span.bu { color: #7f8c8d; } /* BuiltIn */
+code span.cf { color: #fdbc4b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #3daee9; } /* Char */
+code span.cn { color: #27aeae; font-weight: bold; } /* Constant */
+code span.co { color: #7a7c7d; } /* Comment */
+code span.cv { color: #7f8c8d; } /* CommentVar */
+code span.do { color: #a43340; } /* Documentation */
+code span.dt { color: #2980b9; } /* DataType */
+code span.dv { color: #f67400; } /* DecVal */
+code span.er { color: #da4453; text-decoration: underline; } /* Error */
+code span.ex { color: #0099ff; font-weight: bold; } /* Extension */
+code span.fl { color: #f67400; } /* Float */
+code span.fu { color: #8e44ad; } /* Function */
+code span.im { color: #27ae60; } /* Import */
+code span.in { color: #c45b00; } /* Information */
+code span.kw { color: #cfcfc2; font-weight: bold; } /* Keyword */
+code span.op { color: #cfcfc2; } /* Operator */
+code span.ot { color: #27ae60; } /* Other */
+code span.pp { color: #27ae60; } /* Preprocessor */
+code span.re { color: #2980b9; background-color: #153042; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #da4453; } /* SpecialString */
+code span.st { color: #f44f4f; } /* String */
+code span.va { color: #27aeae; } /* Variable */
+code span.vs { color: #da4453; } /* VerbatimString */
+code span.wa { color: #da4453; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IITA_2021GS</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Imputation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="convertDCas21_6038_ToVCF.html">Conversion DArT report DCas21_6038 to VCF</a>
+    </li>
+    <li>
+      <a href="ImputeDCas21_6038.html">Impute DCas21_6038</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Preliminary Steps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-cleanTPdata.html">Data Cleaning</a>
+    </li>
+    <li>
+      <a href="02-GetBLUPs.html">Get BLUPs</a>
+    </li>
+    <li>
+      <a href="03-validatePedigree.html">Verify pedigree records</a>
+    </li>
+    <li>
+      <a href="04-PreprocessDataFiles.html">Preprocessing input data</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="05-CrossValidation.html">Cross-validation</a>
+</li>
+<li>
+  <a href="06-GenomicPredictions.html">Genomic (mate) predictions</a>
+</li>
+<li>
+  <a href="07-Results.html">Results</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Inputs for Sims
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="inputsForSimulationV2.html">Version 2</a>
+    </li>
+    <li>
+      <a href="inputsForSimulation.html">Version 1</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Other
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="about.html">About</a>
+    </li>
+    <li>
+      <a href="license.html">License</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/wolfemd/IITA_2021GS">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Empirical inputs for simulations - IITA</h1>
+<h4 class="date">2021-Aug-13</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-08-26
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>IITA_2021GS/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210504code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210504)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210504code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210504)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStreec2c7dae2e3c42d9bca89e7aacef2257a865aac62targetblankc2c7daea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/IITA_2021GS/tree/c2c7dae2e3c42d9bca89e7aacef2257a865aac62" target="_blank">c2c7dae</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdIITA2021GStreec2c7dae2e3c42d9bca89e7aacef2257a865aac62targetblankc2c7daea" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/IITA_2021GS/tree/c2c7dae2e3c42d9bca89e7aacef2257a865aac62" target="_blank">c2c7dae</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+
+Untracked files:
+    Untracked:  data/DatabaseDownload_2021Aug08/
+    Untracked:  data/DatabaseDownload_2021May04/
+    Untracked:  data/GBSdataMasterList_31818.csv
+    Untracked:  data/IITA_GBStoPhenoMaster_33018.csv
+    Untracked:  data/NRCRI_GBStoPhenoMaster_40318.csv
+    Untracked:  data/PedigreeGeneticGainCycleTime_aafolabi_01122020.xls
+    Untracked:  data/Report-DCas21-6038/
+    Untracked:  data/blups_forGP.rds
+    Untracked:  data/chr1_RefPanelAndGSprogeny_ReadyForGP_72719.fam
+    Untracked:  data/dosages_IITA_2021Aug09.rds
+    Untracked:  data/haps_IITA_2021Aug09.rds
+    Untracked:  data/recombFreqMat_1minus2c_2021Aug02.qs
+    Untracked:  output/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/inputsForSimulationV2.Rmd</code>) and HTML (<code>docs/inputsForSimulationV2.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/c2c7dae2e3c42d9bca89e7aacef2257a865aac62/analysis/inputsForSimulationV2.Rmd" target="_blank">c2c7dae</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-26
+</td>
+<td>
+Update site with new version of inputs for simulations including 2 approaches now.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/IITA_2021GS/blob/8db43ac8937fbd41c8be777544a6fc046395c142/analysis/inputsForSimulationV2.Rmd" target="_blank">8db43ac</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2021-08-26
+</td>
+<td>
+Revised empirical analysis for sim inputs. Two approaches: direct estimate with mixed model + indirect with SI_GETGV on SI_TrialBLUP.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="estimate-selection-error" class="section level1">
+<h1>Estimate selection error</h1>
+<div id="approach-1-direct-estimation-with-multivar-mixed-model" class="section level2">
+<h2>Approach 1: direct estimation with multivar mixed model</h2>
+<p>Try a multivariate model with the proper error and other heterogeneous variances.</p>
+<p>This will be for DIRECT calculation, if I can get the models to converge, of the variance components of interest.</p>
+<p>Goal is to get estimate of errorCov matrix <em>per</em> stage.</p>
+<p>Then compute SI errorVar <em>per</em> stage.</p>
+<p>Things not modeled, which could be input to sims:</p>
+<ul>
+<li>GxL, GxYr, GxYrxL variance</li>
+<li>genCor among locs</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span><span class="kw">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/IITA_2021GS/<span class="kw">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">-n</span> 8 <span class="at">--mem</span><span class="op">=</span>60G <span class="at">--time</span><span class="op">=</span>06:00:00<span class="kw">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH=</span>/programs/R-4.0.5clean-p/bin:<span class="va">$PATH</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OMP_NUM_THREADS=</span>8</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span><span class="kw">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(genomicMateSelectR); </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># CLEANED PLOT-LEVEL TRIAL DATA</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;IITA_ExptDesignsDetected_2021Aug08.rds&quot;</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># SELECTION INDEX WEIGHTS</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>SIwts<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="at">logFYLD=</span><span class="dv">20</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">HI=</span><span class="dv">10</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">DM=</span><span class="dv">15</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">MCMDS=</span><span class="sc">-</span><span class="dv">10</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">logRTNO=</span><span class="dv">12</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">logDYLD=</span><span class="dv">20</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">logTOPYLD=</span><span class="dv">15</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">PLTHT=</span><span class="dv">10</span>) </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># FILTER TRIALS TO-BE-CONSIDERED</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="do">### Restrict consideration to &gt;2012 </span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="do">### to measure the selection error during the current &quot;era&quot; at IITA.</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="do">### Only trials with &gt;=50% genotyped and key TrialTypes</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="do">### Keep only trials with full plotWidth and plotLength meta-data</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="do">### Calc plotArea=plotWidth*plotLength (in meters-squared)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>trialdata<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyYear<span class="sc">&gt;=</span><span class="dv">2013</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(MaxNOHAV),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(plotWidth),</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(plotLength),</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(PropNOHAV)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">TrialData=</span><span class="sc">-</span><span class="fu">c</span>(studyName,TrialType,plotWidth,plotLength,CompleteBlocks,IncompleteBlocks,MaxNOHAV)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">propGenotyped=</span><span class="fu">map_dbl</span>(TrialData,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>                              <span class="sc">~</span><span class="fu">length</span>(<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">unique</span>(.<span class="sc">$</span>FullSampleName))))<span class="sc">/</span><span class="fu">length</span>(<span class="fu">unique</span>(.<span class="sc">$</span>GID))),</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>         <span class="at">plotArea=</span>plotWidth<span class="sc">*</span>plotLength,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>         <span class="at">IncompleteBlocks=</span><span class="fu">ifelse</span>(IncompleteBlocks<span class="sc">==</span><span class="cn">TRUE</span>,<span class="st">&quot;Yes&quot;</span>,<span class="st">&quot;No&quot;</span>),</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>         <span class="at">CompleteBlocks=</span><span class="fu">ifelse</span>(CompleteBlocks<span class="sc">==</span><span class="cn">TRUE</span>,<span class="st">&quot;Yes&quot;</span>,<span class="st">&quot;No&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(propGenotyped<span class="sc">&gt;=</span><span class="fl">0.5</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>         TrialType <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;GeneticGain&quot;</span>,<span class="st">&quot;CET&quot;</span>,<span class="st">&quot;ExpCET&quot;</span>,<span class="st">&quot;PYT&quot;</span>,<span class="st">&quot;AYT&quot;</span>,<span class="st">&quot;UYT&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(yearInLoc,studyName,studyYear,locationName,TrialType,</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>         plotArea,plotWidth,plotLength,</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>         CompleteBlocks,IncompleteBlocks,observationUnitDbId,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>         GID,trialInLocYr,repInTrial,blockInRep,PropNOHAV,MaxNOHAV,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>         <span class="fu">all_of</span>(<span class="fu">names</span>(SIwts)))</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> <span class="fu">nrow</span>(.) <span class="sc">%&gt;%</span> <span class="fu">paste0</span>(.,<span class="st">&quot; plots&quot;</span>); </span></code></pre></div>
+<pre><code>[1] &quot;108254 plots&quot;</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;108254 plots&quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> <span class="fu">distinct</span>(studyName) <span class="sc">%&gt;%</span> <span class="fu">nrow</span>(.) <span class="sc">%&gt;%</span> <span class="fu">paste0</span>(.,<span class="st">&quot; trials&quot;</span>);</span></code></pre></div>
+<pre><code>[1] &quot;382 trials&quot;</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;382 trials&quot;</span></span></code></pre></div>
+<p>Filters applied to the data-to-be-considered:</p>
+<ul>
+<li><code>studyYear&gt;=2013</code></li>
+<li><code>propGenotyped&gt;=0.5</code></li>
+<li><code>TrialType %in% c("GeneticGain","CET","ExpCET","PYT","AYT","UYT")</code></li>
+<li>Must have plotLength, plotWidth <em>and</em> MaxNOHAV meta-data.</li>
+</ul>
+<p>It turns out, most IITA trials at least already have this.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,plotArea,MaxNOHAV) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TrialType=</span><span class="fu">factor</span>(TrialType,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;CrossingBlock&quot;</span>,<span class="st">&quot;GeneticGain&quot;</span>,<span class="st">&quot;CET&quot;</span>,<span class="st">&quot;ExpCET&quot;</span>,<span class="st">&quot;PYT&quot;</span>,<span class="st">&quot;AYT&quot;</span>,<span class="st">&quot;UYT&quot;</span>,<span class="st">&quot;NCRP&quot;</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>TrialType,<span class="at">y=</span>plotArea,<span class="at">fill=</span>TrialType)) <span class="sc">+</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">notch =</span> T) <span class="sc">+</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">45</span>,<span class="at">vjust=</span>.<span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Plot Area (m-squared) by TrialType&quot;</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">&quot;plotArea = plotWidth*plotLength. studyYear&gt;=2013&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/plotArea%20vs.%20TrialType-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,plotArea,MaxNOHAV) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TrialType=</span><span class="fu">factor</span>(TrialType,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;CrossingBlock&quot;</span>,<span class="st">&quot;GeneticGain&quot;</span>,<span class="st">&quot;CET&quot;</span>,<span class="st">&quot;ExpCET&quot;</span>,<span class="st">&quot;PYT&quot;</span>,<span class="st">&quot;AYT&quot;</span>,<span class="st">&quot;UYT&quot;</span>,<span class="st">&quot;NCRP&quot;</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>TrialType,<span class="at">y=</span>MaxNOHAV,<span class="at">fill=</span>TrialType)) <span class="sc">+</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">notch =</span> T) <span class="sc">+</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">45</span>,<span class="at">vjust=</span>.<span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Max number harvested as a proxy for planned plot size&quot;</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">&quot;MaxNOHAV = The maximum number stands harvested per trial. studyYear&gt;=2013&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/MaxNOHAV%20vs.%20TrialType-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Much less clear difference between trials using MaxNOHAV.</p>
+<p>I decided to take a narrow view of plot configurations and analyze only trials confi=orming to the common (median) plotArea for each TrialType. Does not exclude too many.</p>
+<p>Below, I work carefully up to a multivariate model with 7 of the 8 SELIND traits. Starting with homogenous variances and one trait, then 2 traits, 2 traits + heterogenous error by TrailType, 4 + heterog. error, and finally 7 traits skipping PLTHT b/c of &gt;50% missingness.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">semi_join</span>(trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">distinct</span>(TrialType,studyName,plotArea,plotWidth,plotLength) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">group_by</span>(TrialType) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>              <span class="fu">summarize</span>(<span class="at">plotArea=</span><span class="fu">median</span>(plotArea)) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>())</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> <span class="fu">nrow</span>(.) <span class="sc">%&gt;%</span> <span class="fu">paste0</span>(.,<span class="st">&quot; plots&quot;</span>); </span></code></pre></div>
+<pre><code>[1] &quot;70301 plots&quot;</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;70301 plots&quot;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> <span class="fu">distinct</span>(studyName) <span class="sc">%&gt;%</span> <span class="fu">nrow</span>(.) <span class="sc">%&gt;%</span> <span class="fu">paste0</span>(.,<span class="st">&quot; trials&quot;</span>);</span></code></pre></div>
+<pre><code>[1] &quot;240 trials&quot;</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] &quot;240 trials&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(TrialType,plotArea) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(plotArea)</span></code></pre></div>
+<pre><code># A tibble: 6 × 2
+  TrialType   plotArea
+  &lt;chr&gt;          &lt;dbl&gt;
+1 CET              2.5
+2 PYT              8  
+3 GeneticGain     10  
+4 ExpCET          16  
+5 AYT             22  
+6 UYT             33  </code></pre>
+<div id="work-up-to-the-full-analysis" class="section level3">
+<h3>Work up to the full analysis</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>MultiTrialTraitData<span class="ot">&lt;-</span>trialdata <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(DM)) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(GID,yearInLoc,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                  CompleteBlocks,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                  IncompleteBlocks,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                  trialInLocYr,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                  repInTrial,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                  blockInRep),as.factor)) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  droplevels</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">=</span><span class="st">&quot;DM ~ yearInLoc&quot;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,&#39;Yes&#39;):repInTrial &quot;</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;+ at(IncompleteBlocks,&#39;Yes&#39;):blockInRep&quot;</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(asreml); </span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(fixedFormula)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(randFormula)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co"># fit asreml </span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> randFormula,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> MultiTrialTraitData, </span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">maxiter =</span> <span class="dv">40</span>, <span class="at">workspace=</span><span class="fl">1000e6</span>, </span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">na.method.X=</span><span class="st">&quot;omit&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>MultiTrialTraitData<span class="ot">&lt;-</span>trialdata <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(DM),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(logFYLD)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(GID,yearInLoc,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                  CompleteBlocks,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                  IncompleteBlocks,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                  trialInLocYr,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                  repInTrial,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>                  blockInRep,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>                  TrialType),as.factor)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  droplevels</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">=</span><span class="st">&quot;cbind(DM,logFYLD) ~ yearInLoc*trait + PropNOHAV*trait&quot;</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~us(trait,init=c(0,0,0)):GID + idv(trialInLocYr) + at(CompleteBlocks,&#39;Yes&#39;):repInTrial &quot;</span>,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;+ at(IncompleteBlocks,&#39;Yes&#39;):blockInRep&quot;</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>errFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~units:us(trait,init=c(0,0,0))&quot;</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(asreml); </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(fixedFormula)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(randFormula)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>errFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(errFormula)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co"># fit asreml </span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> randFormula,</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">rcov =</span> errFormula,</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> MultiTrialTraitData, </span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">maxiter =</span> <span class="dv">40</span>, <span class="at">workspace=</span><span class="fl">1000e6</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">=</span><span class="st">&quot;cbind(DM,logFYLD) ~ yearInLoc*trait + PropNOHAV*trait&quot;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~us(trait,init=c(0,0,0)):GID + idv(trialInLocYr) + at(CompleteBlocks,&#39;Yes&#39;):repInTrial &quot;</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;+ at(IncompleteBlocks,&#39;Yes&#39;):blockInRep&quot;</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>errFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~units:at(TrialType):us(trait,init=c(0,0,0))&quot;</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(asreml); </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(fixedFormula)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(randFormula)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>errFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(errFormula)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># fit asreml </span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> randFormula,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">rcov =</span> errFormula,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> MultiTrialTraitData <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(TrialType), </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">maxiter =</span> <span class="dv">40</span>, <span class="at">workspace=</span><span class="fl">1000e6</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the proportion missing for each trait</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">any_of</span>(<span class="fu">names</span>(SIwts)),<span class="sc">~</span><span class="fu">length</span>(<span class="fu">which</span>(<span class="fu">is.na</span>(.)))<span class="sc">/</span><span class="fu">length</span>(.)))</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   logFYLD     HI    DM   MCMDS logRTNO logDYLD logTOPYLD PLTHT</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1  0.0166 0.0327 0.101 0.00613  0.0104   0.109    0.0186 0.544</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>MultiTrialTraitData<span class="ot">&lt;-</span>trialdata <span class="sc">%&gt;%</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(!is.na(DM),</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#        !is.na(logFYLD)) %&gt;% </span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(GID,yearInLoc,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                  CompleteBlocks,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>                  IncompleteBlocks,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>                  trialInLocYr,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>                  repInTrial,</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>                  blockInRep,</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                  TrialType),as.factor)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  droplevels</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">=</span><span class="st">&quot;cbind(DM,logFYLD,MCMDS,logTOPYLD) ~ yearInLoc*trait + PropNOHAV*trait&quot;</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~us(trait):GID + &quot;</span>,</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;idv(trialInLocYr) + at(CompleteBlocks,&#39;Yes&#39;):repInTrial &quot;</span>,</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;+ at(IncompleteBlocks,&#39;Yes&#39;):blockInRep&quot;</span>)</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>errFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~units:at(TrialType):us(trait)&quot;</span>)</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(asreml); </span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(fixedFormula)</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(randFormula)</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>errFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(errFormula)</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="co"># fit asreml </span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> randFormula,</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">rcov =</span> errFormula,</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> MultiTrialTraitData <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(TrialType), </span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>            <span class="at">maxiter =</span> <span class="dv">40</span>, <span class="at">workspace=</span><span class="fl">1000e6</span>)</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(SIwts)</span></code></pre></div>
+</div>
+<div id="full-multi-trait-model" class="section level3">
+<h3>Full multi-trait model</h3>
+<p>7 traits. Heterogeneous error by TrialType. Skip PLTHT b/c &gt;50% missing data.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the proportion missing for each trait</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">any_of</span>(<span class="fu">names</span>(SIwts)),<span class="sc">~</span><span class="fu">length</span>(<span class="fu">which</span>(<span class="fu">is.na</span>(.)))<span class="sc">/</span><span class="fu">length</span>(.)))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   logFYLD     HI    DM   MCMDS logRTNO logDYLD logTOPYLD PLTHT</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1  0.0166 0.0327 0.101 0.00613  0.0104   0.109    0.0186 0.544</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># SKIP ONLY PLTHT B/C AMOUNT MISSING...</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>MultiTrialTraitData<span class="ot">&lt;-</span>trialdata <span class="sc">%&gt;%</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(GID,yearInLoc,</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>                  CompleteBlocks,</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>                  IncompleteBlocks,</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>                  trialInLocYr,</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>                  repInTrial,</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>                  blockInRep,</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>                  TrialType),as.factor)) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  droplevels</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">=</span><span class="st">&quot;cbind(logFYLD,HI,DM,MCMDS,logRTNO,logDYLD,logTOPYLD) ~ yearInLoc*trait + PropNOHAV*trait&quot;</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~us(trait):GID + &quot;</span>,</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;idv(trialInLocYr) + at(CompleteBlocks,&#39;Yes&#39;):repInTrial &quot;</span>,</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;+ at(IncompleteBlocks,&#39;Yes&#39;):blockInRep&quot;</span>)</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>errFormula<span class="ot">=</span><span class="fu">paste0</span>(<span class="st">&quot;~units:at(TrialType):us(trait)&quot;</span>)</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(asreml); </span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>fixedFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(fixedFormula)</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>randFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(randFormula)</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>errFormula<span class="ot">&lt;-</span><span class="fu">as.formula</span>(errFormula)</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a><span class="co"># fit asreml </span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">asreml</span>(<span class="at">fixed =</span> fixedFormula,</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> randFormula,</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">rcov =</span> errFormula,</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> MultiTrialTraitData <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(TrialType), </span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>            <span class="at">maxiter =</span> <span class="dv">60</span>, <span class="at">workspace=</span><span class="fl">1000e6</span>)</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(out,<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateErrorCov_byTrialType_asreml_2021Aug25.rds&quot;</span>))</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>as_summary<span class="ot">&lt;-</span><span class="fu">summary</span>(out)</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(as_summary,<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateErrorCov_byTrialType_asreml_summary_2021Aug25.rds&quot;</span>))</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a><span class="co"># ASReml: Wed Aug 25 16:48:25 2021</span></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a><span class="co">#  US matrix updates modified 7 times to remain positive definite.</span></span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a><span class="co">#      LogLik         S2      DF      wall     cpu</span></span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a><span class="co"># -552132.9648      1.0000471133  16:50:44   107.3 (199 restrained)</span></span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a><span class="co">#  Notice: NonPosDef US matrix modified</span></span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a><span class="co"># -172985.8107      1.0000471133  16:52:02    77.5 (199 restrained)</span></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a><span class="co">#  -11758.3924      1.0000471133  16:53:15    73.2 (199 restrained)</span></span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a><span class="co">#   86902.0709      1.0000471133  16:54:31    76.4 (199 restrained)</span></span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a><span class="co">#  171214.2253      1.0000471133  16:55:47    75.0 (199 restrained)</span></span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a><span class="co">#  225677.4607      1.0000471133  16:56:57    70.1 (155 restrained)</span></span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a><span class="co">#  260884.6336      1.0000471133  16:58:06    68.7 (148 restrained)</span></span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a><span class="co">#  280487.3333      1.0000471133  16:59:13    67.2 (87 restrained)</span></span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a><span class="co">#  295260.2919      1.0000471133  17:00:20    66.5 (32 restrained)</span></span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a><span class="co">#  302995.2011      1.0000471133  17:01:30    70.4 (5 restrained)</span></span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a><span class="co">#  311088.9518      1.0000471133  17:02:46    75.9 (4 restrained)</span></span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a><span class="co">#  Notice: NonPosDef US matrix modified</span></span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a><span class="co">#  316645.9289      1.0000471133  17:03:59    72.2 (5 restrained)</span></span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a><span class="co">#  324430.0701      1.0000471133  17:05:06    67.1 (2 restrained)</span></span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a><span class="co">#  331602.8926      1.0000471133  17:06:14    67.9</span></span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a><span class="co">#  335069.2210      1.0000471133  17:07:27    72.8</span></span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a><span class="co">#  337425.1130      1.0000471133  17:08:50    77.6</span></span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a><span class="co">#  339834.7415      1.0000471133  17:10:49    98.5</span></span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a><span class="co">#  340877.5399      1.0000471133  17:13:12   114.1</span></span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a><span class="co">#  341423.1058      1.0000471133  17:14:50    84.5</span></span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a><span class="co">#  341734.7595      1.0000471133  17:16:00    70.2</span></span>
+<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a><span class="co">#  341939.2189      1.0000471133  17:17:12    71.2</span></span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a><span class="co">#  342091.3023      1.0000471133  17:18:27    75.2</span></span>
+<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a><span class="co">#  342215.4180      1.0000471133  17:19:49    81.6</span></span>
+<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a><span class="co">#  342322.6216      1.0000471133  17:21:38    94.1</span></span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a><span class="co">#  342418.1298      1.0000471133  17:23:04    84.4</span></span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a><span class="co">#  342504.5682      1.0000471133  17:24:26    79.1</span></span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a><span class="co">#  342583.3893      1.0000471133  17:25:54    83.8</span></span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a><span class="co">#  342655.5189      1.0000471133  17:27:22    84.5</span></span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a><span class="co">#  342721.6172      1.0000471133  17:28:59    85.1</span></span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a><span class="co">#  342782.2099      1.0000471133  17:30:46    90.1</span></span>
+<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a><span class="co">#  342837.7490      1.0000471133  17:32:17    76.1</span></span>
+<span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a><span class="co">#  342888.6246      1.0000471133  17:33:23    65.9</span></span>
+<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a><span class="co">#  342935.2019      1.0000471133  17:34:25    62.7</span></span>
+<span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a><span class="co">#  342977.8038      1.0000471133  17:35:29    63.7</span></span>
+<span id="cb20-78"><a href="#cb20-78" aria-hidden="true" tabindex="-1"></a><span class="co">#  343016.7322      1.0000471133  17:36:35    65.5</span></span>
+<span id="cb20-79"><a href="#cb20-79" aria-hidden="true" tabindex="-1"></a><span class="co">#  343052.2701      1.0000471133  17:37:34    59.8</span></span>
+<span id="cb20-80"><a href="#cb20-80" aria-hidden="true" tabindex="-1"></a><span class="co">#  343084.6751      1.0000471133  17:38:37    63.0</span></span>
+<span id="cb20-81"><a href="#cb20-81" aria-hidden="true" tabindex="-1"></a><span class="co">#  343114.1894      1.0000471133  17:39:42    64.2</span></span>
+<span id="cb20-82"><a href="#cb20-82" aria-hidden="true" tabindex="-1"></a><span class="co">#  343141.0370      1.0000471133  17:40:46    64.7</span></span>
+<span id="cb20-83"><a href="#cb20-83" aria-hidden="true" tabindex="-1"></a><span class="co">#  343165.4329      1.0000471133  17:41:46    59.9</span></span>
+<span id="cb20-84"><a href="#cb20-84" aria-hidden="true" tabindex="-1"></a><span class="co">#  343187.5770      1.0000471133  17:42:51    64.7</span></span>
+<span id="cb20-85"><a href="#cb20-85" aria-hidden="true" tabindex="-1"></a><span class="co">#  343207.6489      1.0000471133  17:43:54    63.5</span></span>
+<span id="cb20-86"><a href="#cb20-86" aria-hidden="true" tabindex="-1"></a><span class="co">#  343225.8251      1.0000471133  17:44:58    63.8</span></span>
+<span id="cb20-87"><a href="#cb20-87" aria-hidden="true" tabindex="-1"></a><span class="co">#  343242.2660      1.0000471133  17:46:06    67.9</span></span>
+<span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a><span class="co">#  343257.1194      1.0000471133  17:47:25    77.2</span></span>
+<span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a><span class="co">#  343270.5287      1.0000471133  17:48:49    76.7</span></span>
+<span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a><span class="co">#  343282.6168      1.0000471133  17:50:12    81.2</span></span>
+<span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a><span class="co">#  343293.5105      1.0000471133  17:51:18    66.5</span></span>
+<span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a><span class="co">#  343303.3166      1.0000471133  17:52:25    66.2</span></span>
+<span id="cb20-93"><a href="#cb20-93" aria-hidden="true" tabindex="-1"></a><span class="co">#  343312.1366      1.0000471133  17:53:44    75.7</span></span>
+<span id="cb20-94"><a href="#cb20-94" aria-hidden="true" tabindex="-1"></a><span class="co">#  343320.0631      1.0000471133  17:55:06    80.0</span></span>
+<span id="cb20-95"><a href="#cb20-95" aria-hidden="true" tabindex="-1"></a><span class="co">#  343327.1802      1.0000471133  17:56:25    74.7</span></span>
+<span id="cb20-96"><a href="#cb20-96" aria-hidden="true" tabindex="-1"></a><span class="co">#  343333.5731      1.0000471133  17:57:53    79.7</span></span>
+<span id="cb20-97"><a href="#cb20-97" aria-hidden="true" tabindex="-1"></a><span class="co">#  343339.3063      1.0000471133  17:59:17    78.3</span></span>
+<span id="cb20-98"><a href="#cb20-98" aria-hidden="true" tabindex="-1"></a><span class="co">#  343344.4459      1.0000471133  18:01:01    76.5</span></span>
+<span id="cb20-99"><a href="#cb20-99" aria-hidden="true" tabindex="-1"></a><span class="co">#  343349.0523      1.0000471133  18:02:05    64.3</span></span>
+<span id="cb20-100"><a href="#cb20-100" aria-hidden="true" tabindex="-1"></a><span class="co">#  343353.1798      1.0000471133  18:03:08    63.0</span></span>
+<span id="cb20-101"><a href="#cb20-101" aria-hidden="true" tabindex="-1"></a><span class="co">#  343356.8724      1.0000471133  18:04:13    64.6</span></span>
+<span id="cb20-102"><a href="#cb20-102" aria-hidden="true" tabindex="-1"></a><span class="co">#  343360.1798      1.0000471133  18:05:19    66.5</span></span>
+<span id="cb20-103"><a href="#cb20-103" aria-hidden="true" tabindex="-1"></a><span class="co">#  343363.1377      1.0000471133  18:06:29    70.0</span></span>
+<span id="cb20-104"><a href="#cb20-104" aria-hidden="true" tabindex="-1"></a><span class="co"># US variance structures were modified in 51 instances to make them positive definite</span></span>
+<span id="cb20-105"><a href="#cb20-105" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb20-106"><a href="#cb20-106" aria-hidden="true" tabindex="-1"></a><span class="co"># Finished on: Wed Aug 25 18:06:31 2021</span></span>
+<span id="cb20-107"><a href="#cb20-107" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb20-108"><a href="#cb20-108" aria-hidden="true" tabindex="-1"></a><span class="co"># LogLikelihood not converged</span></span></code></pre></div>
+<p>Independent but heterogeneous error covariances were fit by TrialType. After 40 iterations (~30 minutes), likelihood wasn’t converged… but looks on the way.</p>
+</div>
+<div id="result" class="section level3">
+<h3>Result</h3>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>asfit<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateErrorCov_byTrialType_asreml_2021Aug25.rds&quot;</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>as_summary<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateErrorCov_byTrialType_asreml_summary_2021Aug25.rds&quot;</span>))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>varcomps<span class="ot">&lt;-</span>as_summary<span class="sc">$</span>varcomp <span class="sc">%&gt;%</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;VarComp&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(VarComp,component)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># SELECTION INDEX WEIGHTS</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>SIwts<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="at">logFYLD=</span><span class="dv">20</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">HI=</span><span class="dv">10</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">DM=</span><span class="dv">15</span>,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">MCMDS=</span><span class="sc">-</span><span class="dv">10</span>,</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">logRTNO=</span><span class="dv">12</span>,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">logDYLD=</span><span class="dv">20</span>,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">logTOPYLD=</span><span class="dv">15</span>)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">#         PLTHT=10) </span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>adjSIwts<span class="ot">&lt;-</span>trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(<span class="fu">names</span>(SIwts)),<span class="sc">~</span><span class="fu">sqrt</span>(<span class="fu">var</span>(.,<span class="at">na.rm=</span>T)))) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  magrittr<span class="sc">::</span><span class="fu">divide_by</span>(SIwts,.) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">names&lt;-</span><span class="st">`</span>(.,<span class="fu">names</span>(SIwts))</span></code></pre></div>
+<p>SIwts, specified by breeder as relative importances, essentially.</p>
+<p>Try adjusting weights by dividing by Trait Std. Devs.</p>
+<p>Trait Standard Deviations:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(<span class="fu">names</span>(SIwts)),<span class="sc">~</span><span class="fu">sqrt</span>(<span class="fu">var</span>(.,<span class="at">na.rm=</span>T)),<span class="at">.names =</span> <span class="fu">paste0</span>(<span class="st">&quot;sd_&quot;</span>,<span class="st">&quot;{.col}&quot;</span>)));</span></code></pre></div>
+<pre><code># A tibble: 1 × 7
+  sd_logFYLD sd_HI sd_DM sd_MCMDS sd_logRTNO sd_logDYLD sd_logTOPYLD
+       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;
+1      0.892 0.142  5.80    0.787      0.879      0.866        0.798</code></pre>
+<p>Adjusted Weights:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>adjSIwts</span></code></pre></div>
+<pre><code>   logFYLD         HI         DM      MCMDS    logRTNO    logDYLD  logTOPYLD 
+ 22.422466  70.381762   2.584201 -12.706449  13.656355  23.096896  18.790244 </code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>errorVars<span class="ot">&lt;-</span>varcomps <span class="sc">%&gt;%</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;TrialType&quot;</span>,VarComp),</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">grepl</span>(<span class="st">&quot;!trait.&quot;</span>,VarComp)) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(VarComp,<span class="fu">c</span>(<span class="st">&quot;TrialType&quot;</span>,<span class="st">&quot;VarParam&quot;</span>),<span class="st">&quot;!trait.&quot;</span>,<span class="at">remove =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(VarParam,<span class="fu">c</span>(<span class="st">&quot;Trait1&quot;</span>,<span class="st">&quot;Trait2&quot;</span>),<span class="st">&quot;:&quot;</span>,<span class="at">remove =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TrialType=</span><span class="fu">gsub</span>(<span class="st">&quot;TrialType_&quot;</span>,<span class="st">&quot;&quot;</span>,TrialType)) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">VarEsts=</span><span class="fu">c</span>(Trait1,Trait2,component))</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>errorVars <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">siErrorVarEst=</span><span class="fu">map_dbl</span>(VarEsts,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>                           <span class="cf">function</span>(VarEsts,SIwts){</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>                             covMat<span class="ot">&lt;-</span>VarEsts <span class="sc">%&gt;%</span> </span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">spread</span>(Trait2,component) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">column_to_rownames</span>(<span class="st">&quot;Trait1&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>                               .[<span class="fu">names</span>(SIwts),<span class="fu">names</span>(SIwts)]</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>                             covMat[<span class="fu">upper.tri</span>(covMat)]<span class="ot">&lt;-</span><span class="fu">t</span>(covMat)[<span class="fu">upper.tri</span>(covMat)]</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>                             siError<span class="ot">&lt;-</span>SIwts<span class="sc">%*%</span>covMat<span class="sc">%*%</span>SIwts</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">return</span>(siError) },<span class="at">SIwts=</span>SIwts))</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>errorVars <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">distinct</span>(TrialType,plotArea)) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(plotArea) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>plotArea,<span class="at">y=</span>siErrorVarEst)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label=</span>TrialType,<span class="at">color=</span>TrialType),<span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Unadjusted SIwts - siError vs. plotArea&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/siError%20vs.%20plotArea%20-%20orig%20SIwts-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>adjErrorVars<span class="ot">&lt;-</span>varcomps <span class="sc">%&gt;%</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;TrialType&quot;</span>,VarComp),</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">grepl</span>(<span class="st">&quot;!trait.&quot;</span>,VarComp)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(VarComp,<span class="fu">c</span>(<span class="st">&quot;TrialType&quot;</span>,<span class="st">&quot;VarParam&quot;</span>),<span class="st">&quot;!trait.&quot;</span>,<span class="at">remove =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(VarParam,<span class="fu">c</span>(<span class="st">&quot;Trait1&quot;</span>,<span class="st">&quot;Trait2&quot;</span>),<span class="st">&quot;:&quot;</span>,<span class="at">remove =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TrialType=</span><span class="fu">gsub</span>(<span class="st">&quot;TrialType_&quot;</span>,<span class="st">&quot;&quot;</span>,TrialType)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">VarEsts=</span><span class="fu">c</span>(Trait1,Trait2,component))</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>adjErrorVars <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">siErrorVarEst=</span><span class="fu">map_dbl</span>(VarEsts,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>                           <span class="cf">function</span>(VarEsts,SIwts){</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>                             covMat<span class="ot">&lt;-</span>VarEsts <span class="sc">%&gt;%</span> </span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">spread</span>(Trait2,component) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">column_to_rownames</span>(<span class="st">&quot;Trait1&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>                               .[<span class="fu">names</span>(SIwts),<span class="fu">names</span>(SIwts)]</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>                             covMat[<span class="fu">upper.tri</span>(covMat)]<span class="ot">&lt;-</span><span class="fu">t</span>(covMat)[<span class="fu">upper.tri</span>(covMat)]</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>                             siError<span class="ot">&lt;-</span>SIwts<span class="sc">%*%</span>covMat<span class="sc">%*%</span>SIwts</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">return</span>(siError) },<span class="at">SIwts=</span>adjSIwts))</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>adjErrorVars <span class="sc">%&gt;%</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">distinct</span>(TrialType,plotArea)) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(plotArea) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>plotArea,<span class="at">y=</span>siErrorVarEst)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label=</span>TrialType,<span class="at">color=</span>TrialType),<span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Adjusted SIwts - siError vs. plotArea&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/siError%20vs.%20plotArea%20-%20adjSIwts-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="convergence-check" class="section level3">
+<h3>Convergence check</h3>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>asfit<span class="sc">$</span>monitor[<span class="st">&quot;loglik&quot;</span>,] <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  as.numeric <span class="sc">%&gt;%</span> <span class="fu">plot</span>(.,<span class="at">ylab=</span><span class="st">&#39;loglik&#39;</span>,<span class="at">xlab=</span><span class="st">&#39;iter&#39;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/look%20at%20convergence%20monitor-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>asfit<span class="sc">$</span>monitor <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  as.data.frame <span class="sc">%&gt;%</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;param&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>constraint) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="sc">-</span><span class="fu">c</span>(<span class="st">&quot;param&quot;</span>),<span class="at">names_to=</span><span class="st">&quot;iter&quot;</span>,<span class="at">values_to=</span><span class="st">&quot;value&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">iter=</span><span class="fu">as.numeric</span>(iter)) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;!trait&quot;</span>,param)) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Component=</span><span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">&quot;GID!trait&quot;</span>,param),<span class="st">&quot;genVar&quot;</span>,<span class="st">&quot;errorVar&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>iter,<span class="at">y=</span>value,<span class="at">group=</span>param,<span class="at">color=</span>Component)) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">alpha=</span><span class="fl">0.7</span>) <span class="sc">+</span> </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;ErrorVarCovars&quot;</span>)<span class="co">#geom_label(aes(label=param))</span></span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>asfit<span class="sc">$</span>monitor <span class="sc">%&gt;%</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  as.data.frame <span class="sc">%&gt;%</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;param&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>constraint) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="sc">-</span><span class="fu">c</span>(<span class="st">&quot;param&quot;</span>),<span class="at">names_to=</span><span class="st">&quot;iter&quot;</span>,<span class="at">values_to=</span><span class="st">&quot;value&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">iter=</span><span class="fu">as.numeric</span>(iter)) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;!trait|!variance|loglik|S2|df&quot;</span>,param)) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>iter,<span class="at">y=</span>value,<span class="at">group=</span>param,<span class="at">color=</span>param)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>asfit<span class="sc">$</span>monitor <span class="sc">%&gt;%</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  as.data.frame <span class="sc">%&gt;%</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;param&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>constraint) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="sc">-</span><span class="fu">c</span>(<span class="st">&quot;param&quot;</span>),<span class="at">names_to=</span><span class="st">&quot;iter&quot;</span>,<span class="at">values_to=</span><span class="st">&quot;value&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">iter=</span><span class="fu">as.numeric</span>(iter)) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;!trait&quot;</span>,param)) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Component=</span><span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">&quot;GID!trait&quot;</span>,param),<span class="st">&quot;genVar&quot;</span>,<span class="st">&quot;errorVar&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Component<span class="sc">==</span><span class="st">&quot;genVar&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>iter,<span class="at">y=</span>value,<span class="at">group=</span>param,<span class="at">color=</span>param)) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">alpha=</span><span class="fl">0.7</span>) <span class="sc">+</span> </span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Genetic VarCovars&quot;</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;bottom&#39;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/unnamed-chunk-8-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="approach-2-indirect---regress-si-getgv-on-trial-specific-si-blup" class="section level2">
+<h2>Approach 2: indirect - regress SI GETGV on Trial-specific SI BLUP</h2>
+<p>This will be a revised version of the original version of this approach, which is <a href="https://wolfemd.github.io/IITA_2021GS/inputsForSimulation.html">documented here</a>.</p>
+<p><strong>Changes:</strong></p>
+<ul>
+<li>Analyze the same subset of trials chosen in Approach 1 above, which is more restrictively chosen than the previous analysis</li>
+<li>Adopt a SI weighting scheme for computing the Trial-specific SI with BLUPs, which is invariant to which traits are observed</li>
+<li>Categorize trials according to <code>plotArea</code> and/or <code>TrialType</code></li>
+</ul>
+<p><strong>Procedure:</strong></p>
+<ul>
+<li><p>Use the <em>SELECTION INDEX</em> GETGV from genomic prediction using all entire available training population and all of the latest available data as a best estimate of “true” net merit</p>
+<ul>
+<li><p>The predictions documented <a href="https://wolfemd.github.io/IITA_2021GS/06-GenomicPredictions.html">here</a> is the most up-to-date. See the summary of genomic prediction results <a href="https://wolfemd.github.io/IITA_2021GS/07-Results.html#Genomic_Predictions">here</a>.</p></li>
+<li><p>Alternative best estimate of “true” net merit: actual national performance trial data (e.g. from NCRPs in Nigeria?)</p></li>
+</ul></li>
+<li><p>For each trial, analyze the cleaned plot-basis data:</p>
+<ol style="list-style-type: decimal">
+<li><p>Fit a univariate mixed-model to each trait scored</p></li>
+<li><p>Extract trial-specific BLUPs for whatever clones were present</p></li>
+<li><p>Compute the SELIND for the current trial using BLUPs for whatever component traits were scored (<span class="math inline">\(SI_{TrialBLUP}\)</span>).</p>
+<ul>
+<li>Scale weights so their sum always equals the sum of the full set of weights, even when only subsets of traits are present.</li>
+</ul></li>
+<li><p>Regress <span class="math inline">\(SI_{GETGV}\)</span> on the <span class="math inline">\(SI_{TrialBLUP}\)</span></p></li>
+<li><p>Extract the <span class="math inline">\(\hat{\sigma}^2_e\)</span> of the regression as the trial-specific estimate of the selection error</p></li>
+</ol></li>
+<li><p>Use mean (or median) <span class="math inline">\(\hat{\sigma}^2_e\)</span> for each TrialType / plotArea as potential simulation input. Consider a weighted mean/median according to number of clones available to measure <span class="math inline">\(\hat{\sigma}^2_e\)</span> for each trial.</p></li>
+</ul>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span><span class="kw">;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/IITA_2021GS/<span class="kw">;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">-n</span> 20 <span class="at">--mem</span><span class="op">=</span>60G <span class="at">--time</span><span class="op">=</span>06:00:00<span class="kw">;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co">#export PATH=/programs/R-4.0.5clean-p/bin:$PATH</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co">#export OMP_NUM_THREADS=8</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span><span class="kw">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(genomicMateSelectR); </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># CLEANED PLOT-LEVEL TRIAL DATA</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>dbdata<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;IITA_ExptDesignsDetected_2021Aug08.rds&quot;</span>))</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># SELECTION INDEX WEIGHTS</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>SIwts<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="at">logFYLD=</span><span class="dv">20</span>,</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">HI=</span><span class="dv">10</span>,</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">DM=</span><span class="dv">15</span>,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">MCMDS=</span><span class="sc">-</span><span class="dv">10</span>,</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">logRTNO=</span><span class="dv">12</span>,</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">logDYLD=</span><span class="dv">20</span>,</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">logTOPYLD=</span><span class="dv">15</span>) <span class="co"># ,PLTHT=10) </span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co"># FILTER TRIALS TO-BE-CONSIDERED</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="do">### Restrict consideration to &gt;2012 </span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="do">### to measure the selection error during the current &quot;era&quot; at IITA.</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="do">### Only trials with &gt;=50% genotyped and key TrialTypes</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="do">### Keep only trials with full plotWidth and plotLength meta-data</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="do">### Calc plotArea=plotWidth*plotLength (in meters-squared)</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>trialdata<span class="ot">&lt;-</span>dbdata <span class="sc">%&gt;%</span> </span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyYear<span class="sc">&gt;=</span><span class="dv">2013</span>,</span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(MaxNOHAV),</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(plotWidth),</span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(plotLength),</span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(PropNOHAV)) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">TrialData=</span><span class="sc">-</span><span class="fu">c</span>(studyName,TrialType,plotWidth,plotLength,CompleteBlocks,IncompleteBlocks,MaxNOHAV)) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">propGenotyped=</span><span class="fu">map_dbl</span>(TrialData,</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>                              <span class="sc">~</span><span class="fu">length</span>(<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">unique</span>(.<span class="sc">$</span>FullSampleName))))<span class="sc">/</span><span class="fu">length</span>(<span class="fu">unique</span>(.<span class="sc">$</span>GID))),</span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>         <span class="at">plotArea=</span>plotWidth<span class="sc">*</span>plotLength,</span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>         <span class="at">IncompleteBlocks=</span><span class="fu">ifelse</span>(IncompleteBlocks<span class="sc">==</span><span class="cn">TRUE</span>,<span class="st">&quot;Yes&quot;</span>,<span class="st">&quot;No&quot;</span>),</span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>         <span class="at">CompleteBlocks=</span><span class="fu">ifelse</span>(CompleteBlocks<span class="sc">==</span><span class="cn">TRUE</span>,<span class="st">&quot;Yes&quot;</span>,<span class="st">&quot;No&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(propGenotyped<span class="sc">&gt;=</span><span class="fl">0.5</span>,</span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>         TrialType <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;GeneticGain&quot;</span>,<span class="st">&quot;CET&quot;</span>,<span class="st">&quot;ExpCET&quot;</span>,<span class="st">&quot;PYT&quot;</span>,<span class="st">&quot;AYT&quot;</span>,<span class="st">&quot;UYT&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(yearInLoc,studyName,studyYear,locationName,TrialType,</span>
+<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>         plotArea,plotWidth,plotLength,</span>
+<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a>         CompleteBlocks,IncompleteBlocks,observationUnitDbId,</span>
+<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>         GID,trialInLocYr,repInTrial,blockInRep,PropNOHAV,MaxNOHAV,</span>
+<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>         <span class="fu">all_of</span>(<span class="fu">names</span>(SIwts)))</span>
+<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">semi_join</span>(trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>              <span class="fu">distinct</span>(TrialType,studyName,plotArea,plotWidth,plotLength) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a>              <span class="fu">group_by</span>(TrialType) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a>              <span class="fu">summarize</span>(<span class="at">plotArea=</span><span class="fu">median</span>(plotArea)) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>())</span>
+<span id="cb35-46"><a href="#cb35-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-47"><a href="#cb35-47" aria-hidden="true" tabindex="-1"></a><span class="do">### ADJUSTED SELIND WEIGHTS</span></span>
+<span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a>adjSIwts<span class="ot">&lt;-</span>trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(<span class="fu">names</span>(SIwts)),<span class="sc">~</span><span class="fu">sqrt</span>(<span class="fu">var</span>(.,<span class="at">na.rm=</span>T)))) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a>  magrittr<span class="sc">::</span><span class="fu">divide_by</span>(SIwts,.) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-51"><a href="#cb35-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">names&lt;-</span><span class="st">`</span>(.,<span class="fu">names</span>(SIwts))</span>
+<span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a><span class="co"># SELIND GETGVS (for input to estimateSelectionError func below)</span></span>
+<span id="cb35-55"><a href="#cb35-55" aria-hidden="true" tabindex="-1"></a>gpreds<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="at">file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;genomicPredictions_full_set_2021Aug09.rds&quot;</span>))</span>
+<span id="cb35-56"><a href="#cb35-56" aria-hidden="true" tabindex="-1"></a>getgvs<span class="ot">&lt;-</span>gpreds<span class="sc">$</span>gblups[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb35-57"><a href="#cb35-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(predOf<span class="sc">==</span><span class="st">&quot;GETGV&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-58"><a href="#cb35-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GID,SELIND,<span class="fu">all_of</span>(<span class="fu">names</span>(SIwts)))</span>
+<span id="cb35-59"><a href="#cb35-59" aria-hidden="true" tabindex="-1"></a>siadj_getgvs<span class="ot">&lt;-</span>getgvs <span class="sc">%&gt;%</span> </span>
+<span id="cb35-60"><a href="#cb35-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SELIND=</span><span class="fu">as.numeric</span>(getgvs <span class="sc">%&gt;%</span> </span>
+<span id="cb35-61"><a href="#cb35-61" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">select</span>(<span class="sc">-</span>SELIND,<span class="sc">-</span>GID) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-62"><a href="#cb35-62" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">as.matrix</span>(.)<span class="sc">%*%</span>adjSIwts)) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-63"><a href="#cb35-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GID,SELIND)</span>
+<span id="cb35-64"><a href="#cb35-64" aria-hidden="true" tabindex="-1"></a>si_getgvs<span class="ot">&lt;-</span>getgvs <span class="sc">%&gt;%</span> </span>
+<span id="cb35-65"><a href="#cb35-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GID,SELIND)</span>
+<span id="cb35-66"><a href="#cb35-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-67"><a href="#cb35-67" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb35-68"><a href="#cb35-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">TrialData=</span><span class="sc">-</span><span class="fu">c</span>(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV,plotArea))</span>
+<span id="cb35-69"><a href="#cb35-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-70"><a href="#cb35-70" aria-hidden="true" tabindex="-1"></a><span class="co"># SOURCE FUNCTION estimateSelectionError() </span></span>
+<span id="cb35-71"><a href="#cb35-71" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;code&quot;</span>,<span class="st">&quot;estimateSelectionError.R&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="do">###### unit test inputs for estimateSelectionError</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># TrialData&lt;-trialdata$TrialData[[1]]</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># CompleteBlocks&lt;-trialdata$CompleteBlocks[[1]]</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># IncompleteBlocks&lt;-trialdata$IncompleteBlocks[[1]]</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># getgvs&lt;-si_getgvs</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># TrialData&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% TrialData[[1]]</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># CompleteBlocks&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% CompleteBlocks[[1]]</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="co"># IncompleteBlocks&lt;-trialdata %&gt;% filter(propGenotyped&gt;0.75) %&gt;% slice(4) %$% IncompleteBlocks[[1]]</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ncores=4</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># rm(TrialData,CompleteBlocks,IncompleteBlocks)</span></span></code></pre></div>
+<p>Run function <code>estimateSelectionError()</code> across trials to estimation selection errors.</p>
+<p>Two runs: once with “original” SIwts, also with adjusted SIwts and SI_GETGVs.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ORIGINAL SIwts</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(furrr); <span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">20</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">future.globals.maxSize=</span><span class="sc">+</span><span class="cn">Inf</span>); <span class="fu">options</span>(<span class="at">future.rng.onMisuse=</span><span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SelectionError=</span><span class="fu">future_pmap</span>(.,estimateSelectionError,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">SIwts=</span>SIwts,<span class="at">getgvs=</span>si_getgvs))</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(trialdata,here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError_origSIwts_2021Aug24.rds&quot;</span>))</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ADJUSTED SIwts</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(furrr); <span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">20</span>)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">future.globals.maxSize=</span><span class="sc">+</span><span class="cn">Inf</span>); <span class="fu">options</span>(<span class="at">future.rng.onMisuse=</span><span class="st">&quot;ignore&quot;</span>)</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>trialdata <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SelectionError=</span><span class="fu">future_pmap</span>(.,estimateSelectionError,</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">SIwts=</span>adjSIwts,<span class="at">getgvs=</span>siadj_getgvs))</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(trialdata,here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError_adjSIwts_2021Aug24.rds&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>estSelError_adj<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError_adjSIwts_2021Aug24.rds&quot;</span>))</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>estSelError_adj <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>SI_BLUPs,<span class="sc">-</span>BLUPs,<span class="sc">-</span>SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(TrialMSE))</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>estSelError<span class="ot">&lt;-</span><span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;output&quot;</span>,<span class="st">&quot;estimateSelectionError_origSIwts_2021Aug24.rds&quot;</span>))</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>estSelError <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>TrialData) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>SI_BLUPs,<span class="sc">-</span>BLUPs,<span class="sc">-</span>SelectionError) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(TrialMSE))</span></code></pre></div>
+<p>Use mean (or median) <span class="math inline">\(\hat{\sigma}^2_e\)</span> for each TrialType / plotArea as potential simulation input. Consider a weighted mean/median according to number of clones available to measure <span class="math inline">\(\hat{\sigma}^2_e\)</span> for each trial.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>estSelError_adj <span class="sc">%&gt;%</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>plotArea,<span class="at">y=</span>TrialMSE, <span class="at">size=</span>NcloneForReg, <span class="at">fill=</span>TrialType)) <span class="sc">+</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">notch =</span> T) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Distributions of TrialMSE by TrialType (sorted by plotArea)&quot;</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">&quot;From regression of SI_GETGV on Trial-specific SI_BLUP.&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/boxplot%20TrialMSE%20vs%20plotArea-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Compute per TrialType means:</p>
+<ul>
+<li><code>meanTrialMSE</code>: from regression of SI_GETGV on Trial-specific SI_BLUP</li>
+<li><code>meanCor2si</code>: correlation b/t SI_GETGV and Trial-specific SI_BLUP</li>
+<li>weighted by <code>NcloneForReg</code>: the number of clones in a trial that had data to compute SELIND.</li>
+</ul>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>estSelError_adj_summarized<span class="ot">&lt;-</span>estSelError_adj <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TrialType,plotArea) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">meanTrialMSE=</span><span class="fu">weighted.mean</span>(TrialMSE,<span class="at">w =</span> NcloneForReg),</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">meanCor2si=</span><span class="fu">weighted.mean</span>(cor2si,<span class="at">w =</span> NcloneForReg,<span class="at">na.rm =</span> T)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(plotArea)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>estSelError_adj_summarized</span></code></pre></div>
+<pre><code># A tibble: 6 × 4
+# Groups:   TrialType [6]
+  TrialType   plotArea meanTrialMSE meanCor2si
+  &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+1 CET              2.5         204.      0.414
+2 PYT              8           179.      0.384
+3 GeneticGain     10           226.      0.399
+4 ExpCET          16           222.      0.409
+5 AYT             22           137.      0.188
+6 UYT             33           149.      0.335</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>estSelError_adj_summarized <span class="sc">%&gt;%</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>plotArea,<span class="at">y=</span>meanTrialMSE)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label=</span>TrialType,<span class="at">color=</span>TrialType),<span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Regress SELIND GETGV on Trial-specific SELIND BLUP&quot;</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Per TrialType mean MSE. Adjusted SIwts. Order TrialType by plotArea.&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>estSelError_adj_summarized <span class="sc">%&gt;%</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>plotArea,<span class="at">y=</span>meanCor2si)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label=</span>TrialType,<span class="at">color=</span>TrialType),<span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Regress SELIND GETGV on Trial-specific SELIND BLUP&quot;</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Per TrialType mean cor(SI_GETGV,SI_TrialBLUP). Adjusted SIwts. Order TrialType by plotArea.&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>p1<span class="ot">&lt;-</span>adjErrorVars <span class="sc">%&gt;%</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(trialdata <span class="sc">%&gt;%</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">distinct</span>(TrialType,plotArea)) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(plotArea) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>plotArea,<span class="at">y=</span>siErrorVarEst)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label=</span>TrialType,<span class="at">color=</span>TrialType),<span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Direct Estimate by Multivariate Mixed Model&quot;</span>)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>p2<span class="ot">&lt;-</span>estSelError_adj_summarized <span class="sc">%&gt;%</span> </span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,<span class="fu">aes</span>(<span class="at">x=</span>plotArea,<span class="at">y=</span>meanTrialMSE)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label=</span>TrialType,<span class="at">color=</span>TrialType),<span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Indirect Estimate by SELIND GETGV on Trial BLUP&quot;</span>)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> </span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="st">&#39;A&#39;</span>) <span class="sc">+</span> </span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">guides=</span><span class="st">&#39;collect&#39;</span>) <span class="sc">&amp;</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)</span></code></pre></div>
+<p><img src="figure/inputsForSimulationV2.Rmd/side%20by%20side%20plot%20of%20results-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Above is a side-by-side plot of the key result from two approaches I have tried above for empirically estimating measurement (or selection) error relative to the selection index. The first approach (A), was to fit a multivariate mixed-model with heterogenous error covariances among TrialType. The direct approach allowed calculating the SELIND error variance (y-axis) by <span class="math inline">\(b^T\boldsymbol{R}_{TrialType}b\)</span>, where _{TrialType} is the TrialType-specific estimate of the error covariance matrix and <span class="math inline">\(b\)</span> are the SELIND weights. The second approach (B) was to fit univariate mixed-models to each trait in each trial, then compute trial-specific SELIND using the resulting BLUPs. The SELIND GETGV value for all clones based on using <em>all</em> phenotypic data and genomic information was then regressed on each trial’s SELIND BLUPs. The mean squared error (mean residual variance) from each regression was extracted and then the average TrialMSE by TrialType was computed (y-axis, B).</p>
+<p>We need to choose one of these two options, or revise the approach further, for use input for VDP simulations. Note that in simulation, the error variances we input will be divided by the Nrep and Nloc for each stage specific, so even if UYT has worse error than AYT overall, at the clone-level, UYT would have lower error b/c of more reps and locs.</p>
+<p>I prefer <strong>option A / approach #1</strong> and only hesitate that it may be challenging to successfully fit these models for each breeding program’s data.</p>
+<p>See the <a href="https://wolfemd.github.io/BreedingSchemeOpt/baselineSim.html">baseline simulations page</a> for downstream usage / next steps.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur 10.16
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] patchwork_1.1.1          forcats_0.5.1            stringr_1.4.0           
+ [4] readr_2.0.1              ggplot2_3.3.5            tidyverse_1.3.1         
+ [7] genomicMateSelectR_0.2.0 purrr_0.3.4              tidyr_1.1.3             
+[10] dplyr_1.0.7              tibble_3.1.3             workflowr_1.6.2         
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.7        lubridate_1.7.10  here_1.0.1        assertthat_0.2.1 
+ [5] rprojroot_2.0.2   digest_0.6.27     utf8_1.2.2        R6_2.5.0         
+ [9] cellranger_1.1.0  backports_1.2.1   reprex_2.0.1      evaluate_0.14    
+[13] highr_0.9         httr_1.4.2        pillar_1.6.2      rlang_0.4.11     
+[17] readxl_1.3.1      rstudioapi_0.13   whisker_0.4       jquerylib_0.1.4  
+[21] rmarkdown_2.10    labeling_0.4.2    munsell_0.5.0     broom_0.7.9      
+[25] compiler_4.1.0    httpuv_1.6.1      modelr_0.1.8      xfun_0.25        
+[29] pkgconfig_2.0.3   htmltools_0.5.1.1 tidyselect_1.1.1  fansi_0.5.0      
+[33] crayon_1.4.1      tzdb_0.1.2        dbplyr_2.1.1      withr_2.4.2      
+[37] later_1.2.0       grid_4.1.0        jsonlite_1.7.2    gtable_0.3.0     
+[41] lifecycle_1.0.0   DBI_1.1.1         git2r_0.28.0      magrittr_2.0.1   
+[45] scales_1.1.1      cli_3.0.1         stringi_1.7.3     farver_2.1.0     
+[49] fs_1.5.0          promises_1.2.0.1  xml2_1.3.2        bslib_0.2.5.1    
+[53] ellipsis_0.3.2    generics_0.1.0    vctrs_0.3.8       tools_4.1.0      
+[57] glue_1.4.2        hms_1.1.0         yaml_2.2.1        colorspace_2.0-2 
+[61] rvest_1.0.1       knitr_1.33        haven_2.4.3       sass_0.4.0       </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
