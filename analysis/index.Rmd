@@ -67,7 +67,7 @@ See the updated [version of this analysis here](inputsForSimulationV2.html) and 
 
 Uses two approaches to empirically estimate the measurement (selection) error associated with different TrialType's / plot configurations. 
 
-First approach, was to fit a multivariate mixed-model with heterogenous error covariances among TrialType. The direct approach allowed calculating the SELIND error variance (y-axis) by $b^T\boldsymbol{R}_{TrialType}b$, where \boldsymbol{R}_{TrialType} is the TrialType-specific estimate of the error covariance matrix and $b$ are the SELIND weights. 
+First approach, was to fit a multivariate mixed-model with heterogenous error covariances among TrialType. The direct approach allowed calculating the SELIND error variance (y-axis) by $b^T\boldsymbol{R}_{TrialType}b$, where $\boldsymbol{R}_{TrialType}$ is the TrialType-specific estimate of the error covariance matrix and $b$ are the SELIND weights. 
 
 The second approach was to fit univariate mixed-models to each trait in each trial, then compute trial-specific SELIND using the resulting BLUPs. The SELIND GETGV value for all clones based on using _all_ phenotypic data and genomic information was then regressed on each trial's SELIND BLUPs. The mean squared error (mean residual variance) from each regression was extracted and then the average TrialMSE by TrialType was computed.
 

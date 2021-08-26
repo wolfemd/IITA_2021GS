@@ -123,7 +123,7 @@ Much less clear difference between trials using MaxNOHAV.
 
 I decided to take a narrow view of plot configurations and analyze only trials confi=orming to the common (median) plotArea for each TrialType. Does not exclude too many.
 
-Below, I work carefully up to a multivariate model with 7 of the 8 SELIND traits. Starting with homogenous variances and one trait, then 2 traits, 2 traits + heterogenous error by TrailType, 4 + heterog. error, and finally 7 traits skipping PLTHT b/c of \>50% missingness.
+Below, I work carefully up to a multivariate model with 7 of the 8 SELIND traits. Starting with homogenous variances and one trait, then 2 traits, 2 traits + heterogenous error by TrialType, 4 + heterog. error, and finally 7 traits skipping PLTHT b/c of \>50% missingness.
 
 ```{r keep trials with standard plotArea}
 trialdata %<>% 
@@ -466,6 +466,7 @@ adjErrorVars %<>%
                              covMat[upper.tri(covMat)]<-t(covMat)[upper.tri(covMat)]
                              siError<-SIwts%*%covMat%*%SIwts
                              return(siError) },SIwts=adjSIwts))
+saveRDS(adjErrorVars,file=here::here("output","siErrorVarEst_byTrialType_directApproach_2021Aug25.rds"))
 ```
 
 ```{r siError vs. plotArea - adjSIwts}
@@ -715,6 +716,8 @@ estSelError_adj_summarized<-estSelError_adj %>%
   summarize(meanTrialMSE=weighted.mean(TrialMSE,w = NcloneForReg),
             meanCor2si=weighted.mean(cor2si,w = NcloneForReg,na.rm = T)) %>% 
   arrange(plotArea)
+saveRDS(estSelError_adj_summarized,file=here::here("output","siErrorVarEst_byTrialType_indirectApproach_2021Aug25.rds"))
+
 estSelError_adj_summarized
 ```
 
@@ -755,7 +758,7 @@ p1 + p2 +
   theme(legend.position = "bottom")
 ```
 
-Above is a side-by-side plot of the key result from two approaches I have tried above for empirically estimating measurement (or selection) error relative to the selection index. The first approach (A), was to fit a multivariate mixed-model with heterogenous error covariances among TrialType. The direct approach allowed calculating the SELIND error variance (y-axis) by $b^T\boldsymbol{R}_{TrialType}b$, where \boldsymbol{R}_{TrialType} is the TrialType-specific estimate of the error covariance matrix and $b$ are the SELIND weights. The second approach (B) was to fit univariate mixed-models to each trait in each trial, then compute trial-specific SELIND using the resulting BLUPs. The SELIND GETGV value for all clones based on using _all_ phenotypic data and genomic information was then regressed on each trial's SELIND BLUPs. The mean squared error (mean residual variance) from each regression was extracted and then the average TrialMSE by TrialType was computed (y-axis, B).
+Above is a side-by-side plot of the key result from two approaches I have tried above for empirically estimating measurement (or selection) error relative to the selection index. The first approach (A), was to fit a multivariate mixed-model with heterogenous error covariances among TrialType. The direct approach allowed calculating the SELIND error variance (y-axis) by $b^T\boldsymbol{R}_{TrialType}b$, where $\boldsymbol{R}_{TrialType}$ is the TrialType-specific estimate of the error covariance matrix and $b$ are the SELIND weights. The second approach (B) was to fit univariate mixed-models to each trait in each trial, then compute trial-specific SELIND using the resulting BLUPs. The SELIND GETGV value for all clones based on using _all_ phenotypic data and genomic information was then regressed on each trial's SELIND BLUPs. The mean squared error (mean residual variance) from each regression was extracted and then the average TrialMSE by TrialType was computed (y-axis, B).
 
 We need to choose one of these two options, or revise the approach further, for use input for VDP simulations. Note that in simulation, the error variances we input will be divided by the Nrep and Nloc for each stage specific, so even if UYT has worse error than AYT overall, at the clone-level, UYT would have lower error b/c of more reps and locs.
 
