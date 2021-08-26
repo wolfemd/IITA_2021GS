@@ -19,7 +19,7 @@ estimateSelectionError<-possibly(function(TrialData,CompleteBlocks,IncompleteBlo
 
   # SET-UP THE DATA TRAIT-BY-TRIAL~~~~~~~~~~~~~~~~~~~~~
   blups<-TrialData %>%
-    select(observationUnitDbId,GID,plotNumber,repInTrial,blockInRep,PropNOHAV,
+    select(observationUnitDbId,GID,repInTrial,blockInRep,PropNOHAV,
            all_of(names(SIwts))) %>%
     pivot_longer(cols = c(all_of(names(SIwts))),
                  names_to = "Trait",
@@ -40,9 +40,9 @@ estimateSelectionError<-possibly(function(TrialData,CompleteBlocks,IncompleteBlo
 
     # Model formula based on trial design
     modelFormula<-paste0("TraitValue ~ (1|GID)")
-    modelFormula<-ifelse(CompleteBlocks,
+    modelFormula<-ifelse(CompleteBlocks=="Yes",
                          paste0(modelFormula,"+(1|repInTrial)"),modelFormula)
-    modelFormula<-ifelse(IncompleteBlocks,
+    modelFormula<-ifelse(IncompleteBlocks=="Yes",
                          paste0(modelFormula,"+(1|blockInRep)"),modelFormula)
     modelFormula<-ifelse(Trait %in% c("logRTNO","logFYLD","logTOPYLD","logDYLD"),
                          paste0(modelFormula,"+PropNOHAV"),modelFormula)
@@ -88,7 +88,10 @@ estimateSelectionError<-possibly(function(TrialData,CompleteBlocks,IncompleteBlo
     column_to_rownames(var = "GID") %>%
     as.matrix
 
-  si_blups<-si_blups%*%SIwts[colnames(si_blups)] %>%
+  wts<-SIwts[colnames(si_blups)]
+  adjWts<-wts*(sum(SIwts)/sum(wts))
+
+  si_blups<-si_blups%*%adjWts %>%
     as.data.frame %>%
     rownames_to_column(var = "GID") %>%
     rename(SI_BLUP=V1) %>%
@@ -118,6 +121,5 @@ estimateSelectionError<-possibly(function(TrialData,CompleteBlocks,IncompleteBlo
                     NcloneForReg=NcloneForReg,
                     SI_BLUPs=list(si_blups),
                     BLUPs=list(blups))
-
   return(trial_out)
 },otherwise = NA)
