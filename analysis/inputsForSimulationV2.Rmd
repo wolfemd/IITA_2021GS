@@ -1,0 +1,687 @@
+---
+title: "Empirical inputs for simulations - IITA"
+site: workflowr::wflow_site
+date: "2021-Aug-13"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+    toc: true
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = F, 
+                      tidy='styler', tidy.opts=list(strict=FALSE,width.cutoff=100), highlight=TRUE)
+```
+
+# Estimate selection error
+
+## Approach 1: direct estimation with multivar mixed model
+
+Try a multivariate model with the proper error and other heterogeneous variances.
+
+This will be for DIRECT calculation, if I can get the models to converge, of the variance components of interest.
+
+Goal is to get estimate of errorCov matrix *per* stage.
+
+Then compute SI errorVar *per* stage.
+
+Things not modeled, which could be input to sims:
+
+-   GxL, GxYr, GxYrxL variance
+-   genCor among locs
+
+```{bash, eval=F}
+screen;
+cd ~/IITA_2021GS/;
+salloc -n 8 --mem=60G --time=06:00:00;
+export PATH=/programs/R-4.0.5clean-p/bin:$PATH
+export OMP_NUM_THREADS=8
+R;
+```
+
+```{r setup inputs}
+library(genomicMateSelectR); 
+library(tidyverse)
+
+# CLEANED PLOT-LEVEL TRIAL DATA
+dbdata<-readRDS(here::here("output","IITA_ExptDesignsDetected_2021Aug08.rds"))
+# SELECTION INDEX WEIGHTS
+SIwts<-c(logFYLD=20,
+         HI=10,
+         DM=15,
+         MCMDS=-10,
+         logRTNO=12,
+         logDYLD=20,
+         logTOPYLD=15,
+         PLTHT=10) 
+# FILTER TRIALS TO-BE-CONSIDERED
+### Restrict consideration to >2012 
+### to measure the selection error during the current "era" at IITA.
+### Only trials with >=50% genotyped and key TrialTypes
+### Keep only trials with full plotWidth and plotLength meta-data
+### Calc plotArea=plotWidth*plotLength (in meters-squared)
+trialdata<-dbdata %>% 
+  filter(studyYear>=2013,
+         !is.na(MaxNOHAV),
+         !is.na(plotWidth),
+         !is.na(plotLength),
+         !is.na(PropNOHAV)) %>% 
+  nest(TrialData=-c(studyName,TrialType,plotWidth,plotLength,CompleteBlocks,IncompleteBlocks,MaxNOHAV)) %>% 
+  mutate(propGenotyped=map_dbl(TrialData,
+                              ~length(which(!is.na(unique(.$FullSampleName))))/length(unique(.$GID))),
+         plotArea=plotWidth*plotLength,
+         IncompleteBlocks=ifelse(IncompleteBlocks==TRUE,"Yes","No"),
+         CompleteBlocks=ifelse(CompleteBlocks==TRUE,"Yes","No")) %>% 
+  filter(propGenotyped>=0.5,
+         TrialType %in% c("GeneticGain","CET","ExpCET","PYT","AYT","UYT")) %>%
+  unnest(TrialData) %>% 
+  select(yearInLoc,studyName,studyYear,locationName,TrialType,
+         plotArea,plotWidth,plotLength,
+         CompleteBlocks,IncompleteBlocks,observationUnitDbId,
+         GID,trialInLocYr,repInTrial,blockInRep,PropNOHAV,MaxNOHAV,
+         all_of(names(SIwts)))
+trialdata %>% nrow(.) %>% paste0(.," plots"); 
+# [1] "108254 plots"
+trialdata %>% distinct(studyName) %>% nrow(.) %>% paste0(.," trials");
+# [1] "382 trials"
+```
+
+Filters applied to the data-to-be-considered:
+
+-   `studyYear>=2013`
+-   `propGenotyped>=0.5`
+-   `TrialType %in% c("GeneticGain","CET","ExpCET","PYT","AYT","UYT")`
+-   Must have plotLength, plotWidth *and* MaxNOHAV meta-data.
+
+It turns out, most IITA trials at least already have this.
+
+```{r plotArea vs. TrialType}
+trialdata %>% 
+  distinct(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,plotArea,MaxNOHAV) %>% 
+  mutate(TrialType=factor(TrialType,levels=c("CrossingBlock","GeneticGain","CET","ExpCET","PYT","AYT","UYT","NCRP"))) %>% 
+  ggplot(.,aes(x=TrialType,y=plotArea,fill=TrialType)) + 
+  geom_boxplot(notch = T) + 
+  theme_bw() + theme(axis.text.x = element_text(angle=45,vjust=.5)) +
+  labs(title = "Plot Area (m-squared) by TrialType",
+       subtitle="plotArea = plotWidth*plotLength. studyYear>=2013")
+```
+
+```{r MaxNOHAV vs. TrialType}
+trialdata %>% 
+  distinct(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,plotArea,MaxNOHAV) %>% 
+  mutate(TrialType=factor(TrialType,levels=c("CrossingBlock","GeneticGain","CET","ExpCET","PYT","AYT","UYT","NCRP"))) %>% 
+  ggplot(.,aes(x=TrialType,y=MaxNOHAV,fill=TrialType)) + 
+  geom_boxplot(notch = T) + 
+  theme_bw() + theme(axis.text.x = element_text(angle=45,vjust=.5)) +
+  labs(title = "Max number harvested as a proxy for planned plot size",
+       subtitle="MaxNOHAV = The maximum number stands harvested per trial. studyYear>=2013")
+```
+
+Much less clear difference between trials using MaxNOHAV.
+
+I decided to take a narrow view of plot configurations and analyze only trials confi=orming to the common (median) plotArea for each TrialType. Does not exclude too many.
+
+Below, I work carefully up to a multivariate model with 7 of the 8 SELIND traits. Starting with homogenous variances and one trait, then 2 traits, 2 traits + heterogenous error by TrailType, 4 + heterog. error, and finally 7 traits skipping PLTHT b/c of \>50% missingness.
+
+```{r keep trials with 'standard' plotArea}
+trialdata %<>% 
+  semi_join(trialdata %>% 
+              distinct(TrialType,studyName,plotArea,plotWidth,plotLength) %>% 
+              group_by(TrialType) %>% 
+              summarize(plotArea=median(plotArea)) %>% ungroup())
+
+trialdata %>% nrow(.) %>% paste0(.," plots"); 
+# [1] "70301 plots"
+trialdata %>% distinct(studyName) %>% nrow(.) %>% paste0(.," trials");
+# [1] "240 trials"
+```
+
+```{r}
+trialdata %>% 
+  distinct(TrialType,plotArea) %>% 
+  arrange(plotArea)
+```
+
+### Work up to the full analysis
+
+```{r one trait, eval=F}
+MultiTrialTraitData<-trialdata %>%
+  filter(!is.na(DM)) %>% 
+  mutate(across(c(GID,yearInLoc,
+                  CompleteBlocks,
+                  IncompleteBlocks,
+                  trialInLocYr,
+                  repInTrial,
+                  blockInRep),as.factor)) %>% 
+  droplevels
+
+fixedFormula="DM ~ yearInLoc"
+randFormula=paste0("~idv(GID) + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial ",
+                   "+ at(IncompleteBlocks,'Yes'):blockInRep")
+
+require(asreml); 
+fixedFormula<-as.formula(fixedFormula)
+randFormula<-as.formula(randFormula)
+# fit asreml 
+out<-asreml(fixed = fixedFormula,
+            random = randFormula,
+            data = MultiTrialTraitData, 
+            maxiter = 40, workspace=1000e6, 
+            na.method.X="omit")
+```
+
+```{r two traits, eval=F}
+MultiTrialTraitData<-trialdata %>%
+  filter(!is.na(DM),
+         !is.na(logFYLD)) %>% 
+  mutate(across(c(GID,yearInLoc,
+                  CompleteBlocks,
+                  IncompleteBlocks,
+                  trialInLocYr,
+                  repInTrial,
+                  blockInRep,
+                  TrialType),as.factor)) %>% 
+  droplevels
+
+fixedFormula="cbind(DM,logFYLD) ~ yearInLoc*trait + PropNOHAV*trait"
+randFormula=paste0("~us(trait,init=c(0,0,0)):GID + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial ",
+                   "+ at(IncompleteBlocks,'Yes'):blockInRep")
+errFormula=paste0("~units:us(trait,init=c(0,0,0))")
+require(asreml); 
+fixedFormula<-as.formula(fixedFormula)
+randFormula<-as.formula(randFormula)
+errFormula<-as.formula(errFormula)
+# fit asreml 
+out<-asreml(fixed = fixedFormula,
+            random = randFormula,
+            rcov = errFormula,
+            data = MultiTrialTraitData, 
+            maxiter = 40, workspace=1000e6)
+```
+
+```{r two traits heterog error, eval=F}
+fixedFormula="cbind(DM,logFYLD) ~ yearInLoc*trait + PropNOHAV*trait"
+randFormula=paste0("~us(trait,init=c(0,0,0)):GID + idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial ",
+                   "+ at(IncompleteBlocks,'Yes'):blockInRep")
+errFormula=paste0("~units:at(TrialType):us(trait,init=c(0,0,0))")
+require(asreml); 
+fixedFormula<-as.formula(fixedFormula)
+randFormula<-as.formula(randFormula)
+errFormula<-as.formula(errFormula)
+# fit asreml 
+out<-asreml(fixed = fixedFormula,
+            random = randFormula,
+            rcov = errFormula,
+            data = MultiTrialTraitData %>% arrange(TrialType), 
+            maxiter = 40, workspace=1000e6)
+```
+
+```{r four traits heterog error, eval=F}
+# Check the proportion missing for each trait
+trialdata %>% 
+  summarize(across(any_of(names(SIwts)),~length(which(is.na(.)))/length(.)))
+#   logFYLD     HI    DM   MCMDS logRTNO logDYLD logTOPYLD PLTHT
+#     <dbl>  <dbl> <dbl>   <dbl>   <dbl>   <dbl>     <dbl> <dbl>
+# 1  0.0166 0.0327 0.101 0.00613  0.0104   0.109    0.0186 0.544
+MultiTrialTraitData<-trialdata %>%
+  # filter(!is.na(DM),
+  #        !is.na(logFYLD)) %>% 
+  mutate(across(c(GID,yearInLoc,
+                  CompleteBlocks,
+                  IncompleteBlocks,
+                  trialInLocYr,
+                  repInTrial,
+                  blockInRep,
+                  TrialType),as.factor)) %>% 
+  droplevels
+
+fixedFormula="cbind(DM,logFYLD,MCMDS,logTOPYLD) ~ yearInLoc*trait + PropNOHAV*trait"
+randFormula=paste0("~us(trait):GID + ",
+                   "idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial ",
+                   "+ at(IncompleteBlocks,'Yes'):blockInRep")
+errFormula=paste0("~units:at(TrialType):us(trait)")
+require(asreml); 
+fixedFormula<-as.formula(fixedFormula)
+randFormula<-as.formula(randFormula)
+errFormula<-as.formula(errFormula)
+# fit asreml 
+out<-asreml(fixed = fixedFormula,
+            random = randFormula,
+            rcov = errFormula,
+            data = MultiTrialTraitData %>% arrange(TrialType), 
+            maxiter = 40, workspace=1000e6)
+names(SIwts)
+```
+
+### Full multi-trait model
+
+7 traits. Heterogeneous error by TrialType. Skip PLTHT b/c \>50% missing data.
+
+```{r seven traits heterog error - skip PLTHT, eval=F}
+# Check the proportion missing for each trait
+trialdata %>% 
+  summarize(across(any_of(names(SIwts)),~length(which(is.na(.)))/length(.)))
+#   logFYLD     HI    DM   MCMDS logRTNO logDYLD logTOPYLD PLTHT
+#     <dbl>  <dbl> <dbl>   <dbl>   <dbl>   <dbl>     <dbl> <dbl>
+# 1  0.0166 0.0327 0.101 0.00613  0.0104   0.109    0.0186 0.544
+
+# SKIP ONLY PLTHT B/C AMOUNT MISSING...
+MultiTrialTraitData<-trialdata %>%
+  mutate(across(c(GID,yearInLoc,
+                  CompleteBlocks,
+                  IncompleteBlocks,
+                  trialInLocYr,
+                  repInTrial,
+                  blockInRep,
+                  TrialType),as.factor)) %>% 
+  droplevels
+
+fixedFormula="cbind(logFYLD,HI,DM,MCMDS,logRTNO,logDYLD,logTOPYLD) ~ yearInLoc*trait + PropNOHAV*trait"
+randFormula=paste0("~us(trait):GID + ",
+                   "idv(trialInLocYr) + at(CompleteBlocks,'Yes'):repInTrial ",
+                   "+ at(IncompleteBlocks,'Yes'):blockInRep")
+errFormula=paste0("~units:at(TrialType):us(trait)")
+require(asreml); 
+fixedFormula<-as.formula(fixedFormula)
+randFormula<-as.formula(randFormula)
+errFormula<-as.formula(errFormula)
+# fit asreml 
+out<-asreml(fixed = fixedFormula,
+            random = randFormula,
+            rcov = errFormula,
+            data = MultiTrialTraitData %>% arrange(TrialType), 
+            maxiter = 60, workspace=1000e6)
+saveRDS(out,file=here::here("output","estimateErrorCov_byTrialType_asreml_2021Aug25.rds"))
+as_summary<-summary(out)
+saveRDS(as_summary,file=here::here("output","estimateErrorCov_byTrialType_asreml_summary_2021Aug25.rds"))
+# 
+# ASReml: Wed Aug 25 16:48:25 2021
+# 
+#  US matrix updates modified 7 times to remain positive definite.
+#      LogLik         S2      DF      wall     cpu
+# -552132.9648      1.0000471133  16:50:44   107.3 (199 restrained)
+#  Notice: NonPosDef US matrix modified
+# -172985.8107      1.0000471133  16:52:02    77.5 (199 restrained)
+#  -11758.3924      1.0000471133  16:53:15    73.2 (199 restrained)
+#   86902.0709      1.0000471133  16:54:31    76.4 (199 restrained)
+#  171214.2253      1.0000471133  16:55:47    75.0 (199 restrained)
+#  225677.4607      1.0000471133  16:56:57    70.1 (155 restrained)
+#  260884.6336      1.0000471133  16:58:06    68.7 (148 restrained)
+#  280487.3333      1.0000471133  16:59:13    67.2 (87 restrained)
+#  295260.2919      1.0000471133  17:00:20    66.5 (32 restrained)
+#  302995.2011      1.0000471133  17:01:30    70.4 (5 restrained)
+#  311088.9518      1.0000471133  17:02:46    75.9 (4 restrained)
+#  Notice: NonPosDef US matrix modified
+#  316645.9289      1.0000471133  17:03:59    72.2 (5 restrained)
+#  324430.0701      1.0000471133  17:05:06    67.1 (2 restrained)
+#  331602.8926      1.0000471133  17:06:14    67.9
+#  335069.2210      1.0000471133  17:07:27    72.8
+#  337425.1130      1.0000471133  17:08:50    77.6
+#  339834.7415      1.0000471133  17:10:49    98.5
+#  340877.5399      1.0000471133  17:13:12   114.1
+#  341423.1058      1.0000471133  17:14:50    84.5
+#  341734.7595      1.0000471133  17:16:00    70.2
+#  341939.2189      1.0000471133  17:17:12    71.2
+#  342091.3023      1.0000471133  17:18:27    75.2
+#  342215.4180      1.0000471133  17:19:49    81.6
+#  342322.6216      1.0000471133  17:21:38    94.1
+#  342418.1298      1.0000471133  17:23:04    84.4
+#  342504.5682      1.0000471133  17:24:26    79.1
+#  342583.3893      1.0000471133  17:25:54    83.8
+#  342655.5189      1.0000471133  17:27:22    84.5
+#  342721.6172      1.0000471133  17:28:59    85.1
+#  342782.2099      1.0000471133  17:30:46    90.1
+#  342837.7490      1.0000471133  17:32:17    76.1
+#  342888.6246      1.0000471133  17:33:23    65.9
+#  342935.2019      1.0000471133  17:34:25    62.7
+#  342977.8038      1.0000471133  17:35:29    63.7
+#  343016.7322      1.0000471133  17:36:35    65.5
+#  343052.2701      1.0000471133  17:37:34    59.8
+#  343084.6751      1.0000471133  17:38:37    63.0
+#  343114.1894      1.0000471133  17:39:42    64.2
+#  343141.0370      1.0000471133  17:40:46    64.7
+#  343165.4329      1.0000471133  17:41:46    59.9
+#  343187.5770      1.0000471133  17:42:51    64.7
+#  343207.6489      1.0000471133  17:43:54    63.5
+#  343225.8251      1.0000471133  17:44:58    63.8
+#  343242.2660      1.0000471133  17:46:06    67.9
+#  343257.1194      1.0000471133  17:47:25    77.2
+#  343270.5287      1.0000471133  17:48:49    76.7
+#  343282.6168      1.0000471133  17:50:12    81.2
+#  343293.5105      1.0000471133  17:51:18    66.5
+#  343303.3166      1.0000471133  17:52:25    66.2
+#  343312.1366      1.0000471133  17:53:44    75.7
+#  343320.0631      1.0000471133  17:55:06    80.0
+#  343327.1802      1.0000471133  17:56:25    74.7
+#  343333.5731      1.0000471133  17:57:53    79.7
+#  343339.3063      1.0000471133  17:59:17    78.3
+#  343344.4459      1.0000471133  18:01:01    76.5
+#  343349.0523      1.0000471133  18:02:05    64.3
+#  343353.1798      1.0000471133  18:03:08    63.0
+#  343356.8724      1.0000471133  18:04:13    64.6
+#  343360.1798      1.0000471133  18:05:19    66.5
+#  343363.1377      1.0000471133  18:06:29    70.0
+# US variance structures were modified in 51 instances to make them positive definite
+# 
+# Finished on: Wed Aug 25 18:06:31 2021
+# 
+# LogLikelihood not converged
+
+
+```
+
+Independent but heterogeneous error covariances were fit by TrialType. After 40 iterations (\~30 minutes), likelihood wasn't converged... but looks on the way.
+
+### Result
+
+```{r}
+asfit<-readRDS(file=here::here("output","estimateErrorCov_byTrialType_asreml_2021Aug25.rds"))
+as_summary<-readRDS(file=here::here("output","estimateErrorCov_byTrialType_asreml_summary_2021Aug25.rds"))
+varcomps<-as_summary$varcomp %>% 
+  rownames_to_column(var = "VarComp") %>% 
+  select(VarComp,component)
+
+# SELECTION INDEX WEIGHTS
+SIwts<-c(logFYLD=20,
+         HI=10,
+         DM=15,
+         MCMDS=-10,
+         logRTNO=12,
+         logDYLD=20,
+         logTOPYLD=15)
+#         PLTHT=10) 
+adjSIwts<-trialdata %>% 
+  summarize(across(all_of(names(SIwts)),~sqrt(var(.,na.rm=T)))) %>% 
+  magrittr::divide_by(SIwts,.) %>% 
+  as.numeric() %>% 
+  `names<-`(.,names(SIwts))
+```
+
+SIwts, specified by breeder as relative importances, essentially.
+
+Try adjusting weights by dividing by Trait Std. Devs.
+
+Trait Standard Deviations:
+
+```{r}
+trialdata %>%
+  summarize(across(all_of(names(SIwts)),~sqrt(var(.,na.rm=T)),.names = paste0("sd_","{.col}")));
+```
+
+Adjusted Weights:
+
+```{r}
+adjSIwts
+```
+
+```{r error with orig SIwts}
+errorVars<-varcomps %>% 
+  filter(grepl("TrialType",VarComp),
+         grepl("!trait.",VarComp)) %>% 
+  separate(VarComp,c("TrialType","VarParam"),"!trait.",remove = T) %>% 
+  separate(VarParam,c("Trait1","Trait2"),":",remove = T) %>% 
+  mutate(TrialType=gsub("TrialType_","",TrialType)) %>% 
+  nest(VarEsts=c(Trait1,Trait2,component))
+errorVars %<>% 
+  mutate(siErrorVarEst=map_dbl(VarEsts,
+                           function(VarEsts,SIwts){
+                             covMat<-VarEsts %>% 
+                               spread(Trait2,component) %>% 
+                               column_to_rownames("Trait1") %>% 
+                               as.matrix() %>% 
+                               .[names(SIwts),names(SIwts)]
+                             covMat[upper.tri(covMat)]<-t(covMat)[upper.tri(covMat)]
+                             siError<-SIwts%*%covMat%*%SIwts
+                             return(siError) },SIwts=SIwts))
+```
+
+```{r siError vs. plotArea - orig SIwts}
+errorVars %>% 
+  left_join(trialdata %>% 
+              distinct(TrialType,plotArea)) %>% 
+  arrange(plotArea) %>% 
+  ggplot(.,aes(x=plotArea,y=siErrorVarEst)) + geom_line() + theme_bw() + 
+  geom_label(aes(label=TrialType,color=TrialType),size=4) + 
+  labs(title = "Unadjusted SIwts - siError vs. plotArea")
+```
+
+```{r error with adjSIwts}
+adjErrorVars<-varcomps %>% 
+  filter(grepl("TrialType",VarComp),
+         grepl("!trait.",VarComp)) %>% 
+  separate(VarComp,c("TrialType","VarParam"),"!trait.",remove = T) %>% 
+  separate(VarParam,c("Trait1","Trait2"),":",remove = T) %>% 
+  mutate(TrialType=gsub("TrialType_","",TrialType)) %>% 
+  nest(VarEsts=c(Trait1,Trait2,component))
+adjErrorVars %<>% 
+  mutate(siErrorVarEst=map_dbl(VarEsts,
+                           function(VarEsts,SIwts){
+                             covMat<-VarEsts %>% 
+                               spread(Trait2,component) %>% 
+                               column_to_rownames("Trait1") %>% 
+                               as.matrix() %>% 
+                               .[names(SIwts),names(SIwts)]
+                             covMat[upper.tri(covMat)]<-t(covMat)[upper.tri(covMat)]
+                             siError<-SIwts%*%covMat%*%SIwts
+                             return(siError) },SIwts=adjSIwts))
+```
+
+```{r siError vs. plotArea - adjSIwts}
+adjErrorVars %>% 
+  left_join(trialdata %>% 
+              distinct(TrialType,plotArea)) %>% 
+  arrange(plotArea) %>% 
+  ggplot(.,aes(x=plotArea,y=siErrorVarEst)) + geom_line() + theme_bw() + 
+  geom_label(aes(label=TrialType,color=TrialType),size=4) + 
+  labs(title = "Adjusted SIwts - siError vs. plotArea")
+```
+
+### Convergence check
+
+```{r look at convergence monitor}
+asfit$monitor["loglik",] %>% 
+  as.numeric %>% plot(.,ylab='loglik',xlab='iter')
+```
+
+```{r}
+asfit$monitor %>% 
+  as.data.frame %>% 
+  rownames_to_column("param") %>% 
+  select(-constraint) %>% 
+  pivot_longer(cols=-c("param"),names_to="iter",values_to="value") %>% 
+  mutate(iter=as.numeric(iter)) %>% 
+  filter(grepl("!trait",param)) %>% 
+  mutate(Component=ifelse(grepl("GID!trait",param),"genVar","errorVar")) %>% 
+  ggplot(.,aes(x=iter,y=value,group=param,color=Component)) + geom_line(alpha=0.7) + 
+  labs(title="ErrorVarCovars")#geom_label(aes(label=param))
+```
+
+```{r}
+asfit$monitor %>% 
+  as.data.frame %>% 
+  rownames_to_column("param") %>% 
+  select(-constraint) %>% 
+  pivot_longer(cols=-c("param"),names_to="iter",values_to="value") %>% 
+  mutate(iter=as.numeric(iter)) %>% 
+  filter(!grepl("!trait|!variance|loglik|S2|df",param)) %>% 
+  ggplot(.,aes(x=iter,y=value,group=param,color=param)) + geom_line()
+```
+
+```{r, fig.width=10}
+asfit$monitor %>% 
+  as.data.frame %>% 
+  rownames_to_column("param") %>% 
+  select(-constraint) %>% 
+  pivot_longer(cols=-c("param"),names_to="iter",values_to="value") %>% 
+  mutate(iter=as.numeric(iter)) %>% 
+  filter(grepl("!trait",param)) %>% 
+  mutate(Component=ifelse(grepl("GID!trait",param),"genVar","errorVar")) %>% 
+  filter(Component=="genVar") %>% 
+  ggplot(.,aes(x=iter,y=value,group=param,color=param)) + geom_line(alpha=0.7) + 
+  labs(title="Genetic VarCovars") + theme(legend.position = 'bottom')
+```
+
+## Approach 2: indirect - regress SI GETGV on Trial-specific SI BLUP
+
+This will be a revised version of the original version of this approach, which is [documented here](https://wolfemd.github.io/IITA_2021GS/inputsForSimulation.html).
+
+**Changes:**
+
+-   Analyze the same subset of trials chosen in Approach 1 above, which is more restrictively chosen than the previous analysis
+-   Adopt a SI weighting scheme for computing the Trial-specific SI with BLUPs, which is invariant to which traits are observed
+-   Categorize trials according to `plotArea` and/or `TrialType`
+
+**Procedure:**
+
+-   Use the *SELECTION INDEX* GETGV from genomic prediction using all entire available training population and all of the latest available data as a best estimate of "true" net merit
+
+    -   The predictions documented [here](https://wolfemd.github.io/IITA_2021GS/06-GenomicPredictions.html) is the most up-to-date. See the summary of genomic prediction results [here](https://wolfemd.github.io/IITA_2021GS/07-Results.html#Genomic_Predictions).
+
+    -   Alternative best estimate of "true" net merit: actual national performance trial data (e.g. from NCRPs in Nigeria?)
+
+-   For each trial, analyze the cleaned plot-basis data:
+
+    1.  Fit a univariate mixed-model to each trait scored
+
+    2.  Extract trial-specific BLUPs for whatever clones were present
+
+    3.  Compute the SELIND for the current trial using BLUPs for whatever component traits were scored ($SI_{TrialBLUP}$).
+
+        -   Scale weights so their sum always equals the sum of the full set of weights, even when only subsets of traits are present. 
+
+    4.  Regress $SI_{GETGV}$ on the $SI_{TrialBLUP}$
+
+    5.  Extract the $\hat{\sigma}^2_e$ of the regression as the trial-specific estimate of the selection error
+
+-   Use mean (or median) $\hat{\sigma}^2_e$ for each TrialType / plotArea as potential simulation input. Consider a weighted mean/median according to number of clones available to measure $\hat{\sigma}^2_e$ for each trial.
+
+```{bash, eval=F}
+screen;
+cd ~/IITA_2021GS/;
+salloc -n 20 --mem=60G --time=06:00:00;
+#export PATH=/programs/R-4.0.5clean-p/bin:$PATH
+#export OMP_NUM_THREADS=8
+R;
+```
+
+```{r inputs for approach 2}
+library(genomicMateSelectR); 
+library(tidyverse)
+
+# CLEANED PLOT-LEVEL TRIAL DATA
+dbdata<-readRDS(here::here("output","IITA_ExptDesignsDetected_2021Aug08.rds"))
+# SELECTION INDEX WEIGHTS
+SIwts<-c(logFYLD=20,
+         HI=10,
+         DM=15,
+         MCMDS=-10,
+         logRTNO=12,
+         logDYLD=20,
+         logTOPYLD=15) # ,PLTHT=10) 
+
+# FILTER TRIALS TO-BE-CONSIDERED
+### Restrict consideration to >2012 
+### to measure the selection error during the current "era" at IITA.
+### Only trials with >=50% genotyped and key TrialTypes
+### Keep only trials with full plotWidth and plotLength meta-data
+### Calc plotArea=plotWidth*plotLength (in meters-squared)
+trialdata<-dbdata %>% 
+  filter(studyYear>=2013,
+         !is.na(MaxNOHAV),
+         !is.na(plotWidth),
+         !is.na(plotLength),
+         !is.na(PropNOHAV)) %>% 
+  nest(TrialData=-c(studyName,TrialType,plotWidth,plotLength,CompleteBlocks,IncompleteBlocks,MaxNOHAV)) %>% 
+  mutate(propGenotyped=map_dbl(TrialData,
+                              ~length(which(!is.na(unique(.$FullSampleName))))/length(unique(.$GID))),
+         plotArea=plotWidth*plotLength,
+         IncompleteBlocks=ifelse(IncompleteBlocks==TRUE,"Yes","No"),
+         CompleteBlocks=ifelse(CompleteBlocks==TRUE,"Yes","No")) %>% 
+  filter(propGenotyped>=0.5,
+         TrialType %in% c("GeneticGain","CET","ExpCET","PYT","AYT","UYT")) %>%
+  unnest(TrialData) %>% 
+  select(yearInLoc,studyName,studyYear,locationName,TrialType,
+         plotArea,plotWidth,plotLength,
+         CompleteBlocks,IncompleteBlocks,observationUnitDbId,
+         GID,trialInLocYr,repInTrial,blockInRep,PropNOHAV,MaxNOHAV,
+         all_of(names(SIwts)))
+trialdata %<>% 
+  semi_join(trialdata %>% 
+              distinct(TrialType,studyName,plotArea,plotWidth,plotLength) %>% 
+              group_by(TrialType) %>% 
+              summarize(plotArea=median(plotArea)) %>% ungroup())
+
+### ADJUSTED SELIND WEIGHTS
+adjSIwts<-trialdata %>% 
+  summarize(across(all_of(names(SIwts)),~sqrt(var(.,na.rm=T)))) %>% 
+  magrittr::divide_by(SIwts,.) %>% 
+  as.numeric() %>% 
+  `names<-`(.,names(SIwts))
+
+# SELIND GETGVS (for input to estimateSelectionError func below)
+gpreds<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds"))
+getgvs<-gpreds$gblups[[1]] %>% 
+  filter(predOf=="GETGV") %>% 
+  select(GID,SELIND,all_of(names(SIwts)))
+siadj_getgvs<-getgvs %>% 
+  mutate(SELIND=as.numeric(getgvs %>% 
+                             select(-SELIND,-GID) %>% 
+                             as.matrix(.)%*%adjSIwts)) %>% 
+  select(GID,SELIND)
+si_getgvs<-getgvs %>% 
+  select(GID,SELIND)
+
+trialdata %<>% 
+  nest(TrialData=-c(studyYear,locationName,studyName,TrialType,CompleteBlocks,IncompleteBlocks,MaxNOHAV,plotArea))
+
+# SOURCE FUNCTION estimateSelectionError() 
+source(here::here("code","estimateSelectionError.R"))
+```
+
+```{r unit test inputs for estimateSelectionError, eval=F}
+###### unit test inputs for estimateSelectionError
+# TrialData<-trialdata$TrialData[[1]]
+# CompleteBlocks<-trialdata$CompleteBlocks[[1]]
+# IncompleteBlocks<-trialdata$IncompleteBlocks[[1]]
+# getgvs<-si_getgvs
+# TrialData<-trialdata %>% filter(propGenotyped>0.75) %>% slice(4) %$% TrialData[[1]]
+# CompleteBlocks<-trialdata %>% filter(propGenotyped>0.75) %>% slice(4) %$% CompleteBlocks[[1]]
+# IncompleteBlocks<-trialdata %>% filter(propGenotyped>0.75) %>% slice(4) %$% IncompleteBlocks[[1]]
+# ncores=4
+# rm(TrialData,CompleteBlocks,IncompleteBlocks)
+```
+
+Run function `estimateSelectionError()` across trials to estimation selection errors.
+
+```{r, eval=F}
+# ORIGINAL SIwts
+require(furrr); plan(multisession, workers = 20)
+options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+trialdata %<>% 
+  mutate(SelectionError=future_pmap(.,estimateSelectionError,
+                                    SIwts=SIwts,getgvs=si_getgvs))
+plan(sequential)
+saveRDS(trialdata,here::here("output","estimateSelectionError_origSIwts_2021Aug24.rds"))
+
+# ADJUSTED SIwts
+require(furrr); plan(multisession, workers = 20)
+options(future.globals.maxSize=+Inf); options(future.rng.onMisuse="ignore")
+trialdata %<>% 
+  mutate(SelectionError=future_pmap(.,estimateSelectionError,
+                                    SIwts=adjSIwts,getgvs=siadj_getgvs))
+plan(sequential)
+saveRDS(trialdata,here::here("output","estimateSelectionError_adjSIwts_2021Aug24.rds"))
+
+```
+
+# Conclusions
+
+The analysis seems far from conclusive. Do we even expect the relation b/t plot-size and error variance to be linearly decreasing?
+
+Certainly this will vary by breeding, location, and much more.
+
+There are also possibly many alternative methods to analyze this problem, and alternative datasets to choose.
+
+**NEW APPROACH:** While inconclusive, this exercise emphasizes a key concern for conducting simulations that alter the VDP: that the cost-benefit balance could depend on the relative information value/selection accuracy/error variance of different plot sizes and trial configurations. As a result, I propose to simulate a range of error-vs-plot size as part of the [baseline simulation](https://wolfemd.github.io/BreedingSchemeOpt/baselineSim.html) of each breeding program. ***If*** we observe a shift-point in the cost-benefit analysis we can then work with breeding programs to determine where their data indicate they lie and what changes are subsequently recommended.
