@@ -296,7 +296,253 @@ saveRDS(crossPreds,file = here::here("output",
 
 ```
 
+## Predict crosses for clones in Ubiaja 
+
+September 10th, 2021: received from I. Kayondo a list of plots in Ubiaja available for crosses (`data/Mate_selection_parental.pool.xlsx`). Match these lines to genomic data and (if not already done) predict matings!
+
+First thing, match the germplasm in the list provided to genotype data...
+
+```{r, eval=F}
+library(genomicMateSelectR)
+library(tidyverse); library(magrittr)
+dbdata<-readRDS(here::here("output","IITA_ExptDesignsDetected_2021Aug08.rds"))
+dosages<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
+
+parent_candidates<-readxl::read_xlsx(here::here("data","Mate_selection_parental.pool.xlsx")) %>% 
+  distinct(accession_name) %>% 
+  rename(germplasmName=accession_name) %>% 
+  left_join(dbdata %>% 
+              distinct(germplasmName,GID,FullSampleName))
+```
+1354 unique germplasm to select among. Some genotyped multiple times, so 1576 geno matches.
+
+```{r, eval=F}
+parent_candidates %>% 
+  filter(is.na(GID)) %>% 
+  distinct(germplasmName) %>% 
+  write.table(.,file=here::here("output","parent_candidates_NOGENOS.txt"),col.names = F, row.names = F, quote = F)
+
+parent_candidates %>% 
+  filter(!FullSampleName %in% rownames(dosages),
+         !is.na(FullSampleName)) %>% 
+  distinct(germplasmName) %>% 
+  write.table(.,file=here::here("output","parent_candidates_PEDIGREEREJECT.txt"),col.names = F, row.names = F, quote = F)
+
+parent_candidates %<>% 
+  filter(FullSampleName %in% rownames(dosages)) %>% 
+  distinct(germplasmName,FullSampleName) %>% 
+  group_by(germplasmName) %>% 
+  slice(1)
+parent_candidates %>% 
+    write.table(.,file=here::here("output","parent_candidates_TOPREDICT.txt"),col.names = F, row.names = F, quote = F)
+
+CrossesToPredict<-genomicMateSelectR::crosses2predict(parents)
+# nrow(CrossesToPredict)
+# [1] 258840 possible crosses of 719 parents
+saveRDS(CrossesToPredict,
+        file = here::here("output",
+                          "CrossesToPredict_2021Sep13.rds"))
+```
+13 lines don't seem to have matches in SNP data.
+552 lines DO have SNP data, but seem to have been excluded from my analyses at the [pedigree-validation step here](03-validatePedigree.html) because they had neither BLUPs (useful training data) nor could their pedigree be validated.
+
+That might not be what you want, since as long as the genomic data matches the clone in the field, even without a verified pedigree it could be a useful parent for crossing. Also, my pedigree verification could have false rejections. So care should be taken. Two lists of clones for you: `output/parent_candidates_NOGENOS.txt`, `output/parent_candidates_PEDIGREEREJECT.txt`.
+
+719 germplasmName have genotype data matches and verified pedigrees. Some have more than one DNA sample, so I will choose one for each. 
+
+Because there are PLENTY of candidate parents, I suggest to proceed for now, but some action or decision should be made about the 552 germplasm not-yet-considered.
+
+File with the list I suggeset to work from: `ouptput/parent_candidates_TOPREDICT.txt`.
+
+You can match the predictions I make with your field plots based on match the "germplasmName" column in this file with the "accession_name" column in the `Mate_selection_parental.pool.xlsx` file you shared with me. 
+
+Regarding the number of crosses I can predict:
+It took 21 hrs on a single 112 core server to predict 20100 crosses (pairwise for 200 parents).
+
+For pairwise crosses among 719 in-field parents, 258840 crosses-to-predict. 271 hrs or 11 days. 
+I could secure at least 3 servers and do it in about 3-5 actual days. 
+
+Or I could take the top 500 parents (125250 crosses) or 400 parents (80200 crosses) and cut it down to as little as 2 days. 
+
+Delivery end of week vs mid-week?
+
+
+```{bash, eval=F}
+# 1) start a screen shell 
+screen; # or screen -r if re-attaching...
+# 2) start the singularity Linux shell inside that
+singularity shell ~/rocker2.sif; 
+# Project directory, so R will use as working dir.
+cd /home/mw489/IITA_2021GS/;
+# 3) Start R
+R
+```
+
+```{r, eval=F}
+# NEEDED LIBRARIES
+require(tidyverse); require(magrittr); library(qs)
+library(genomicMateSelectR)
+
+# BLUPs
+blups<-readRDS(file=here::here("data","blups_forGP.rds")) %>% 
+  dplyr::select(-varcomp)
+
+# DOSAGE MATRIX (UNFILTERED)
+dosages<-readRDS(file=here::here("data","dosages_IITA_2021Aug09.rds"))
+
+# RECOMBINATION FREQUENCY MATRIX (UNFILTERED)
+recombFreqMat<-qread(file=here::here("data",
+                                     "recombFreqMat_1minus2c_2021Aug02.qs"))
+
+# HAPLOTYPE MATRIX (UNFILTERED)
+## keep only haplos for parents-in-the-pedigree
+## those which will be used in prediction, saves memory
+haploMat<-readRDS(file=here::here("data","haps_IITA_2021Aug09.rds"))
+
+
+# PARENTS FOR CROSS PREDICTIONS
+parents<-read.table(here::here("output","parent_candidates_TOPREDICT.txt"), header = F, stringsAsFactors = F)$V2
+
+# SUBSET HAPS
+parenthaps<-sort(c(paste0(parents,"_HapA"),
+                   paste0(parents,"_HapB")))
+haploMat<-haploMat[parenthaps,]
+
+# SNP SETS TO ANALYZE
+snpsets<-readRDS(file = here::here("data","snpsets.rds"))
+
+# SELECTION INDEX WEIGHTS
+## from IYR+IK
+## note that not ALL predicted traits are on index
+SIwts<-c(logFYLD=20,
+         HI=10,
+         DM=15,
+         MCMDS=-10,
+         logRTNO=12,
+         logDYLD=20,
+         logTOPYLD=15,
+         PLTHT=10) 
+
+# CROSSES TO PREDICT
+CrossesToPredict<-readRDS(here::here("output",
+                                     "CrossesToPredict_2021Sep13.rds"))
+```
+
+```{r full_set predMeans, eval=F}
+# cbsulm26 - 88 cores, 512 GB RAM - 2021 Sep 13
+snpSet<-"full_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_IITA_2021Aug09.rds")))
+predTheMeans<-TRUE; predTheVars<-FALSE
+gpreds<-readRDS(file = here::here("output","genomicPredictions_full_set_2021Aug09.rds")); gc()
+
+snps2keep<-snpsets %>% 
+  filter(Set==snpSet) %>% 
+  select(snps2keep) %>% 
+  unnest(snps2keep)
+
+dosages<-dosages[,snps2keep$FULL_SNP_ID]
+haploMat<-haploMat[,snps2keep$FULL_SNP_ID]
+recombFreqMat<-recombFreqMat[snps2keep$FULL_SNP_ID,snps2keep$FULL_SNP_ID]
+rm(snpsets); gc()
+snpSet; dim(dosages); predTheMeans; predTheVars
+
+start<-proc.time()[3]
+crossPreds<-predictCrosses(modelType="DirDom",stdSelInt = 2.0627128, 
+                           selInd=TRUE, SIwts=SIwts,
+                           CrossesToPredict=CrossesToPredict,
+                           snpeffs=gpreds$genomicPredOut[[1]],
+                           dosages=dosages,
+                           haploMat=haploMat,recombFreqMat=recombFreqMat,
+                           ncores=17,nBLASthreads=5,
+                           predTheMeans = predTheMeans,
+                           predTheVars = predTheVars)
+runtime<-proc.time()[3]-start; runtime/60
+saveRDS(crossPreds,file = here::here("output",
+                                     paste0("genomicMatePredictions_",
+                                            snpSet,"_2021Sep13.rds")))
+# elapsed 
+# 14.7936 minutes
+```
+
+```{r medium_set predVars in 3 chunks, eval=F}
+snpSet<-"medium_set"
+grms<-list(A=readRDS(here::here("output","kinship_A_MediumSNPset_IITA_2021Aug09.rds")), 
+           D=readRDS(here::here("output","kinship_Dgeno_MediumSNPset_IITA_2021Aug09.rds")))
+predTheMeans<-TRUE; predTheVars<-TRUE
+gpreds<-readRDS(file = here::here("output","genomicPredictions_medium_set_2021Aug09.rds")); gc()
+snps2keep<-snpsets %>% 
+  filter(Set==snpSet) %>% 
+  select(snps2keep) %>% 
+  unnest(snps2keep)
+
+dosages<-dosages[,snps2keep$FULL_SNP_ID]
+haploMat<-haploMat[,snps2keep$FULL_SNP_ID]
+recombFreqMat<-recombFreqMat[snps2keep$FULL_SNP_ID,snps2keep$FULL_SNP_ID]
+rm(snpsets); gc()
+snpSet; dim(dosages); predTheMeans; predTheVars
+
+# DIVIDE CROSSES-TO-PREDICT INTO 3 CHUNKS
+CrossesToPredict %<>% 
+  mutate(Chunk=rep_along(along = CrossesToPredict$sireID, 1:3) %>% sort(.)) %>% 
+  nest(Crosses=c(sireID,damID))
+
+# cbsulm26 - 88 cores, 512 GB RAM - 2021 Sep 13, 10:20am
+CrossesToPredict<-CrossesToPredict$Crosses[[1]]
+chunk<-1
+# [1] "Done predicting fam vars. Took 3867.09 mins for 86280 crosses" = 64.45 hrs = 2.68 days
+# [1] "Done predicting fam vars. Took 1658.5 mins for 86280 crosses"
+# 5548.574
+
+## two runs of predCrossVars() function internally 
+## to predictCrosses() for the DirDom model
+## 3867.09/86280 = 0.045 min per cross
+## (3867.09*2)/86280 = 0.089 total mins per cross (for DirDom model)
+
+# cbsulm18 - 88 cores, 512 GB RAM - 2021 Sep 13, 9:30am
+CrossesToPredict<-CrossesToPredict$Crosses[[2]]
+chunk<-2
+
+# [1] "Done predicting fam vars. Took 3700.52 mins for 86280 crosses" = 61.67 hrs = 2.57 days
+# [1] "Done predicting fam vars. Took 1600.63 mins for 86280 crosses"
+# 5323.687 mins elapsed total
+
+# cbsulm19 - 88 cores, 512 GB RAM - 2021 Sep 13, 9:30am
+CrossesToPredict<-CrossesToPredict$Crosses[[3]]
+chunk<-3
+# [1] "Done predicting fam vars. Took 3659.66 mins for 86280 crosses"
+# [1] "Done predicting fam vars. Took 1609.88 mins for 86280 crosses"
+# 5292.067 = 88.2 hrs = 3.67 days
+CrossesToPredict %>% head
+
+## 128.9 hrs = 5.37 days expected for 3 servers (each 88 core, 512 GB RAM)
+## to deliver ~260K cross predictions for an directional dominance model with
+## an 8 trait SI and 13K SNPs
+```
+
+```{r, eval=F}
+start<-proc.time()[3]
+crossPreds<-predictCrosses(modelType="DirDom",stdSelInt = 2.0627128, 
+                           selInd=TRUE, SIwts=SIwts,
+                           CrossesToPredict=CrossesToPredict,
+                           snpeffs=gpreds$genomicPredOut[[1]],
+                           dosages=dosages,
+                           haploMat=haploMat,recombFreqMat=recombFreqMat,
+                           ncores=17,nBLASthreads=5,
+                           predTheMeans = predTheMeans,
+                           predTheVars = predTheVars)
+runtime<-proc.time()[3]-start; runtime/60
+saveRDS(crossPreds,file = here::here("output",
+                                     paste0("genomicMatePredictions_",
+                                            snpSet,"_chunk",chunk,"_2021Sep13.rds")))
+
+```
+
+
+
 # Write tidy breeder-friendly predictions to disk
+
+## August 2021
 
 Add genetic groups and cohort identifiers and tidy format
 
@@ -335,6 +581,7 @@ gpreds$gblups[[1]] %>%
 ```{r load usefulness predictions, eval=F}
 crossPreds_full<-readRDS(file = here::here("output","genomicMatePredictions_full_set_2021Aug10.rds"))
 crossPreds_medium<-readRDS(file = here::here("output","genomicMatePredictions_medium_set_2021Aug10.rds"))
+crossPreds_medium$rawPreds[[1]]
 ```
 
 
@@ -396,6 +643,79 @@ crossPreds_full$tidyPreds[[1]] %>%
   relocate(predMean,.before = "predMean_medium") %>% 
   arrange(predOf,Trait,desc(predUsefulness)) %>% 
   write.csv(.,file = here::here("output","genomicMatePredictions_2021Aug10.csv"),
+            row.names = F)
+```
+
+
+
+
+
+
+## September 2021
+
+**NOTE:** For cross predictions, check that the predMean from full and medium set are highly correlated. As long as that is true, combine the predMean from full set with pred var from medium set.
+
+```{r, eval=F}
+library(tidyverse); library(magrittr)
+crossPreds_full<-readRDS(file = here::here("output","genomicMatePredictions_full_set_2021Sep13.rds"))
+crossPreds_medium<-readRDS(file = here::here("output","genomicMatePredictions_medium_set_chunk1_2021Sep13.rds")) %>% 
+  bind_rows(readRDS(file = here::here("output","genomicMatePredictions_medium_set_chunk2_2021Sep13.rds"))) %>% 
+  bind_rows(readRDS(file = here::here("output","genomicMatePredictions_medium_set_chunk3_2021Sep13.rds"))) %>% 
+  select(tidyPreds) %>% 
+  unnest(tidyPreds)
+
+```
+
+
+```{r, eval=F}
+crossPreds_full$tidyPreds[[1]] %>% 
+  rename(predMean_full=predMean) %>% 
+  left_join(crossPreds_medium %>% 
+              rename(predMean_medium=predMean)) %>% 
+  group_by(predOf,Trait) %>% 
+  summarize(corPredMeans=cor(predMean_full,predMean_medium),.groups = 'drop') %>% 
+  arrange(desc(corPredMeans)) %$% summary(corPredMeans)
+# Joining, by = c("sireID", "damID", "predOf", "Trait")
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  0.9585  0.9732  0.9863  0.9818  0.9889  0.9964 
+```
+
+The lowest corPredMeans was 0.95 for the SELIND, perhaps unsurprisingly. 
+
+Mean corPredMeans=0.98. I think we are good to go.
+
+Make a plot (below) to examine the scaling of predMean_medium vs. predMean_full to be sure that combining predMean_full with predSD_medium is safe. Seems like it. Everything is on the same scale as expected.
+
+Recompute **predUsefulness** using **predMean_full** before saving to disk.
+
+```{r, eval=F}
+crossPreds_full$tidyPreds[[1]] %>% 
+  left_join(crossPreds_medium %>% 
+              rename(predMean_medium=predMean)) %>% 
+  mutate(predUsefulness=predMean+(2.0627128*predSD),
+         sireGroup=case_when(grepl("2013_|TMS13",sireID)~"TMS13",
+                                    grepl("TMS14",sireID)~"TMS14",
+                                    grepl("TMS15",sireID)~"TMS15",
+                                    grepl("TMS16",sireID)~"TMS16",
+                                    grepl("TMS17",sireID)~"TMS17",
+                                    grepl("TMS18",sireID)~"TMS18",
+                                    grepl("TMS19",sireID)~"TMS19",
+                                    grepl("TMS20",sireID)~"TMS20",
+                                    !grepl("2013_|TMS13|TMS14|TMS15|TMS16|TMS17|TMS18|TMS19|TMS20",sireID)~"PreGS"),
+         damGroup=case_when(grepl("2013_|TMS13",damID)~"TMS13",
+                                    grepl("TMS14",damID)~"TMS14",
+                                    grepl("TMS15",damID)~"TMS15",
+                                    grepl("TMS16",damID)~"TMS16",
+                                    grepl("TMS17",damID)~"TMS17",
+                                    grepl("TMS18",damID)~"TMS18",
+                                    grepl("TMS19",damID)~"TMS19",
+                                    grepl("TMS20",damID)~"TMS20",
+                            !grepl("2013_|TMS13|TMS14|TMS15|TMS16|TMS17|TMS18|TMS19|TMS20",damID)~"PreGS"),
+         CrossGroup=paste0(sireGroup,"x",damGroup)) %>%
+  relocate(contains("Group"),.before = "Nsegsnps") %>% 
+  relocate(predMean,.before = "predMean_medium") %>% 
+  arrange(predOf,Trait,desc(predUsefulness)) %>% 
+  write.csv(.,file = here::here("output","genomicMatePredictions_2021Sep18.csv"),
             row.names = F)
 ```
 

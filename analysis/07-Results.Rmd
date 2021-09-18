@@ -842,9 +842,11 @@ Surprisingly, a significant amount of parents from the "PreGS" (i.e. GeneticGain
 
 ## Genomic mate selection
 
+**Update:** September 18th, 2021: completed predicting 258840 pairwise crosses among 719 in-field parents.
+
 ```{r, eval=T}
 library(tidyverse); library(magrittr); library(ggdist)
-crossPreds<-read.csv(here::here("output","genomicMatePredictions_2021Aug10.csv"), stringsAsFactors = F, header = T)
+crossPreds<-read.csv(here::here("output","genomicMatePredictions_2021Sep18.csv"), stringsAsFactors = F, header = T)
 
 forplot<-crossPreds %>% 
   filter(Trait=="SELIND") %>% 
@@ -878,23 +880,16 @@ forplot %>%
   select(-predMean,-predSD) %>%
   spread(predOf,predUsefulness) %$%
   cor(BV,TGV)
-# [1] 0.3655159
-# The correlation between predUC BV and TGV is not high.
-
+# [1] 0.9687978
+# The correlation between predUC BV and TGV is high.
 
 forplot %>%
   group_by(predOf) %>%
   slice_max(order_by = predUsefulness, n = 50) %>% ungroup() %>%
-  distinct(sireID,damID) %>% nrow() # 96
+  distinct(sireID,damID) %>% nrow() # 71
 ```
 
-The correlation between predUC BV and TGV is not high.
-
-Not many crosses are selected for both $UC_{parent}$ (`predOf=="BV"`) and $UC_{variety}$ (`predOf=="TGV"`).
-
-This is different from what I found in the implementation analyses.
-
-I am not sure why.
+The correlation between predUC BV and TGV is higher among this total group of cross predictions with moderate overlap between crosses seleccted for both $UC_{parent}$ (`predOf=="BV"`) and/or $UC_{variety}$ (`predOf=="TGV"`).
 
 ```{r, fig.width=10}
 forplot %>% 
@@ -913,7 +908,7 @@ forplot %>%
   plottheme + theme(axis.title.x = element_text(face='bold')) + 
   labs(x = "Cross Rank UC_variety",
        y = "Selection Index GETGV",
-       title = "Predicted distribution (mean and variability) of a sample of 2000 of 20100 predicted crosses",
+       title = "Predicted distribution (mean and variability) of a sample of 2000 of 258840 predicted crosses",
        subtitle = "Gives an idea of the range")
 ```
 
@@ -934,7 +929,7 @@ forplot %>%
   plottheme + theme(axis.title.x = element_text(face='bold')) + 
   labs(x = "Cross Rank UC_parent",
        y = "Selection Index GEBV",
-       title = "Predicted distribution (mean and variability) of a sample of 2000 of 20100 predicted crosses",
+       title = "Predicted distribution (mean and variability) of a sample of 2000 of 258840 predicted crosses",
        subtitle = "Gives an idea of the range")
 ```
 
@@ -1027,8 +1022,8 @@ forplot %>%
 
 **Table of Top 50 Crosses:** 2 rows for each cross, one for `predOf=="BV"` one for `predOf=="TGV"`.
 
--   [**Download the CSV for the top 50 crosses and their selection index means, SDs and UC here**](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/top50crosses.csv) or
--   [**Download the complete CSV of ALL genomic mate predictions here**](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicMatePredictions_2021Aug10.csv): for all crosses and both SELIND and component trait predictions.
+-   [**Download the CSV for the top 50 crosses and their selection index means, SDs and UC here**](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/top50crosses_2021Sep18.csv) or
+-   [**Download the complete CSV of ALL genomic mate predictions here**](ftp://ftp.cassavabase.org/marnin_datasets/IITA_2021GS/output/genomicMatePredictions_2021Sep18.csv): for all crosses and both SELIND and component trait predictions.
 
 ```{r, eval=T}
 top50crosses<-forplot %>% 
@@ -1036,7 +1031,112 @@ top50crosses<-forplot %>%
   slice_max(order_by = predUsefulness, n = 50) %>% 
   ungroup()
 top50crosses %>% 
-  write.csv(.,file = here::here("output","top50crosses.csv"), row.names = F)
+  write.csv(.,file = here::here("output","top50crosses_2021Sep18.csv"), row.names = F)
 top50crosses %>% 
   rmarkdown::paged_table()
 ```
+
+
+# For AM 2021
+
+## Plot SELIND prediction accuracy
+
+```{r, eval=F}
+library(tidyverse); library(magrittr); library(ggdist)
+# PARENT-WISE CV RESULTS
+accuracy_full<-readRDS(here::here("output","parentWiseCV_full_set_CrossPredAccuracy.rds"))
+accuracy_medium<-readRDS(here::here("output","parentWiseCV_medium_set_CrossPredAccuracy.rds"))
+accuracy_reduced<-readRDS(here::here("output","parentWiseCV_reduced_set_CrossPredAccuracy.rds"))
+accuracy<-accuracy_medium$meanPredAccuracy %>%
+  filter(Trait=="SELIND") %>%
+  mutate(VarComp=gsub("Mean","",predOf),
+         predOf="Mean",
+         Filter="LDprunedR2pt8 \n (~13K)") %>%
+  bind_rows(accuracy_medium$varPredAccuracy %>%
+              filter(Trait1=="SELIND") %>%
+              rename(Trait=Trait1) %>%
+              select(-Trait2) %>%
+              mutate(VarComp=gsub("Var","",predOf),
+                     predOf="Var",
+                     Filter="LDprunedR2pt8 \n (~13K)")) %>%
+  bind_rows(accuracy_reduced$meanPredAccuracy %>%
+  filter(Trait=="SELIND") %>%
+  mutate(VarComp=gsub("Mean","",predOf),
+         predOf="Mean",
+         Filter="LDprunedR2pt6 \n (~8K)") %>%
+  bind_rows(accuracy_reduced$varPredAccuracy %>%
+              filter(Trait1=="SELIND") %>%
+              rename(Trait=Trait1) %>%
+              select(-Trait2) %>%
+              mutate(VarComp=gsub("Var","",predOf),
+                     predOf="Var",
+                     Filter="LDprunedR2pt6 \n (~8K)"))) %>%
+    bind_rows(accuracy_full$meanPredAccuracy %>%
+  filter(Trait=="SELIND") %>%
+  mutate(VarComp=gsub("Mean","",predOf),
+         predOf="Mean",
+         Filter="FullSet \n (~33K)") %>%
+  bind_rows(accuracy_full$varPredAccuracy %>%
+              filter(Trait1=="SELIND") %>%
+              rename(Trait=Trait1) %>%
+              select(-Trait2) %>%
+              mutate(VarComp=gsub("Var","",predOf),
+                     predOf="Var",
+                     Filter="FullSet \n (~33K)")))
+
+recalculated_accuracy<-accuracy %>% 
+  select(-AccuracyEst) %>% 
+  unnest(predVSobs) %>% 
+  select(-obsVar,-obsMean,-obsVar) %>% 
+  mutate(predValue=ifelse(predOf=="Mean",predMean,predVar)) %>% 
+  select(-predVar,-predMean) %>% 
+  left_join(accuracy %>% 
+              select(-AccuracyEst) %>% 
+              filter(grepl("FullSet",Filter)) %>% 
+              unnest(predVSobs) %>% 
+              select(-predVar,-predMean) %>% 
+              mutate(obsValue=ifelse(predOf=="Mean",obsMean,obsVar)) %>% 
+              select(-obsMean,-obsVar,-Filter)) %>% 
+  nest(predVSobs=c(sireID,damID,predValue,obsValue,famSize)) %>% 
+  mutate(AccuracyEst=map_dbl(predVSobs,function(predVSobs){
+    out<-psych::cor.wt(predVSobs[,c("predValue","obsValue")],
+                       w = predVSobs$famSize) %$% r[1,2] %>%
+      round(.,3)
+    return(out) })) %>% 
+  select(-predVSobs)   
+
+recalculated_accuracy %<>%
+  filter(grepl("FullSet",Filter)) %>% 
+  mutate(predOf=paste0("Cross",predOf))
+  mutate(predOf=factor(predOf,levels=c("CrossMean","CrossVar")),
+         VarComp=factor(VarComp,levels=c("BV","TGV"))) %>% droplevels
+
+colors<-viridis::viridis(4)[1:2]
+```
+
+```{r, fig.width=8, eval=F}
+recalculated_accuracy %>% 
+  ggplot(.,aes(x=VarComp,y=AccuracyEst,fill=VarComp)) +
+  ggdist::stat_halfeye(adjust=0.5,.width = 0,fill='gray',width=0.75) +  
+  geom_boxplot(width=0.12,notch = TRUE) +
+  ggdist::stat_dots(side = "left",justification = 1.1,dotsize=0.6)+
+  theme_bw() + 
+  scale_fill_manual(values = colors) + 
+  geom_hline(data = recalculated_accuracy %>% distinct(predOf) %>% mutate(yint=c(NA,0)),
+             aes(yintercept = yint), color='black', size=0.9) +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title = element_text(face='bold',color = 'black', size=14),
+        strip.text.y = element_text(face='bold',color='black',size=16),
+        axis.text.y = element_text(face = 'bold',color='black',size=12),
+        legend.text = element_text(face='bold',size=14),
+        legend.title = element_text(face='bold',size=14),
+        legend.position = 'bottom',
+        plot.title = element_text(face='bold',size=16)) +
+  facet_grid(predOf~.,scales = 'free') + 
+  labs(title="Accuracy predicting performance on the Selection Index") 
+```
+
